@@ -2,13 +2,14 @@
 
 **Welcome to the world of We7 Content Management System.**
 
-	We7 CMS is an full-featured content based website management system. With most excited features built in, it is widely 
-	known and becoming one of the most deployed Web Content Management Systems in China.  
+We7 CMS is an full-featured content based website management system. With most excited features built in, it is 
+widely known and becoming one of the most deployed Web Content Management Systems in China.  
 
 
 
 ## Simple the stuff ##
-	The newly created mode enables you to design the pages all by drag and drop! We pay continuous attention to keep improving exprience of our product.
+	The newly created mode enables you to design the pages all by drag and drop! We pay continuous attention to keep 
+	improving exprience of our product.
 
 
 ## Extend when you want ##
@@ -33,12 +34,16 @@ Copyright(c) Westengine(Beijing, China) Technology Co, Ltd. All rights reserved.
 The license of the source code is currenly in Chinese within the file *copyright.html*
 
 
+
+
+
+
 ______________________________
 
 
 **欢迎进入We7世界。**
 
-	We7 CMS 是全功能站点内容管理系统。秉持打造asp.net 开源cms顶级产品的理念，We7 CMS帮助您用最简单的方式构建自己的高端网站。
+We7 CMS 是全功能站点内容管理系统。秉持打造asp.net 开源cms顶级产品的理念，We7 CMS帮助您用最简单的方式构建自己的高端网站。
 
 
 ## 简单至上 ##
