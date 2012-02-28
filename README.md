@@ -2,7 +2,8 @@
 
 **Welcome to the world of We7 Content Management System.**
 
-	We7 CMS is an full-featured content based website management system. With most excited features built in, it is widely known and becoming one of the most deployed Web Content Management Systems in China.  
+	We7 CMS is an full-featured content based website management system. With most excited features built in, it is widely 
+	known and becoming one of the most deployed Web Content Management Systems in China.  
 
 
 
@@ -11,15 +12,18 @@
 
 
 ## Extend when you want ##
-	Not only a website, but another entire web. New architecture of the new cms show you a super container which make it possible to extend your site freely.
+	Not only a website, but another entire web. New architecture of the new cms show you a super container which make it 
+	possible to extend your site freely.
 
 
 ## Open Source ##
-	Just take all the freedom! We are proud to host all source code via popular open social networks, we provide lots kind of official online supports.
+	Just take all the freedom! We are proud to host all source code via popular open social networks, we provide lots kind
+	of official online supports.
 
 	
 ## App Mall ##
-	Got passion to start? Wait, don't miss this: we build an App Mall for you if you have any good ideas to make useful plugins, themes, etc. for our CMS.
+	Got passion to start? Wait, don't miss this: we build an App Mall for you if you have any good ideas to make useful 
+	plugins, themes, etc. for our CMS.
 	
 More infomation about We7 CMS is available at *[http://www.westengine.com](http://www.westengine.com "Westengine Home")*
 
