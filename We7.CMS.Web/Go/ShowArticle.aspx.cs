@@ -44,7 +44,6 @@ namespace We7.CMS.Web
 
         protected override void Initialize()
         {
-
             columnID = ChannelHelper.GetChannelIDFromURL();
             articleID = ArticleHelper.GetArticleIDFromURL();
 
@@ -106,6 +105,7 @@ namespace We7.CMS.Web
             }
             else
                 Server.Transfer(TemplateGuideUrl, true);
+
         }
         protected void Page_Load(object sender, EventArgs e)
         {

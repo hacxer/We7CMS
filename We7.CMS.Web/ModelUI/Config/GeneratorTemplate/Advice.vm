@@ -51,7 +51,3 @@
             </asp:View>
         </asp:MultiView>
     </form>
-<script type="text/javascript">
-//<![CDATA[
-$(function(){$('${pre2}<%=form1.ClientID %>').validate();});//]]>
-</script>

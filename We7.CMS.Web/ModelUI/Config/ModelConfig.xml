@@ -65,6 +65,7 @@
     <Item name="ch" type="We7.Model.UI.Converter.ChannelConvert,We7.Model.UI"></Item>
     <Item name="state" type="We7.Model.UI.Converter.StateConvert,We7.Model.UI"></Item>
     <Item name="audit" type="We7.Model.UI.Converter.ProcessStateConvert,We7.Model.UI"></Item>
+    <Item name="ModelToAdviceConvert" type="We7.Model.Core.ListControl.ModelToAdviceConvert,We7.Model.UI"></Item>
   </ColumnConvert>
   <Providers>
     <Item type="article" provider="We7.Model.Core.Data.CompositeProvider,We7.Model.Core">
@@ -78,5 +79,7 @@
     <Item>DateTimeLabel</Item>
     <Item>We7.AttachView</Item>
     <Item>Text</Item>
+    <Item>we7.ThreeCascade</Item>
+    <Item>We7.ThumbnailEx</Item>
   </ViewerControl>
 </ModelConfigInfo>

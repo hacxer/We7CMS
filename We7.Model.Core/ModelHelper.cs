@@ -78,6 +78,26 @@ namespace We7.Model.Core
         }
 
         /// <summary>
+        /// 创建模型数据表
+        /// </summary>
+        /// <param name="info">内容模型</param>
+        /// <returns></returns>
+        public static Dictionary<string, string> CreateModelTable(ModelInfo info)
+        {
+            Dictionary<string, string> d = new Dictionary<string, string>();
+            try
+            {
+                DataBaseHelperFactory.Create().CreateTable(info);
+                d.Add("result", "true");
+            }
+            catch (Exception ex)
+            {
+                d.Add("result", ex.Message);
+            }
+            return d;
+        }
+
+        /// <summary>
         /// 根据模型类型获取模型路径
         /// </summary>
         /// <param name="modeltype">模型类型</param>
@@ -114,7 +134,7 @@ namespace We7.Model.Core
                 {
                     model = SerializationHelper.Load(typeof(ModelInfo), path) as ModelInfo;
                     model.ModelName = GetModelName(modelname);
-                    AppCtx.Cache.AddObjectWithFileChange(modelcacheid, model, path); 
+                    AppCtx.Cache.AddObjectWithFileChange(modelcacheid, model, path);
                 }
             }
             return model;
@@ -355,7 +375,7 @@ namespace We7.Model.Core
             return dic;
         }
 
-        public static Dictionary<string, string> GetModelLayoutCss(string modeltype,string ctrName)
+        public static Dictionary<string, string> GetModelLayoutCss(string modeltype, string ctrName)
         {
             Dictionary<string, string> dic = new Dictionary<string, string>();
             string[] ss = modeltype.Split('.');
@@ -368,7 +388,7 @@ namespace We7.Model.Core
                 FileInfo[] files = new DirectoryInfo(path).GetFiles(ctrName + ".*.css", SearchOption.TopDirectoryOnly);
                 foreach (FileInfo f in files)
                 {
-                    string name=Path.GetFileNameWithoutExtension(f.Name);
+                    string name = Path.GetFileNameWithoutExtension(f.Name);
                     dic.Add(String.Format("{0}/{1}/{2}/{3}", ModelConfig.ModelsDirectory.Replace("~/", "/"), groupName, modelName, f.Name), name.Split('.')[1]);
                 }
             }

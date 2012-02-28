@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Diagnostics;
 using System.Web;
 using System.IO;
@@ -27,44 +25,25 @@ namespace We7.Framework
         /// <param name="logType"></param>
         public static void WriteToLog(string source, Exception ex, EventLogEntryType logType)
         {
+            string message = ex.Source;
+            if (ex.GetType().Equals(typeof(Thinkment.Data.DataException)))
+            {
+                Thinkment.Data.DataException dex = (Thinkment.Data.DataException)ex;
+                message += ("\r\n\r\n" + dex.ErrorCode.ToString());
+            }
+            message += ("\r\n\r\n" + ex.Message);
+            message += ("\r\n\r\n" + ex.StackTrace);
+
+            SaveLogToFile(source, message);
+
             try
             {
-                if (!EventLog.SourceExists(source))
-                {
-                    EventLog.CreateEventSource(source, LogName);
-                }
-
-                string message = "";
-                message = ex.Source;
-                if (ex.GetType().Equals(typeof(Thinkment.Data.DataException)))
-                {
-                    Thinkment.Data.DataException dex = (Thinkment.Data.DataException)ex;
-                    message += ("\r\n\r\n" + dex.ErrorCode.ToString());
-                }
-                message += ("\r\n\r\n" + ex.Message);
-                message += ("\r\n\r\n" + ex.StackTrace);
-
                 EventLog.WriteEntry(source, message, logType);
-                
             }
-            catch (Exception)
+            catch
             {
+                //此处不异常需要处理，只是确保写入Windos日志不出现
             }
-            finally
-            {
-                string message = "";
-                message = ex.Source;
-                if (ex.GetType().Equals(typeof(Thinkment.Data.DataException)))
-                {
-                    Thinkment.Data.DataException dex = (Thinkment.Data.DataException)ex;
-                    message += ("\r\n\r\n" + dex.ErrorCode.ToString());
-                }
-                message += ("\r\n\r\n" + ex.Message);
-                message += ("\r\n\r\n" + ex.StackTrace);
-                SaveLogToFile(source, message);
-
-            }
-
         }
 
         /// <summary>
@@ -74,30 +53,22 @@ namespace We7.Framework
         /// <param name="ex"></param>
         public static void WriteToLog(string source, Exception ex)
         {
-            try
-            {
-                if (!EventLog.SourceExists(source))
-                {
-                    EventLog.CreateEventSource(source, LogName);
-                }
 
-                string message = "";
-                message = ex.Source;
-                if (ex.GetType().Equals(typeof(Thinkment.Data.DataException)))
-                {
-                    Thinkment.Data.DataException dex = (Thinkment.Data.DataException)ex;
-                    message += ("\r\n\r\n" + dex.ErrorCode.ToString());
-                }
-                message += ("\r\n\r\n" + ex.Message);
-                message += ("\r\n\r\n" + ex.StackTrace);
-
-                EventLog.WriteEntry(source, message, EventLogEntryType.Information);
-            }
-            catch (Exception)
+            if (!EventLog.SourceExists(source))
             {
+                EventLog.CreateEventSource(source, LogName);
             }
 
+            string message = ex.Source;
+            if (ex.GetType() == typeof(Thinkment.Data.DataException))
+            {
+                Thinkment.Data.DataException dex = (Thinkment.Data.DataException)ex;
+                message += ("\r\n\r\n" + dex.ErrorCode.ToString());
+            }
+            message += ("\r\n\r\n" + ex.Message);
+            message += ("\r\n\r\n" + ex.StackTrace);
 
+            EventLog.WriteEntry(source, message, EventLogEntryType.Information);
         }
 
         /// <summary>
@@ -107,10 +78,11 @@ namespace We7.Framework
         /// <param name="message"></param>
         public static void SaveLogToFile(string source, string message)
         {
-            string logFileName = LogHelper.shareError;
+            string logFileName = AppDomain.CurrentDomain.BaseDirectory + @"\Log\" + LogHelper.shareError;
             HttpContext context = HttpContext.Current;
             //string path = context.Server.MapPath(logFileName);
-            string dir1 = Path.GetDirectoryName(logFileName);
+            string dir1 = Path.GetDirectoryName(logFileName) ??
+                          AppDomain.CurrentDomain.BaseDirectory + @"\Log\shareError\";
             if (!Directory.Exists(dir1))
             {
                 Directory.CreateDirectory(dir1);
@@ -128,9 +100,9 @@ namespace We7.Framework
         /// <param name="logFileName">文件名称</param>
         public static void SaveLog(string input, string logFileName)
         {
-            string title=new string('-', 30) + DateTime.Now.ToString("M/d H:m") + new string('-', 30);
-            string content=input.Replace("\t", "  ");
-            We7.Framework.LogHelper.WriteFileLog(logFileName, title, content);
+            string title = new string('-', 30) + DateTime.Now.ToString("M/d H:m") + new string('-', 30);
+            string content = input.Replace("\t", "  ");
+            LogHelper.WriteFileLog(logFileName, title, content);
 
             //HttpContext context = HttpContext.Current;
             //FileStream wri = new FileStream(context.Server.MapPath(logFileName), FileMode.Append);

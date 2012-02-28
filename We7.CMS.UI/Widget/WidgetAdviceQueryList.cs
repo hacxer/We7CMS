@@ -22,7 +22,7 @@ namespace We7.CMS.UI.Widget
         public string ErrorMessage { get; set; }
 
 
-        protected override Thinkment.Data.Criteria CreateListCriteria()
+        protected override Criteria CreateListCriteria()
         {
             Criteria c = new Criteria();
             if (!string.IsNullOrEmpty(Request[QueryKey]))

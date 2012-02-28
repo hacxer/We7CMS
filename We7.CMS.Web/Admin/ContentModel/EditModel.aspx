@@ -4,15 +4,34 @@
 
 <%@ Register Assembly="We7.CMS.UI" Namespace="We7.CMS.Controls" TagPrefix="WEC" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="MyContentPlaceHolder" runat="server">
-<script type="text/javascript" src="/scripts/we7/we7.loader.js">
+    <script type="text/javascript" src="/scripts/we7/we7.loader.js">
 	$(document).ready(function () {
 		we7('span[rel=xml-hint]').help();
 		we7("#form-region").attachValidator({
-			inputEvent: 'keyup'
+			//inputEvent: 'keyup'
+            inputEvent: 'blur',
+            ajaxOnSoft:true,
+            errorInputEvent:null
 		});
 		we7.addValidateType("[rel=letters]", "标识符必须为数字或英文字母", function (input, value) {
 			return /^[a-z0-9]+$/gi.test(value);
 		});
+
+        we7("#<%= ModelNameTextBox.ClientID%>").validateAjax({
+            url:function(){
+                return "/admin/ContentModel/ajax/ContentModel.ashx?action=CheckModelName&file="+getModelFileName() 
+                    + "&model=" + getModelName() + "&group=" + getGroupName() + "&isEdit=" + getIsEdit();
+                },
+            callback:function(text,textStatus){
+                if(text=="")
+                    return true;                
+                else
+                    return text;
+            },
+            error:function(data,textStatus){
+                return "服务器忙";
+            }
+        });
 
 		var msg = $("#message_panel").find("div.MessagePanel td:last").html();
 
@@ -20,175 +39,175 @@
 			we7.info(msg, { autoHide: false });
 		}
 	});
-</script>
+    </script>
     <% if (!IsEdit)
        { %>
-<script type="text/javascript">
-	$(function () {
-		$("#ctAdd,#ctDel").css({ "background": '#FFFFFF', 'display': 'none' });
-		$("#addgroup").click(function (e) {
-			$("#msg").text("");
-			$("#ctAdd").fadeIn();
-			$("#ctDel").fadeOut();
-		});
-		we7.load.ready(function () {
-			we7("#ctAdd").attachValidator({
-				onInputSuccess: function (e, input) {
-					setTimeout(function () {
-						var msg = input.data("msg.el");
-						if (msg) {
-							msg.css("z-index", 2000);
-						}
-					}, 10);
-				}
+    <script type="text/javascript">
+        $(function () {
+            $("#ctAdd,#ctDel").css({ "background": '#FFFFFF', 'display': 'none' });
+            $("#addgroup").click(function (e) {
+                $("#msg").text("");
+                $("#ctAdd").fadeIn();
+                $("#ctDel").fadeOut();
+            });
+            we7.load.ready(function () {
+                we7("#ctAdd").attachValidator({
+                    onInputSuccess: function (e, input) {
+                        setTimeout(function () {
+                            var msg = input.data("msg.el");
+                            if (msg) {
+                                msg.css("z-index", 2000);
+                            }
+                        }, 10);
+                    }
 				, onInputFail: function (e, input) {
-					setTimeout(function () {
-						var msg = input.data("msg.el");
-						if (msg) {
-							msg.css("z-index", 2000);
-						}
-					}, 20);
+				    setTimeout(function () {
+				        var msg = input.data("msg.el");
+				        if (msg) {
+				            msg.css("z-index", 2000);
+				        }
+				    }, 20);
 				}
-			});
-		});
-		function resetValidator() {
-			var validator = we7("#ctAdd").getValidator();
-			if (validator) {
-				validator.reset(); 	// 重置验证器
-			}
-		}
-		var delMsg = $("#delmsg");
-		$("#delgroup").click(function (e) {
-			function DeleteItem(val, successhandler) {
-				delMsg.show().text("数据处理中");
-				$.ajax({
-					url: '/Admin/ContentModel/ajax/ContentModel.asmx/DeleteModelGroup',
-					data: "{'group':'" + val + "'}",
-					dataType: 'json',
-					contentType: 'application/json; charset=utf-8',
-					type: 'post',
-					success: function (doc, status, xh) {
-						if (doc.indexOf('true') > -1) {
-							if (successhandler != null)
-								successhandler();
-							delMsg.show().text("删除成功");
-							setTimeout(function () { delMsg.hide(); }, 3500); /*TODO:如果用户继续操作后刚好到达3500时需要显示其新的操作之结果时，可能导致新的操作结果被隐藏*/
-						} else {
-							delMsg.show().text("组中可能含有模型，无法删除");
-							setTimeout(function () { delMsg.hide(); }, 3500);
-						}
-					},
-					error: function () {
-						delMsg.show().text("网络错误，删除失败");
-						setTimeout(function () { delMsg.hide(); }, 3500);
-					}
-				});
-			}
-			function LoadData() {
-				$("#ctList").text('');
-				delMsg.show().text("加载数据...");
-				$.ajax({
-					url: '/Admin/ContentModel/ajax/ContentModel.asmx/LoadModelGroup',
-					dataType: 'json',
-					contentType: 'application/json; charset=utf-8',
-					type: 'post',
-					success: function (doc, status, xh) {
-						if (doc) {
-							var result = eval("(" + doc + ")");
-							if (result && result.success && result.data) {
-								for (var i = 0; i < result.data.length; i++) {
-									var row = $("<div />");
-									row.css("border-bottom", "solid 1px #e0e0e0").append($("<span>" + result.data[i].txt + "&nbsp;&nbsp;&nbsp;&nbsp;</span>")).append($("<span>X</span>").data('val', result.data[i].val).css({ cursor: 'pointer' }).data("row", row).click(function () {
-										var val = $(this).data("val");
-										var obj = this;
-										if (obj.locked) return;
-										obj.locked = true;
-										DeleteItem(val, function () {
-											$(obj).data("row").remove();
-											var sl = $("#<%=GroupDropDownList.ClientID %>")[0];
-											var ops = sl.options;
-											for (var j = 0; j < ops.length; j++) {
-												if (ops[j].value == val) {
-													if (ops.remove)
-														ops.remove(j);
-													else
-														sl.remove(j);
-													break;
-												}
-											}
-											if (ops.length > 0) ops[0].selected = true;
-										});
-									}));
-									$("#ctList").append(row);
-								}
-							}
-							else {
-								$("#ctList").innerText = "当前模型组为空";
-							}
-						}
-						else {
-							$("#ctList").innerText = "当前模型组为空";
-						}
-						delMsg.hide().text("");
-					},
-					error: function (xhr, status, err) {
-						var e = err.message ? err.message : err.toString();
-						if (we7.alert) { we7.alert(e, "载入出错", {autoClose:false}) }
-						else { alert(e); }
-					}
-				});
-			}
-			LoadData();
-			$("#ctDel").fadeIn();
-			$("#ctAdd").fadeOut();
-		});
-		$("#btnAddGroup").click(function () {
-			if (!we7("#ctAdd").validate()) { return; }
-			$("#msg").text('数据处理中');
-			$.ajax({
-				url: '/Admin/ContentModel/ajax/ContentModel.asmx/CreateModelGroup',
-				data: "{cnName:'" + $("#cngn").val() + "',enName:'" + $("#engn").val() + "'}",
-				contentType: 'application/json; charset=utf-8',
-				dataType: 'json',
-				type: 'post',
-				success: function (doc, status, xh) {
-					if (doc) {
-						var result = eval("(" + doc + ")");
-						if (result && result.success) {
-							var op = new Option();
-							op.text = $("#cngn").val();
-							op.value = $("#engn").val();
-							op.selected = true;
-							$("#<%=GroupDropDownList.ClientID %>")[0].options.add(op);
-							resetValidator();
-							$("#ctAdd").fadeOut();
-							$("#engn").val("");
-							$("#cngn").val("");
-						}
-						else {
-							$("#msg").text("添加失败:" + result.msg);
-						}
-					}
-					else {
-						$("#msg").text("添加失败,应用程序处理错误!");
-					}
-				},
-				error: function () {
-					$("#msg").text("添加失败");
-				}
-			});
-		});
-		$("#btnCancelGroup").click(function () {
-			resetValidator();
-			$("#ctAdd").fadeOut();
-		});
-		$("#delClose").click(function () {
-			$("#ctDel").fadeOut();
-			delMsg.text("").hide();
-		});
-	});
+                });
+            });
+            function resetValidator() {
+                var validator = we7("#ctAdd").getValidator();
+                if (validator) {
+                    validator.reset(); 	// 重置验证器
+                }
+            }
+            var delMsg = $("#delmsg");
+            $("#delgroup").click(function (e) {
+                function DeleteItem(val, successhandler) {
+                    delMsg.show().text("数据处理中");
+                    $.ajax({
+                        url: '/Admin/ContentModel/ajax/ContentModel.asmx/DeleteModelGroup',
+                        data: "{'group':'" + val + "'}",
+                        dataType: 'json',
+                        contentType: 'application/json; charset=utf-8',
+                        type: 'post',
+                        success: function (doc, status, xh) {
+                            if (doc.indexOf('true') > -1) {
+                                if (successhandler != null)
+                                    successhandler();
+                                delMsg.show().text("删除成功");
+                                setTimeout(function () { delMsg.hide(); }, 3500); /*TODO:如果用户继续操作后刚好到达3500时需要显示其新的操作之结果时，可能导致新的操作结果被隐藏*/
+                            } else {
+                                delMsg.show().text("组中可能含有模型，无法删除");
+                                setTimeout(function () { delMsg.hide(); }, 3500);
+                            }
+                        },
+                        error: function () {
+                            delMsg.show().text("网络错误，删除失败");
+                            setTimeout(function () { delMsg.hide(); }, 3500);
+                        }
+                    });
+                }
+                function LoadData() {
+                    $("#ctList").text('');
+                    delMsg.show().text("加载数据...");
+                    $.ajax({
+                        url: '/Admin/ContentModel/ajax/ContentModel.asmx/LoadModelGroup',
+                        dataType: 'json',
+                        contentType: 'application/json; charset=utf-8',
+                        type: 'post',
+                        success: function (doc, status, xh) {
+                            if (doc) {
+                                var result = eval("(" + doc + ")");
+                                if (result && result.success && result.data) {
+                                    for (var i = 0; i < result.data.length; i++) {
+                                        var row = $("<div />");
+                                        row.css("border-bottom", "solid 1px #e0e0e0").append($("<span>" + result.data[i].txt + "&nbsp;&nbsp;&nbsp;&nbsp;</span>")).append($("<span>X</span>").data('val', result.data[i].val).css({ cursor: 'pointer' }).data("row", row).click(function () {
+                                            var val = $(this).data("val");
+                                            var obj = this;
+                                            if (obj.locked) return;
+                                            obj.locked = true;
+                                            DeleteItem(val, function () {
+                                                $(obj).data("row").remove();
+                                                var sl = $("#<%=GroupDropDownList.ClientID %>")[0];
+                                                var ops = sl.options;
+                                                for (var j = 0; j < ops.length; j++) {
+                                                    if (ops[j].value == val) {
+                                                        if (ops.remove)
+                                                            ops.remove(j);
+                                                        else
+                                                            sl.remove(j);
+                                                        break;
+                                                    }
+                                                }
+                                                if (ops.length > 0) ops[0].selected = true;
+                                            });
+                                        }));
+                                        $("#ctList").append(row);
+                                    }
+                                }
+                                else {
+                                    $("#ctList").innerText = "当前模型组为空";
+                                }
+                            }
+                            else {
+                                $("#ctList").innerText = "当前模型组为空";
+                            }
+                            delMsg.hide().text("");
+                        },
+                        error: function (xhr, status, err) {
+                            var e = err.message ? err.message : err.toString();
+                            if (we7.alert) { we7.alert(e, "载入出错", { autoClose: false }) }
+                            else { alert(e); }
+                        }
+                    });
+                }
+                LoadData();
+                $("#ctDel").fadeIn();
+                $("#ctAdd").fadeOut();
+            });
+            $("#btnAddGroup").click(function () {
+                if (!we7("#ctAdd").validate()) { return; }
+                $("#msg").text('数据处理中');
+                $.ajax({
+                    url: '/Admin/ContentModel/ajax/ContentModel.asmx/CreateModelGroup',
+                    data: "{cnName:'" + $("#cngn").val() + "',enName:'" + $("#engn").val() + "'}",
+                    contentType: 'application/json; charset=utf-8',
+                    dataType: 'json',
+                    type: 'post',
+                    success: function (doc, status, xh) {
+                        if (doc) {
+                            var result = eval("(" + doc + ")");
+                            if (result && result.success) {
+                                var op = new Option();
+                                op.text = $("#cngn").val();
+                                op.value = $("#engn").val();
+                                op.selected = true;
+                                $("#<%=GroupDropDownList.ClientID %>")[0].options.add(op);
+                                resetValidator();
+                                $("#ctAdd").fadeOut();
+                                $("#engn").val("");
+                                $("#cngn").val("");
+                            }
+                            else {
+                                $("#msg").text("添加失败:" + result.msg);
+                            }
+                        }
+                        else {
+                            $("#msg").text("添加失败,应用程序处理错误!");
+                        }
+                    },
+                    error: function () {
+                        $("#msg").text("添加失败");
+                    }
+                });
+            });
+            $("#btnCancelGroup").click(function () {
+                resetValidator();
+                $("#ctAdd").fadeOut();
+            });
+            $("#delClose").click(function () {
+                $("#ctDel").fadeOut();
+                delMsg.text("").hide();
+            });
+        });
 
-   </script>
+    </script>
     <%} %>
     <h2 class="title">
         <asp:Image ID="LogoImage" runat="server" ImageUrl="~/admin/Images/icon_settings.png" />
@@ -197,7 +216,10 @@
             <asp:Label ID="SummaryLabel" runat="server" Text='<%= ModelTypeName %>的描述信息' />
         </span>
     </h2>
-	<div id="message_panel" style="display:none"><WEC:MessagePanel ID="Messages" runat="server"></WEC:MessagePanel></div>
+    <div id="message_panel" style="display: none">
+        <WEC:MessagePanel ID="Messages" runat="server">
+        </WEC:MessagePanel>
+    </div>
     <div id="form-region">
         <table>
             <tr>
@@ -205,7 +227,7 @@
                     分组
                 </td>
                 <td>
-                    <asp:DropDownList ID="GroupDropDownList" runat="server" Width="200px" >
+                    <asp:DropDownList ID="GroupDropDownList" runat="server" Width="200px">
                     </asp:DropDownList>
                 </td>
                 <td>
@@ -214,7 +236,7 @@
                     <a id="addgroup" style="cursor: pointer; font-size: 14px; color: Red; text-decoration: underline;">
                         新增</a>&nbsp;&nbsp; <a id="delgroup" style="cursor: pointer; font-size: 14px; color: Red;
                             text-decoration: underline">删除</a>
-                   <%} %>
+                    <%} %>
                 </td>
             </tr>
             <tr>
@@ -232,10 +254,11 @@
                     配置文件
                 </td>
                 <td>
-                    <asp:TextBox ID="ModelNameTextBox" rel="letters" runat="server" Width="200px" MaxLength="50" required="required"  pattern="[a-zA-Z0-9]+" errmsg="模型配置文件名称，请使用字母与数字"></asp:TextBox>
+                    <asp:TextBox ID="ModelNameTextBox" rel="letters" runat="server" Width="200px" MaxLength="50"
+                        required="required" pattern="[a-zA-Z0-9]+" errmsg="模型配置文件名称，请使用字母与数字"></asp:TextBox>
                 </td>
                 <td>
-                    .xml<span rel="xml-hint" title="模型配置文件名称，请使用字母与数字" style="margin-left:10px" ></span>
+                    .xml<span rel="xml-hint" title="模型配置文件名称，请使用字母与数字" style="margin-left: 10px"></span>
                 </td>
             </tr>
             <tr>
@@ -243,12 +266,13 @@
                     详细描述
                 </td>
                 <td>
-                    <asp:TextBox ID="DescriptionTextBox" runat="server" TextMode="MultiLine" Width="200px" Height="100px" MaxLength="500"></asp:TextBox>
+                    <asp:TextBox ID="DescriptionTextBox" runat="server" TextMode="MultiLine" Width="200px"
+                        Height="100px" MaxLength="500"></asp:TextBox>
                 </td>
-                 <td>
+                <td>
                 </td>
             </tr>
-            <%if (MyModelType == "Template.AccountModel")
+            <%if (MyModelType == "ACCOUNT")
               { %>
             <tr>
                 <td align="right">
@@ -262,11 +286,11 @@
             </tr>
             <%}
 
-              if (MyModelType == "Template.ArticleModel")
+              if (MyModelType == "ARTICLE")
               { %>
             <tr>
                 <td align="right">
-                    启用任意浏览权限
+                    任意浏览<span rel="xml-hint" title="勾选此功能后，用户可不必登录即可查看内容" style="margin-left: 10px"></span>
                 </td>
                 <td>
                     <asp:CheckBox ID="AuthorityTypeCheckBox" runat="server" />
@@ -274,11 +298,12 @@
             </tr>
             <tr>
                 <td>
-                    关联反馈模型
+                    关联反馈表单<span rel="xml-hint" title="是指在在内容模型后附加一个反馈表单，内容模型前台内容页可以关联反馈表单，比如：意见征集" style="margin-left: 10px"></span>
                 </td>
                 <td>
                     <asp:DropDownList ID="ddlRelationModelName" runat="server" Width="200px">
                     </asp:DropDownList>
+                    <a href="/admin/ContentModel/editmodel.aspx?action=add&type=ADVICE">新建反馈模型表单</a> 
                 </td>
             </tr>
             <%} %>
@@ -301,22 +326,24 @@
         <asp:HyperLink ID="SaveHyperLink" NavigateUrl="javascript:SubmitClick();" runat="server">
             保存
         </asp:HyperLink>
-        <a href="/Admin/ContentModel/Models.aspx?modelType=<%=MyModelType %>" >返回列表</a>
+        <a href="/Admin/ContentModel/Models.aspx?modelType=<%=MyModelType %>">返回列表</a>
     </div>
     <div style="display: none">
         <asp:Button ID="SubmitsButton" runat="server" Text="Save" OnClick="SubmitButton_Click"
             ValidationGroup="SubmitButton" />
     </div>
-	<%if(!IsEdit) {%>
-	<div id="ctAdd" style="position:absolute;left:445px;top:150px;padding:3px; border:solid 1px #e0e0e0;z-index:1000">
-        <div style="border:solid 1px #f0f0f0;">
+    <%if (!IsEdit)
+      {%>
+    <div id="ctAdd" style="position: absolute; left: 445px; top: 150px; padding: 3px;
+        border: solid 1px #e0e0e0; z-index: 1000">
+        <div style="border: solid 1px #f0f0f0;">
             <table>
                 <tr>
                     <td>
                         模型组名称:
                     </td>
                     <td>
-                        <input id="cngn" type="text" required="required"  />
+                        <input id="cngn" type="text" required="required" />
                     </td>
                 </tr>
                 <tr>
@@ -340,7 +367,8 @@
             </table>
         </div>
     </div>
-    <div id="ctDel" style="position:absolute;left:485px;top:150px;padding: 3px; border: solid 1px #e0e0e0;z-index:1000">
+    <div id="ctDel" style="position: absolute; left: 485px; top: 150px; padding: 3px;
+        border: solid 1px #e0e0e0; z-index: 1000">
         <div style="border: solid 1px #f0f0f0;">
             <div id="delClose" style="text-align: right; cursor: pointer; border-bottom: solid 1px #e0e0e0">
                 X</div>
@@ -350,15 +378,29 @@
                 数据处理中...</div>
         </div>
     </div>
-	<%}%>
+    <%}%>
     <script type="text/javascript">
         function SubmitClick() {
             var submitBtn = document.getElementById("<%=SubmitsButton.ClientID %>");
-			var div = $("#form-region");
-			var enable = we7(div).validate();
-			if (enable) {
-				submitBtn.click();
-			}
+            var div = $("#form-region");
+            var enable = we7(div).validate();
+            if (enable) {
+                submitBtn.click();
+            }
+        }
+
+        function getModelFileName() {
+            return $("#<%= ModelNameTextBox.ClientID%>").val();
+        }
+        function getModelName() {
+            return $("#<%= ModelLabelTextBox.ClientID%>").val();
+        }
+        function getGroupName() {
+            var select = document.getElementById('<%= GroupDropDownList.ClientID%>');
+            return select.options[select.selectedIndex].value;
+        }
+        function getIsEdit() {
+            return we7.queryString("action") == "edit";
         }
     </script>
 </asp:Content>

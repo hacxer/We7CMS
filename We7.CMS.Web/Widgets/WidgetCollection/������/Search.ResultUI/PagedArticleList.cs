@@ -1,22 +1,13 @@
 ﻿using System;
-using System.Collections;
-using System.Configuration;
-using System.Data;
-using System.Web;
-using System.Web.Security;
-using System.Web.UI;
-using System.Web.UI.HtmlControls;
-using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
-using We7.CMS.Common;
 using System.Collections.Generic;
-using We7.Framework;
-using We7.CMS.WebControls;
+using System.Web;
+using System.Web.UI.WebControls;
 using Thinkment.Data;
+using We7.CMS.Common;
+using We7.CMS.WebControls;
 using We7.CMS.WebControls.Core;
-using We7.Model.Core.Data;
+using We7.Framework;
 using We7.Framework.Util;
-using System.ComponentModel;
 
 namespace We7.CMS.Web.Widgets
 {
@@ -92,7 +83,7 @@ namespace We7.CMS.Web.Widgets
                 if (Request["keywords"] == null || Request["keywords"].ToString().Trim().Length < 1)
                     return null;
                 else
-                    return We7Helper.RemoveHtml(Request["keywords"].ToString());
+                   return We7Helper.RemoveHtml(System.Web.HttpUtility.UrlDecode(Request["keywords"].ToString()));
             }
         }
 
@@ -126,7 +117,13 @@ namespace We7.CMS.Web.Widgets
                 int pageIndex = Pager.PageIndex, startIndex, pageItemsCount;
                 Utils.BuidlPagerParam(Pager.RecordCount, Pager.PageSize, ref pageIndex, out startIndex, out pageItemsCount);
                 Order[] os = new Order[] { new Order("Updated", OrderMode.Desc), new Order("ID", OrderMode.Desc) };
-                articles = Assistant.List<Article>(criteria, os, startIndex, pageItemsCount);
+                articles = Assistant.List<Article>(criteria, os, startIndex, pageItemsCount, new string[]
+                                                                                                 {
+                                                                                                     "ID", "Title",
+                                                                                                     "ChannelFullUrl",
+                                                                                                     "Created",
+                                                                                                     "SN", "Updated"
+                                                                                                 });
 
                 return articles;
             }

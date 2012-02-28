@@ -104,18 +104,42 @@
         <asp:Button ID="DeleteDepartmentButton" runat="server" OnClick="DeleteDepartmentButton_Click" />
         <asp:Button ID="DeleteAccountButton" runat="server" OnClick="DeleteAccountButton_Click" />
     </div>
-
+    <script type="text/javascript">
+        $(function () {
+            $('#KeyWord').bind('keyup', function (event) {
+                if (event.keyCode == 13) {
+                    window.location = "Departments.aspx?keyword=" + encodeURIComponent(this.value);
+                }
+            });
+            $('#SearchButton').click(function () {
+                window.location = "Departments.aspx?keyword=" + encodeURIComponent($('#KeyWord').val());
+            });
+            if (QueryString('keyword'))
+                $('#KeyWord').val(QueryString('keyword'));
+        });
+</script>
 
     <script type="text/javascript" src="/scripts/we7/we7.loader.js"></script>
-	<script>
+    
+	<%--<script type="text/javascript">
 		we7.load.ready(function () {
-			function bindData() {
+		    function bindData() {
+                // 定义条件
+		        var FromSiteID = new we7.BindCondition("FromSiteID", we7.bindVerb.equals, "<%=siteID%>");
+       
+		        var CurrentState=null;
+                 <%if (CurrentState!=OwnerRank.All)
+               {%>
+                 CurrentState= new we7.BindCondition("UserType", we7.bindVerb.equals, "<%=(int)CurrentState%>");
+               <%}%>
 				var bindDestination = new we7.BindOption({
 					tableName: "Department"
 					, fields: { "ID": {}, "Name": {}, "Description": {}, "Created": {} }
 					, sortField: "Created"
 					, sortOrder: "desc"
 				});
+                bindDestination.conditions.push(FromSiteID);
+                bindDestination.conditions.push(CurrentState);
 
 				var options = {
 					caption: "部门列表",
@@ -127,8 +151,10 @@
 						e.preventDefault();
 						DeleteConfirm(row.ID, row.Title, "Department");
 						return false;
-					}
+					},
+		            isSiteGroup: true
 				};
+               
 				we7("#ModelList").bind(bindDestination, options);
 			}
 
@@ -144,20 +170,84 @@
 		});
 	</script>
     <table id="ModelList" style="display:none">
-		 <tr><td header="名称"><img src="/admin/images/icon_Department.gif" style="border-width:0px;"><a href="DepartmentDetail.aspx?id=${ID}">${Title}</a></td><td header="描述" editable="text">${Description}</td><td header="添加日期" editable="date" editkey="Created">{{html Created.substr(0,10)}}</td></tr>
-    </table>
-   <script type="text/javascript">
-	$(function(){
-		$('#KeyWord').bind('keyup',function(event) {  
-          if(event.keyCode==13){  
-           window.location="Departments.aspx?keyword="+encodeURIComponent(this.value);
-          }
-       });
-       $('#SearchButton').click(function() {
-           window.location="Departments.aspx?keyword="+encodeURIComponent($('#KeyWord').val());
-       });
-       if(QueryString('keyword'))
-            $('#KeyWord').val(QueryString('keyword'));
-	});
-</script>
+		 <tr><td header="名称"><img src="/admin/images/icon_Department.gif" style="border-width:0px;"><a href="DepartmentDetail.aspx?id=${ID}">${Title}</a></td><td header="描述" editable="text">${Description}</td><td header="操作"><a href="/admin/DepartmentDetail.aspx?pid=${ID}">添加子部门</a></td><td header="添加日期" editable="date" editkey="Created">{{html Created.substr(0,10)}}</td></tr>
+    </table>--%>
+    <div style="width:300px;float:left;">
+    <div id="dtree"></div>
+    </div>
+    <div style="width:auto;float:left;">
+        <iframe id="edit"  style="background-color:transparent;display:none;"   scrolling="no" frameborder="0"  allowTransparency="true"></iframe>
+    </div>
+    <script type="text/javascript">
+        function SetIFrame(width,height){
+            $("#edit").width(600);//width
+            $("#edit").height(height+50);
+        }
+        function decodeId(t) {
+	        return t ? decodeURIComponent(t).replace('-_-', '{').replace('_-_', '}') : t;
+        }
+        we7.load.ready(function () {
+                // 定义条件
+		        var FromSiteID = new we7.BindCondition("FromSiteID", we7.bindVerb.equals, "<%=siteID%>");
+		        var CurrentState=null;
+                 <%if (CurrentState!=OwnerRank.All)
+               {%>
+                 CurrentState= new we7.BindCondition("UserType", we7.bindVerb.equals, "<%=(int)CurrentState%>");
+               <%}%>
+				var bindDestination = new we7.BindOption({
+					 title: function(){return '<span style="cursor: pointer;" class="linkDepart"  href="/admin/DepartmentDetail.aspx?notiframe=1&id='+this.ID+'">'+this.Title+'<span>'}//'Title'
+					, tableName: "Department"
+                    , parentFieldName: "ParentID"
+					, fields: "ID,Name,Created"
+					, sortField: "Created"
+					, sortOrder: "desc"
+				});
+                bindDestination.conditions.push(FromSiteID);
+                CurrentState && bindDestination.conditions.push(CurrentState);
+                we7("#dtree").bindTree(bindDestination,{
+					ajax:{
+						success:function(data){
+							if(data.code != 200){
+								return {"Title":"加载出错"}
+							}else{return data.rows;}
+						}
+					},
+					menu:[
+							{
+							text:'刷新',
+							action:function(source, sender, menu){
+								var tree = we7.tree.getTree(source);
+								if(tree){
+									tree.refresh();
+								}
+							}
+						},
+
+						{
+							text:'添加子部门',
+							    action:function(source, sender, menu){
+                                var objId,treeNode = we7.tree.getTree( source );
+	                            if(treeNode){
+		                            objId = decodeId( treeNode.id );
+	                            }
+                                $("#edit").show().attr("src","/admin/DepartmentDetail.aspx?notiframe=1&pid="+objId)
+                            }
+						}
+                        ,{
+                            text:"删除",
+                            action:function(source,sender,menu){
+                                var objId,treeNode = we7.tree.getTree(source);
+	                            if(treeNode){
+		                            objId = decodeId( treeNode.id );
+	                            }
+                                DeleteConfirm(objId,$(treeNode.text).text());
+                            }
+                        }
+					]
+				});	
+         });
+        $("li[tree] span.linkDepart").live("click",function(){
+            $("#edit").show().attr("src",$(this).attr("href"));
+        });
+    </script>
 </asp:Content>

@@ -102,11 +102,7 @@ namespace We7.CMS.Web.Admin.ContentModel.Controls
                 ddlDepartment.Height = Unit.Parse(Control.Height);
             }
 
-            ddlDepartment.CssClass = Control.CssClass;
-            if (Control.Required && !ddlDepartment.CssClass.Contains("required"))
-            {
-                ddlDepartment.CssClass += " required";
-            }
+            Validator(ddlDepartment);
         }
 
         public override object GetValue()

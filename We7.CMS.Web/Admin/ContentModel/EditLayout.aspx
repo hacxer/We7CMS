@@ -39,7 +39,6 @@
     <script src="/Scripts/jQuery/jQueryUI/1.8.5/js/jquery-ui-1.8.5.custom.min.js" type="text/javascript"></script>
     <script src="<%=AppPath%>/cgi-bin/article.js" type="text/javascript"></script>
     <script src="<%=AppPath%>/cgi-bin/cookie.js" type="text/javascript"></script>
-    <script src="<%=AppPath%>/cgi-bin/tags.js" type="text/javascript"></script>
     <script type="text/javascript" src="/Admin/cgi-bin/CheckBrowser.js"></script>
     <script src="<%=AppPath%>/ajax/jquery/colorbox/jquery.colorbox-min.js"></script>
     <script type="text/javascript" src="/scripts/we7/we7.loader.js">
@@ -74,22 +73,64 @@
             </div>
         </div>
     </div>
+    <%if (ContentModelType == We7.Model.Core.ModelType.ADVICE || ContentModelType == We7.Model.Core.ModelType.ARTICLE)
+      { %>
     <div class="rTop" id="rTop">
         <ul>
-            <li class="opl"><a href="javascript:void(0);" onclick="CreateModelTable()">创建表</a></li>
-            <li class="opl"><a href="javascript:void(0);" onclick="CreateWidget()">创建部件</a></li>
-            <li class="opl"><a href="javascript:void(0);" onclick="CreateLayout()">自定义布局</a></li>
+            <li class="opl"><a href="javascript:void(0);" onclick="CreateWidget()">生成部件</a> <span
+                rel="xml-hint" title="生成的部件用于【可视化模板操作】"></li>
+            <li class="opl"><a href="javascript:void(0);" onclick="CreateLayout()">自定义布局</a> <span
+                rel="xml-hint" title="通过自定义布局，可以自由定制内容模型的布局和样式等"></li>
+            <%if (ContentModelType == We7.Model.Core.ModelType.ARTICLE)
+              { %>
+            <li class="opl"><a href="javascript:void(0);" onclick="CreateModelTable()">更新表</a> <span
+                rel="xml-hint" title="重新创建表结构，保留当前表中已经存在数据!"></li>
             <li class="opl"><a href="javascript:void(0);" onclick="AddLeftMenu()">添加至左侧菜单</a></li>
+            <%} %>
         </ul>
     </div>
+    <%} %>
     <script type="text/javascript" language="javascript">
-        function newForm(url, title, w, h) {
+        function newForm(url, title, w, h, scroll) {
+
             $.colorbox({ width: w, height: h, href: url, iframe: true,
-                overlayClose: false, escKey: false,
+                overlayClose: false, scrolling: (scroll ? scroll : false), escKey: false,
                 onClosed: function () {
                 }
             });
         }
+        function CloseForm() {
+            $.fn.colorbox.close();
+            we7.loading("添加成功,即将刷新左侧菜单..", { autoHide: true, hideTimeout: 2000 });
+            setTimeout(function () {
+                if (location.href.indexOf("?") > 0)
+                    location.href = location.href + '&reload=menu';
+                else
+                    location.href = location.href + '?reload=menu';
+            }, 2000);
+
+
+        }
+        //选择表结构，字段
+        function SelectTabInfo(tabInfoJson) {
+            $.fn.colorbox.close();
+            var base = $((window.parent.document || document).body).find("#props");
+            if (we7.isObj(tabInfoJson)) {
+                $(document.getElementById("Params.model")).val(tabInfoJson.tab).trigger("change");
+                $(document.getElementById("Params.textfield")).val(tabInfoJson.key).trigger("change");
+                $(document.getElementById("Params.valuefield")).val(tabInfoJson.val).trigger("change");
+            }
+        }
+        function openValidateManager() {
+            newForm('ValidatorManage.aspx?rule=' + document.getElementById('Params.validator').value, '选择验证器', '40%', '50%',true);
+        }
+
+        function getValidator(validator) {
+            $.fn.colorbox.close();
+            var base = $((window.parent.document || document).body).find("#props");
+            $(document.getElementById("Params.validator")).val(we7.isObj(validator) ? JSON.stringify(validator) : "").trigger("change");
+        }
+
         function CreateModelTable() {
             we7.loading("操作中");
             var url = "/Admin/ContentModel/ajax/ContentModel.asmx/CreateModelTable";
@@ -106,7 +147,7 @@
                     var result = stringToJSON(json);
                     if (result.success) {
                         we7.info("创建成功！");
-                       
+
                     }
                     else {
                         we7.info("创建失败！错误信息：" + result.msg, { autoHide: true, hideTimeout: 6000 });
@@ -119,30 +160,19 @@
         }
 
         function CreateLayout() {
-            newForm('/Admin/ContentModel/EditDetail.aspx?t=layout&modelname='+we7.queryString("modelname"), '编辑布局', "80%", "100%");
+            newForm('/Admin/ContentModel/EditDetail.aspx?t=layout&modelname=' + we7.queryString("modelname"), '编辑布局', "80%", "100%");
         }
         function CreateWidget() {
-            newForm('/Admin/ContentModel/EditDetail.aspx?t=widget&modelname='+we7.queryString("modelname"), '编辑部件', "80%", "80%");
+            newForm('/Admin/ContentModel/EditDetail.aspx?t=widget&modelname=' + we7.queryString("modelname"), '编辑部件', "80%", "80%");
         }
 
-        function CloseForm()
-        {
-         $.fn.colorbox.close();
-         we7.loading("添加成功,即将刷新左侧菜单..", {autoHide:true,hideTimeout:2000});
-         setTimeout(function(){ 
-            if (location.href.indexOf("?") > 0)
-                location.href = location.href + '&reload=menu';
-            else
-                location.href = location.href + '?reload=menu';
-                },2000);
-       
+
+        function AddLeftMenu() {
+            var url = '/admin/manage/AddMenu.aspx?modelname=' + we7.queryString("modelname") + '&nomenu=nomenu';
+            $.colorbox({ width: "60%", height: "95%", href: url, iframe: true,
+                overlayClose: false, escKey: false
+            });
         }
-    function AddLeftMenu()
-    {
-      var url='/admin/manage/AddMenu.aspx?modelname=' + we7.queryString("modelname") + '&nomenu=nomenu';
-      $.colorbox({ width: "60%",height: "95%", href: url, iframe: true,
-                overlayClose: false, escKey: false});
-    }
 
         function iframeAutoFit() {
             try {

@@ -1,22 +1,13 @@
 ﻿using System;
-using System.Collections;
-using System.Configuration;
-using System.Data;
-using System.Web;
-using System.Web.Security;
-using System.Web.UI;
-using System.Web.UI.HtmlControls;
-using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
-using We7.CMS.Common;
 using System.Collections.Generic;
-using We7.Framework;
-using We7.CMS.WebControls;
+using System.Web;
+using System.Web.UI.WebControls;
 using Thinkment.Data;
+using We7.CMS.Common;
+using We7.CMS.WebControls;
 using We7.CMS.WebControls.Core;
-using We7.Model.Core.Data;
+using We7.Framework;
 using We7.Framework.Util;
-using System.ComponentModel;
 
 namespace We7.CMS.Web.Widgets
 {
@@ -124,7 +115,10 @@ namespace We7.CMS.Web.Widgets
                     {
                         OwnerID = helper.GetChannelIDFromURL();
                     }
-                    channel = helper.GetChannel(OwnerID, null) ?? new Channel();
+                    channel = helper.GetChannel(OwnerID, new string[]
+                                                         {
+                                                             "ID", "Title", "ChannelFullUrl", "Created", "SN"
+                                                         }) ?? new Channel();
                 }
                 return channel;
             }
@@ -138,9 +132,18 @@ namespace We7.CMS.Web.Widgets
             get
             {
                 int pageIndex = Pager.PageIndex, startIndex, pageItemsCount;
-                Utils.BuidlPagerParam(Pager.RecordCount, Pager.PageSize, ref pageIndex, out startIndex, out pageItemsCount);
-                Order[] os = IsShow ? new Order[] { new Order("IsShow",OrderMode.Desc), new Order("Updated", OrderMode.Desc), new Order("ID", OrderMode.Desc) } : new Order[] { new Order("Updated", OrderMode.Desc), new Order("ID", OrderMode.Desc) };
-                articles = Assistant.List<Article>(criteria, os, startIndex, pageItemsCount);
+                Utils.BuidlPagerParam(Pager.RecordCount, Pager.PageSize, ref pageIndex, out startIndex,
+                                      out pageItemsCount);
+                Order[] os = IsShow
+                                 ? new Order[]
+                                       {
+                                           new Order("IsShow", OrderMode.Desc), new Order("Updated", OrderMode.Desc),
+                                           new Order("ID", OrderMode.Desc)
+                                       }
+                                 : new Order[] {new Order("Updated", OrderMode.Desc), new Order("ID", OrderMode.Desc)};
+                articles = Assistant.List<Article>(criteria, os, startIndex, pageItemsCount,
+                                                   new string[]
+                                                       {"ID", "Title", "ChannelFullUrl", "Created", "SN", "Updated"});
 
                 return articles;
             }

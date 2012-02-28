@@ -40,10 +40,11 @@ namespace We7.Model.UI.Controls.we7
             field1DataField = PanelContext.Row.IndexOf(field1);
             field2DataField = PanelContext.Row.IndexOf(field2);
             field3DataField = PanelContext.Row.IndexOf(field3);
-           
+
+            InitLable();
+
             if (!string.IsNullOrEmpty(dataSourceType) && dataSourceType == "db")
             {
-                InitLable();
                 tableName = Control.Params["table"];
                 //一级类别对应字段名
                 field1TextMapping = Control.Params["field1TextMapping"];
@@ -62,6 +63,8 @@ namespace We7.Model.UI.Controls.we7
                 //xml类型绑定数据
                 BindXmlData();
             }
+
+            Validator(Field1DropDownList);
         }
 
         /// <summary>

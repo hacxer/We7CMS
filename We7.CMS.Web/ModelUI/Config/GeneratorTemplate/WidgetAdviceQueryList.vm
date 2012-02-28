@@ -33,17 +33,21 @@
 </table>
 <script type="text/javascript">
     $("#doCmd").bind("click", function () {
-        var Parms = "";
+        //var Parms = "";
+		var url="";
         $("#forSearch").find(":text,:password").each(function () {
             if ($(this).val() != "") {
-                Parms += "&" + $(this).attr("id") + "=" + $(this).val();
+                //Parms += "&" + $(this).attr("id") + "=" + $(this).val();
+				url=setUrlParam(window.location.href,$(this).attr("id"),$(this).val());
             }
         });
-        if (Parms != "")
-            window.location.href = "?" + Parms;
+        if (url != "")
+            window.location.href = url;
         else
             alert("输入的查询条件不符合要求！");
     });
+
+	    function setUrlParam(url, param, v)        {         var re = new RegExp("(\\\?|&)" + param + "=([^&]+)(&|$)", "i");         var m = url.match(re);         if (m)         {          return (url.replace(re, function($0, $1, $2) { return ($0.replace($2, v)); } ));         }         else         {          if (url.indexOf('?') == -1)           return (url + '?' + param + '=' + v);          else           return (url + '&' + param + '=' + v);         }        }
 </script>
 <table>
     <tr>

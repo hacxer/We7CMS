@@ -568,9 +568,13 @@ namespace We7.Model.Core
             }
         }
 
+        /// <summary>
+        /// 生成内容模型部件
+        /// </summary>
+        /// <param name="model">内容模型实体</param>
         public static void CreateWidgets(ModelInfo model)
         {
-            if (model.Type == null || model.Type == ModelType.ARTICLE)
+            if (model.Type == ModelType.ARTICLE)
             {
                 CreateArticleViewWidget(model);
                 CreateArticleListWidget(model);

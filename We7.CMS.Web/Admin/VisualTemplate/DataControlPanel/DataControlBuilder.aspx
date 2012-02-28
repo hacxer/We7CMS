@@ -20,7 +20,7 @@
 
     <script src="<%=AppPath%>/ajax/jquery/jquery1.2.6.pack.js" type="text/javascript"></script>
 
-    <script src="<%=AppPath%>/ajax/jquery/jquery.simplemodal-1.1.1.js" type="text/javascript"></script>
+    
 
     <script type="text/javascript">
 var dialog	= window.parent ;

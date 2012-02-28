@@ -26,28 +26,29 @@
 	});    
 </script>
 <script language="JavaScript" type="text/javascript">
-	$(document).ready(function () {
-		$("#SaveButton").click(function () {
-			var div = $("#personalForm");
-			var enable = we7(div).validate();
+    $(document).ready(function () {
+        $("#SaveButton").click(function () {
+            var div = $("#personalForm");
+            var enable = we7(div).validate();
 
-			if (enable) {
-				$("#<%=SaveButton.ClientID %>").click();
-			} else {
-				we7.status('部门相关信息填写不符合要求，请按提示进行完善');
-			}
-		});
-	});
+            if (enable) {
+                $("#<%=SaveButton.ClientID %>").click();
+            } else {
+                we7.status('部门相关信息填写不符合要求，请按提示进行完善');
+            }
+        });
+        window.parent.SetIFrame(this.body.scrollWidth, document.getElementById("breadcrumb").scrollHeight);
+    });
 </script>
     <asp:Panel runat="Server" ID="ContentPanel">
-        <div id="breadcrumb">
+        <div id="breadcrumb" >
             <h2 class="title">
                 <asp:Image ID="LogoImage" runat="server" ImageUrl="~/admin/Images/icons_user.gif" />
                 <asp:Label ID="DepartmentNameLabel" runat="server" Text="New Department">
                 </asp:Label>
             </h2>
             <div class="toolbar">
-                <asp:HyperLink ID="ReturnHyperLink" runat="server" NavigateUrl="">
+                <asp:HyperLink ID="ReturnHyperLink" runat="server" NavigateUrl="" style="display:none">
                                     返回</asp:HyperLink>
             </div>
             <div>

@@ -8,14 +8,13 @@
     /// 搜索地址
     /// </summary>
     [Parameter(Title="搜索结果地址",Type="String")]
-    public string SearchPage = "Search.aspx";
+    public string SearchPage = "/Search.aspx";
 </script>
 <div class="<%=CssClass %>">
 <div class="web_tool">
                 <div class="full_model_search">
-                    <label><input value="" class="model_search"></label><label><input type="button" class="model_search_click" value="搜索"></label>
-                    <script type="text/javascript">$('.model_search').useKeypressSubmit($('.model_search_click'))</script>
-                    <a title="高级搜索" id="model_adv_search" href="javascript:void(0)">高级搜索</a> <a class="model_search_all" title="全文检索" href="#">全文检索</a>
+                    <input value="输入关键字" class="model_search"><input type="button" class="model_search_click" value="">
+              
                 </div>
             </div>
 </div>
@@ -72,7 +71,8 @@ $(function () {
         }
 
         var doModelSearch = function (modelId, searchType) {
-            var searchValue = $('.model_search').val();
+            var searchValue = escape($('.model_search').val());
+
             if (searchType != 2 && (searchValue == null || searchValue == '')) {
                 alert('请输入要搜索的关键词');
                 $('.model_search').focus();
@@ -96,4 +96,3 @@ $(function () {
         }
 });
 </script>
-

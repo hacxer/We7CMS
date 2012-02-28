@@ -83,7 +83,7 @@ namespace We7.Model.UI.Panel.system
 			string parentModel = string.Empty;
 			foreach (We7Control control in PanelContext.Model.Layout.Panels["edit"].EditInfo.Controls)
 			{
-				if (control.Type == "RelationSelect")
+				if (control.Type == "RelationSelect" || control.Type == "RelationSelectEx")
 				{
 					parentModel = control.Params["model"];
 					break;
@@ -96,7 +96,7 @@ namespace We7.Model.UI.Panel.system
 				btnBack.Style.Add(HtmlTextWriterStyle.Visibility, "hidden");
 			}
 			else
-				btnBack.HRef = string.Format("/admin/addins/Modellist.aspx?notiframe=1&model={0}", parentModel);
+				btnBack.HRef = We7Helper.AddParamToUrl(Request.RawUrl, "model", parentModel);
 			btnBack.Attributes.Add("title", "返回");
 			HtmlImage img = new HtmlImage();
 			img.Src = "/admin/images/back.png";
@@ -134,11 +134,11 @@ namespace We7.Model.UI.Panel.system
 			phMode.Controls.Add(div);
 		}
 
-        /// <summary>
-        /// 执行命令前，在这里进行multirow多行值传递
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="args"></param>
+		/// <summary>
+		/// 执行命令前，在这里进行multirow多行值传递
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
 		protected override void DoPreCommand(object sender, ModelEventArgs args)
 		{
 			if (args.CommandArguments != null)

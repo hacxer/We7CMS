@@ -1,21 +1,6 @@
 using System;
-using System.Text;
-using System.Data;
-using System.Configuration;
-using System.Collections;
-using System.Collections.Generic;
-using System.Web;
-using System.Web.Security;
-using System.Web.UI;
-using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
-using System.Web.UI.HtmlControls;
-
-using We7.CMS.Controls;
-using Thinkment.Data;
 using We7.CMS.Common.PF;
 using We7.CMS.Common.Enum;
-using We7.Framework.Cache;
 using We7.CMS.Accounts;
 using We7.Framework.Config;
 
@@ -106,115 +91,115 @@ namespace We7.CMS.Web.Admin
             NewUserHyperLink.NavigateUrl = String.Format("AccountEdit.aspx?d={0}", DepartmentID);
 
             FullPathLabel.Text = BuildPagePath();
-            StateLiteral.Text = BuildStateLinks();
-            BindData();
+            //StateLiteral.Text = BuildStateLinks();
+            //BindData();
         }
 
 
-        void BindData()
-        {
-            List<ViewItem> items = new List<ViewItem>();
-            List<Department> dts = null;
-            List<Account> acts = null;
+//        void BindData()
+//        {
+//            List<ViewItem> items = new List<ViewItem>();
+//            List<Department> dts = null;
+//            List<Account> acts = null;
            
 
-            AccountQuery aq = new AccountQuery();
-            aq.KeyWord = Keyword;
-            aq.SiteID = SiteID;
-            aq.UserType = (int)CurrentState;
+//            AccountQuery aq = new AccountQuery();
+//            aq.KeyWord = Keyword;
+//            aq.SiteID = SiteID;
+//            aq.UserType = (int)CurrentState;
 
-            UPager.PageIndex = PageNumber;
-            UPager.ItemCount = AccountHelper.QueryAccountCountByQuery(aq);
-            UPager.UrlFormat = We7Helper.AddParamToUrl(Request.RawUrl, Keys.QRYSTR_PAGEINDEX, "{0}");
-            UPager.PrefixText = "共 " + UPager.MaxPages + "  页 ·   第 " + UPager.PageIndex + "  页 · ";
+//            UPager.PageIndex = PageNumber;
+//            UPager.ItemCount = AccountHelper.QueryAccountCountByQuery(aq);
+//            UPager.UrlFormat = We7Helper.AddParamToUrl(Request.RawUrl, Keys.QRYSTR_PAGEINDEX, "{0}");
+//            UPager.PrefixText = "共 " + UPager.MaxPages + "  页 ·   第 " + UPager.PageIndex + "  页 · ";
 
-            acts = AccountHelper.QueryAccountsByQuery(aq, UPager.Begin - 1, UPager.Count,
-                new string[] { "ID", "LoginName", "Email", "CreatedNoteTime", "EmailValidate", "ModelState", "ModelName", "State","Created","UserType","Department" });
-
-
-            if (acts != null)
-            {
-                foreach (Account act in acts)
-                {
-                    ViewItem vi = new ViewItem();
-                    vi.Text = "<b>" + act.LoginName + "</b> " + act.LastName + "";
-                    vi.Summary = act.Department;
-                    vi.Mode = "User";
-                    vi.State = act.TypeText;
-                    vi.Url = String.Format("AccountEdit.aspx?id={0}", act.ID);
-                    vi.DeleteUrl = String.Format("javascript:DeleteConfirm('{0}','{1}','Account');", act.ID, act.LoginName);
-                    vi.EditUrl = String.Format("AccountEdit.aspx?id={0}", act.ID);
-                    string mng = @"<a href=""AccountEdit.aspx?id={0}&tab=2"">
-                            角色设置</a> 
-                        <a href=""AccountEdit.aspx?id={0}&tab=6"">
-                            模块权限</a>    ";
-                    vi.ManageLinks = string.Format(mng, act.ID);
-                    vi.ID = act.ID;
-                    vi.RegisterDate = act.Created.ToLongDateString();
-                    if (DepartmentID != We7Helper.EmptyGUID)
-                    {
-                        if (act.DepartmentID == DepartmentID)
-                        {
-                            items.Add(vi);
-                        }
-                    }
-                    else
-                    {
-                        if (act.DepartmentID == We7Helper.EmptyGUID)
-                        {
-                            items.Add(vi);
-                        }
-                    }
-                }
-            }
-            AccountsGridView.DataSource = items;
-            AccountsGridView.DataBind();
-        }
+//            acts = AccountHelper.QueryAccountsByQuery(aq, UPager.Begin - 1, UPager.Count,
+//                new string[] { "ID", "LoginName", "Email", "CreatedNoteTime", "EmailValidate", "ModelState", "ModelName", "State","Created","UserType","Department" });
 
 
-        protected void DeleteDepartmentButton_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                if (DemoSiteMessage) return;//是否是演示站点
-                string dptID = IDTextBox.Text;
-                string dptName = NameTextBox.Text;
+//            if (acts != null)
+//            {
+//                foreach (Account act in acts)
+//                {
+//                    ViewItem vi = new ViewItem();
+//                    vi.Text = "<b>" + act.LoginName + "</b> " + act.LastName + "";
+//                    vi.Summary = act.Department;
+//                    vi.Mode = "User";
+//                    vi.State = act.TypeText;
+//                    vi.Url = String.Format("AccountEdit.aspx?id={0}", act.ID);
+//                    vi.DeleteUrl = String.Format("javascript:DeleteConfirm('{0}','{1}','Account');", act.ID, act.LoginName);
+//                    vi.EditUrl = String.Format("AccountEdit.aspx?id={0}", act.ID);
+//                    string mng = @"<a href=""AccountEdit.aspx?id={0}&tab=2"">
+//                            角色设置</a> 
+//                        <a href=""AccountEdit.aspx?id={0}&tab=6"">
+//                            模块权限</a>    ";
+//                    vi.ManageLinks = string.Format(mng, act.ID);
+//                    vi.ID = act.ID;
+//                    vi.RegisterDate = act.Created.ToLongDateString();
+//                    if (DepartmentID != We7Helper.EmptyGUID)
+//                    {
+//                        if (act.DepartmentID == DepartmentID)
+//                        {
+//                            items.Add(vi);
+//                        }
+//                    }
+//                    else
+//                    {
+//                        if (act.DepartmentID == We7Helper.EmptyGUID)
+//                        {
+//                            items.Add(vi);
+//                        }
+//                    }
+//                }
+//            }
+//            AccountsGridView.DataSource = items;
+//            AccountsGridView.DataBind();
+//        }
 
-                Department dpt = AccountHelper.GetDepartment(dptID, new string[] { "ParentID" });
-                AccountHelper.DeleteDepartment(dptID);
-                CacheRecord.Create(typeof(AccountLocalHelper)).Release();
-                string content = string.Format("删除部门“{0}”", dptName);
-                AddLog("删除部门", content);
+
+        //protected void DeleteDepartmentButton_Click(object sender, EventArgs e)
+        //{
+        //    try
+        //    {
+        //        if (DemoSiteMessage) return;//是否是演示站点
+        //        string dptID = IDTextBox.Text;
+        //        string dptName = NameTextBox.Text;
+
+        //        Department dpt = AccountHelper.GetDepartment(dptID, new string[] { "ParentID" });
+        //        AccountHelper.DeleteDepartment(dptID);
+        //        CacheRecord.Create(typeof(AccountLocalHelper)).Release();
+        //        string content = string.Format("删除部门“{0}”", dptName);
+        //        AddLog("删除部门", content);
 
 
-                Response.Redirect(String.Format("AccountList.aspx?id={0}", dpt.ParentID));
-            }
-            catch (Exception ex)
-            {
-                Messages.ShowMessage("删除部门出错！出错原因：" + ex.Message);
-            }
-        }
+        //        Response.Redirect(String.Format("AccountList.aspx?id={0}", dpt.ParentID));
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Messages.ShowMessage("删除部门出错！出错原因：" + ex.Message);
+        //    }
+        //}
 
-        protected void DeleteAccountButton_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                if (DemoSiteMessage) return;//是否是演示站点
-                string actID = IDTextBox.Text;
-                string actName = NameTextBox.Text;
+        //protected void DeleteAccountButton_Click(object sender, EventArgs e)
+        //{
+        //    try
+        //    {
+        //        if (DemoSiteMessage) return;//是否是演示站点
+        //        string actID = IDTextBox.Text;
+        //        string actName = NameTextBox.Text;
 
-                AccountHelper.DeleteAccont(actID);
+        //        AccountHelper.DeleteAccont(actID);
 
-                string content = string.Format("删除帐户“{0}”", actName);
-                AddLog("删除帐户", content);
+        //        string content = string.Format("删除帐户“{0}”", actName);
+        //        AddLog("删除帐户", content);
 
-                Response.Redirect(String.Format("AccountList.aspx?id={0}", DepartmentID));
-            }
-            catch (Exception ex)
-            {
-                Messages.ShowMessage("删除用户出错！出错原因：" + ex.Message);
-            }
-        }
+        //        Response.Redirect(String.Format("AccountList.aspx?id={0}", DepartmentID));
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Messages.ShowMessage("删除用户出错！出错原因：" + ex.Message);
+        //    }
+        //}
 
         /// <summary>
         /// 构建按类型/状态过滤的超级链接字符串

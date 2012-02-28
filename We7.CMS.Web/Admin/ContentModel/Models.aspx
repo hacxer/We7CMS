@@ -162,6 +162,8 @@
                         <li><a href="/admin/manage/AddMenu.aspx?modelname=< %=collection[i].Name % >" target="_self">
                             添加到左边菜单</a> </li>
                         < %} % > -->
+                         <li><a href="AdvanceEdit.aspx?modelname=<%=collection[i].Name %>" target="_self">高级编辑</a>
+                        </li>
                     </ul>
                 </td>
             </tr>

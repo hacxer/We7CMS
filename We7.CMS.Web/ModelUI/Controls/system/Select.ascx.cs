@@ -43,11 +43,7 @@ namespace We7.Model.UI.Controls.system
                 ddlEnum.Height = Unit.Parse(Control.Height);
             }
 
-            ddlEnum.CssClass = Control.CssClass;
-            if (Control.Required && !ddlEnum.CssClass.Contains("required"))
-            {
-                ddlEnum.CssClass += " required";
-            }
+            Validator(ddlEnum);
         }
 
         public override object GetValue()

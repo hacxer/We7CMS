@@ -1,7 +1,7 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="CategoryDoubleCascade.ascx.cs"
     Inherits="We7.Model.UI.Controls.system.CategoryDoubleCascade" %>
 
-<script type="text/javascript" src="/ModelUI/js/CategoryDoubleCascade.js?20110113001"></script>
+<script type="text/javascript" src="/ModelUI/js/CategoryDoubleCascade.js?20111207001"></script>
 
 <asp:DropDownList ID="Field1DropDownList" runat="server">
 </asp:DropDownList>

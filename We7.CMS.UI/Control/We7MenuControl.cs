@@ -117,13 +117,16 @@ namespace We7.CMS.Controls
         /// <summary>
         /// 菜单树的所有数据，存储在HttpContext.Current.Items中
         /// </summary>
-        protected List<We7.CMS.Common.MenuItem> AllShowMemuItem
+        public List<We7.CMS.Common.MenuItem> AllShowMemuItem
         {
             get
             {
                 List<We7.CMS.Common.MenuItem> menus = new List<We7.CMS.Common.MenuItem>();
-                if (HttpContext.Current.Items["ALLSHOWMEMUITEM"] != null)
-                    menus = (List<We7.CMS.Common.MenuItem>)HttpContext.Current.Items["ALLSHOWMEMUITEM"];
+                //在Context中的menu数据
+                List<We7.CMS.Common.MenuItem> menusInContext =
+                    (List<We7.CMS.Common.MenuItem>)HttpContext.Current.Items["ALLSHOWMEMUITEM"];
+                if (menusInContext != null && menusInContext.Count>0)
+                    menus = menusInContext;
                 else
                 {
                     menus = MenuHelper.GetMenuTree(We7Helper.EmptyGUID,EntityID);

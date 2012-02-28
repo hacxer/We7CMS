@@ -110,6 +110,13 @@ namespace We7.CMS.Web.Admin
         /// <param name="checkPassword">是否校验密码</param>
         void LoginAction(string loginName, string password)
         {
+            if (!checkLicense())
+            {
+                ShowMessage("您的系统授权已经过期，请及时联系客服！");
+                return;
+            }
+            
+
             if (String.IsNullOrEmpty(loginName) || String.IsNullOrEmpty(loginName.Trim()))
             {
                 ShowMessage("错误：用户名不能为空！");
@@ -162,6 +169,30 @@ namespace We7.CMS.Web.Admin
             GoWhere();
         }
 
+        private bool checkLicense()
+        {
+            bool result = true;
+            try
+            {
+                string filePath = Server.MapPath("~/admin/exp.txt");
+                if (File.Exists(filePath))
+                {
+                    string content = FileHelper.ReadFile(filePath, Encoding.Default);
+                    DateTime expDate;
+                    if (DateTime.TryParse(content, out expDate))
+                    {
+                        if (expDate <= DateTime.Now)
+                        {
+                            result = false;
+                        }
+                    }
+                }
+            }
+            catch { }
+
+            return result;
+        }
+
 
 
         private void GoWhere()
@@ -208,6 +239,12 @@ namespace We7.CMS.Web.Admin
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            if (!checkLicense())
+            {
+                ShowMessage("您的系统授权已经过期，请及时联系客服！");
+                return;
+            }
+
             if (!IsPostBack)
             {
                 GeneralConfigInfo si = GeneralConfigs.GetConfig();

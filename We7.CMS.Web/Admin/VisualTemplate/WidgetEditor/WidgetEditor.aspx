@@ -43,13 +43,11 @@ display: none;
 z-index: 5;
 }
 
-#main {
-height: 1000px;
-} 
+
     </style>
     <link rel="stylesheet" type="text/css" href="/admin/ajax/CodeMirror/css/docs.css"/>
     <script src="/admin/ajax/CodeMirror/js/codemirror.js" type="text/javascript"></script>
-   <%-- <link href="/admin/ajax/CodeMirror2/lib/codemirror.css" type="text/css" rel="Stylesheet" />
+   <!-- <link href="/admin/ajax/CodeMirror2/lib/codemirror.css" type="text/css" rel="Stylesheet" />
     <link href="/admin/ajax/CodeMirror2/css/docs.css" type="text/css" rel="Stylesheet" />
     <link href="/admin/ajax/CodeMirror2/mode/css/css.css" type="text/css" rel="Stylesheet" />
     <link href="/admin/ajax/CodeMirror2/mode/xml/xml.css" type="text/css" rel="Stylesheet" />
@@ -58,7 +56,7 @@ height: 1000px;
     <script src="/admin/ajax/CodeMirror2/lib/codemirror.js" type="text/javascript"></script>
     <script src="/admin/ajax/CodeMirror2/mode/xml/xml.js" type="text/javascript"></script>
     <script src="/admin/ajax/CodeMirror2/mode/htmlmixed/htmlmixed.js" type="text/javascript"></script>
-    <script src="/admin/ajax/CodeMirror2/mode/javascript/javascript.js" type="text/javascript"></script>--%>
+    <script src="/admin/ajax/CodeMirror2/mode/javascript/javascript.js" type="text/javascript"></script>-->
      <script type="text/javascript" src="<%=AppPath%>/ajax/jquery/jquery.latest.min.js"></script>
     <script type="text/javascript">
         function store() {

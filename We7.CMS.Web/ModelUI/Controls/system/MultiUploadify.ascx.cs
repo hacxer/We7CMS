@@ -43,54 +43,23 @@ namespace We7.Model.UI.Controls.system
 			return dics;
 		}
 
+		public string col1Name = string.Empty;
+		public string col1Len = "0";
+		public string col2Name = string.Empty;
+		public string col2Len = "0";
+
 		public override void InitControl()
 		{
-			//ddlEnum.PreRender += new EventHandler(ddlEnum_PreRender);
-			//string model = Control.Params["model"];
-			//string valuefield = Control.Params["valuefield"];
-			//string textfield = Control.Params["textfield"];
-
-			//if (GeneralConfigs.GetConfig().EnableSingleTable)
-			//{
-			//    ModelDBHelper helper = ModelDBHelper.Create(model);
-			//    Criteria c = new Criteria(CriteriaType.Equals, "State", 1);
-			//    DataTable dt = helper.Query(c, new List<Order>() { new Order("Created", OrderMode.Desc), new Order("ID", OrderMode.Desc) }, 0, 0);
-			//    ddlEnum.DataSource = dt;
-			//}
-			//else
-			//{
-			//    List<Article> list = ArticleHelper.QueryArticleByModel(model);
-			//    DataSet ds = ModelHelper.CreateDataSet(model);
-			//    foreach (Article a in list)
-			//    {
-			//        TextReader reader = new StringReader(a.ModelXml);
-			//        ds.ReadXml(reader);
-			//    }
-
-			//    ddlEnum.DataSource = ds.Tables[0];
-			//}
-
-			//ddlEnum.DataValueField = valuefield;
-			//ddlEnum.DataTextField = textfield;
-			//ddlEnum.DataBind();
-
-			//ddlEnum.Items.Insert(0, new ListItem("请选择", ""));
-			//ddlEnum.SelectedValue = Value == null ? Control.DefaultValue : Value.ToString();
-
-			//if (!String.IsNullOrEmpty(Control.Width))
-			//{
-			//    ddlEnum.Width = Unit.Parse(Control.Width);
-			//}
-			//if (!String.IsNullOrEmpty(Control.Height))
-			//{
-			//    ddlEnum.Height = Unit.Parse(Control.Height);
-			//}
-
-			//ddlEnum.CssClass = Control.CssClass;
-			//if (Control.Required && !ddlEnum.CssClass.Contains("required"))
-			//{
-			//    ddlEnum.CssClass += " required";
-			//}
+			if (!string.IsNullOrEmpty(Control.Params["col1"]))
+			{
+				col1Name = PanelContext.DataSet.Tables[0].Columns[Control.Params["col1"]].Label;
+				col1Len = PanelContext.DataSet.Tables[0].Columns[Control.Params["col1"]].MaxLength.ToString();
+			}
+			if (!string.IsNullOrEmpty(Control.Params["col2"]))
+			{
+				col2Name = PanelContext.DataSet.Tables[0].Columns[Control.Params["col2"]].Label;
+				col2Len = PanelContext.DataSet.Tables[0].Columns[Control.Params["col2"]].MaxLength.ToString();
+			}
 		}
 	}
 

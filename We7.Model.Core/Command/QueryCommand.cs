@@ -10,7 +10,7 @@ namespace We7.Model.Core.Command
     /// <summary>
     /// 添加数据
     /// </summary>
-    class QueryCommand : ICommand
+  public  class QueryCommand : ICommand
     {
         public object Do(PanelContext data)
         {

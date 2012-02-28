@@ -1,89 +1,77 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Web;
-using System.Text;
 using Thinkment.Data;
+using We7.CMS.Data;
 
-namespace We7.CMS.Web.Admin.Ajax.BusinessSubmit.Entity
+namespace We7.CMS.Web.Admin.Ajax.BusinessSubmit
 {
     /// <summary>
     /// Ajax 请求实体
     /// </summary>
-    public class QueryCondition : IQueryCondition
+    [Serializable]
+    public class QueryCondition : IQueryCondition, ICloneable
     {
-        public event ResponseDelegate ResponseJsonEvent;
+        /// <summary>
+        /// 输出Json
+        /// </summary>
+        public event ResponseDelegate OnToJsonEvent;
+        /// <summary>
+        /// 除数json之后
+        /// </summary>
+        public event ReaderXmlDelegate UnToJsonEvent; //回发json之后
+        /// <summary>
+        /// 扩展事件
+        /// </summary>
+        public event ExpandDelegate ExpandEvent;  //扩展事件
 
+        /// <summary>
+        /// 实例化
+        /// </summary>
+        /// <param name="querystring"></param>
         public QueryCondition(System.Collections.Specialized.NameValueCollection querystring)
         {
-            int i = -1;
-            #region 页码
-            if (int.TryParse(querystring["_page"], out i))
-            {
-                this.Page = i;
-            }
-            else
-            {
-                this.Page = 1;  //默认第一页
-            }
-            #endregion
-            #region 操作类型
-            if (int.TryParse(querystring["_oper"], out i))
-            {
-                this.Oper = (Enum_operType)i;
-            }
-            else
-            {
-                this.Oper = Enum_operType.Seach;
-            }
-            #endregion
-            #region 查询条数
-            if (int.TryParse(querystring["_rows"], out i))
-            {
-                this.Rows = i;
-            }
-            else
-            {
-                this.Rows = 10;
-            }
-            #endregion
-            #region 排序字段
-            this.Sort = querystring["_sort"];
-            #endregion
-            #region 排序顺序
-            if (int.TryParse(querystring["_sord"], out i))
-            {
-                this.Sord = i;
-            }
-            else  //默认为0
-            {
-                this.Sord = 0;
-            }
-            #endregion
+            int i;
+            Page = int.TryParse(querystring["_page"], out i) ? i : 1;
+
+            OperType = int.TryParse(querystring["_oper"], out i) ? (Enum_operType) i : Enum_operType.Seach;
+
+            Rows = int.TryParse(querystring["_rows"], out i) ? i : 10;
+
+            Sort = querystring["_sort"];
+
+            Sord = int.TryParse(querystring["_sord"], out i) ? i : 0;
             bool flag;
             if (bool.TryParse(querystring["_search"], out flag))
             {
-                this.Search = flag;
+                Search = flag;
             }
-            #region 时间梭
-            this.T = querystring["_t"];
-            #endregion
-            #region 条件
-            this.C = querystring["_c"];
-            #endregion
-            #region 表名
-            this.Tb = querystring["_tb"];
-            #endregion
-            #region 字段
+            T = querystring["_t"];
+
+            C = querystring["_c"];
+
+            TableName = querystring["_tb"];
+
             string fields = querystring["_f"];
             if (!string.IsNullOrEmpty(fields) && !fields.ToUpper().Contains(",ID,") && !fields.ToUpper().StartsWith("ID,") && !fields.ToUpper().EndsWith(",ID"))
             {
                 fields += ",ID";
             }
-            this.F = string.IsNullOrEmpty(fields) ? null : fields.Split(',');
-            #endregion
-            #region ID
-            this.ID = querystring["_id"];
-            #endregion
+            Fields = string.IsNullOrEmpty(fields) ? null : fields.Split(',');
+
+            ID = querystring["_id"];
+
+            _hasModelXml = querystring["_xml"];
+            _modelName = querystring["_model"];
+
+            _expandKey = querystring["expandKey"];
+            if (int.TryParse(querystring["_isSiteGroup"], out i))
+            {
+                _isSiteGroup = (i == 1);
+            }
+
+            InstanceJoin(querystring["_join"]);
+
+            _pIdKeyName = querystring["_pidname"];
         }
 
         /// <summary>
@@ -93,26 +81,135 @@ namespace We7.CMS.Web.Admin.Ajax.BusinessSubmit.Entity
         /// <returns></returns>
         public string ToJson(IQueryCondition condition)
         {
-            if (ResponseJsonEvent!=null)
+            //TODO:事务处理？OnToJsonEvent(condition,Iconnection,IsTransfer) && 验证过滤
+            string result;
+            if (OnToJsonEvent != null)
             {
-                return ResponseJsonEvent(condition);
+                OnToJsonEvent(condition);
+            }
+            if (ExpandEvent != null)
+            {
+                ExpandEvent(this);
+            }
+            if (UnToJsonEvent != null)
+            {
+                UnToJsonEvent(this);
+            }
+
+            if (_jsonMessage.ContainsKey(Enum_operType.Seach.ToString()))
+            {
+                result = _jsonMessage[Enum_operType.Seach.ToString()];
             }
             else
             {
-                return string.Empty;
+                TableInfo ti = new TableInfo();
+                result = ti.ToJson(_jsonMessage, false);
+            }
+
+            return result;
+        }
+
+        #region 实体信息
+
+        #region fields
+        private IDictionary<string, string> _jsonMessage = new Dictionary<string, string>();
+        private string _hasModelXml = string.Empty;
+        /// <summary>
+        /// xml数据模型字段名
+        /// </summary>
+        private string _modelName;
+        private Enum_operType _oper;
+        private bool _isSiteGroup;
+        private string _id;
+        private string _sort;
+        private int _sord;
+        private bool _search;
+        private string _t;
+        private string _c;
+        private string _tb;
+        private string[] _f;
+        private List<FieldsDic> _conditionDic;
+        private string _priMaryKeyName = "ID";
+        private object _expandKey;
+        private Criteria _condition;
+        #endregion
+
+        #region property
+        /// <summary>
+        /// 回发信息
+        /// </summary>
+        public IDictionary<string, string> JsonMessage
+        {
+            get
+            {
+                return _jsonMessage;
+            }
+            set
+            {
+                _jsonMessage = value;
             }
         }
 
-        private Enum_operType _oper;
+        /// <summary>
+        /// xml数据模型信息
+        /// </summary>
+        public string HasModelXml
+        {
+            get
+            {
+                return _hasModelXml;
+            }
+            set
+            {
+                _hasModelXml = value;
+            }
+        }
+
+        /// <summary>
+        /// 内容模型，模型名
+        /// </summary>
+        public string ModelName
+        {
+            get { return _modelName; }
+            set { _modelName = value; }
+        }
+
         /// <summary>
         /// 操作类型
         /// </summary>
-        public Enum_operType Oper
+        public Enum_operType OperType
         {
             get { return _oper; }
             set { _oper = value; }
         }
-        private string _id;
+
+        /// <summary>
+        /// 是否多行
+        /// </summary>
+        public bool IsMulti
+        {
+            get
+            {
+                return !string.IsNullOrEmpty(_id) && _id.Split(',').Length > 0;
+            }
+            set { IsMulti = value; }
+        }
+
+        /// <summary>
+        /// 站群
+        /// </summary>
+        public bool IsSiteGroup
+        {
+            get
+            {
+                return _isSiteGroup;
+            }
+            set
+            {
+                _isSiteGroup = value;
+            }
+        }
+
         /// <summary>
         /// ID
         /// </summary>
@@ -124,6 +221,169 @@ namespace We7.CMS.Web.Admin.Ajax.BusinessSubmit.Entity
             }
             set { _id = value; }
         }
+
+        /// <summary>
+        /// 用于排序的列名索引（一个名称）
+        /// </summary>
+        public string Sort
+        {
+            get { return _sort; }
+            set { _sort = value; }
+        }
+
+        /// <summary>
+        /// 排序的顺序（值为 asc(0) 或 desc(1)）
+        /// 默认为asc
+        /// </summary>
+        public int Sord
+        {
+            get { return _sord; }
+            set { _sord = value; }
+        }
+
+        /// <summary>
+        /// 是否搜索（如果不搜索，其值为 false，）
+        /// </summary>
+        public bool Search
+        {
+            get { return _search; }
+            set { _search = value; }
+        }
+
+        /// <summary>
+        /// 一个用于禁止缓存的时间戳
+        /// </summary>
+        public string T
+        {
+            get { return _t; }
+            set { _t = value; }
+        }
+
+        /// <summary>
+        /// 条件
+        /// </summary>
+        public string C
+        {
+            get { return _c; }
+            set { _c = value; }
+        }
+
+        /// <summary>
+        /// 表名
+        /// </summary>
+        public string TableName
+        {
+            get { return _tb; }
+            set { _tb = value; }
+        }
+
+        /// <summary>
+        /// 字段
+        /// </summary>
+        public string[] Fields
+        {
+            get
+            {
+                if (Enum_operType.Update == OperType)
+                {
+                    var fields = new List<string>();
+                    _conditionDic.ForEach(delegate(FieldsDic f) { fields.Add(f.Key); });
+                    _f = fields.ToArray();
+                }
+                return _f;
+            }
+            set { _f = value; }
+        }
+       
+        /// <summary>
+        /// 条件{多行处理时条件(字段名为ID)}
+        /// </summary>
+        public Criteria Condition
+        {
+            get
+            {
+
+                if (null == _condition && !string.IsNullOrEmpty(C) && !IsMulti)
+                {
+                    _condition = MakeCondition(C);
+                }
+                else if (null == _condition && !string.IsNullOrEmpty(_id) && IsMulti)
+                {
+                    _condition = new Criteria(CriteriaType.None) {Mode = CriteriaMode.Or};
+                    foreach (var item in ID.Split(','))
+                    {
+                        _condition.AddOr(CriteriaType.Equals, _priMaryKeyName, item);
+                    }
+                }
+                return _condition;
+            }
+            set
+            {
+                if (value == null) throw new ArgumentNullException("value");
+                Condition = value;
+            }
+        }
+
+
+        /// <summary>
+        /// 主键字段的名字
+        /// 默认为"ID"
+        /// </summary>
+        public string PriMaryKeyName
+        {
+            get { return _priMaryKeyName; }
+            set { _priMaryKeyName = value; }
+        }
+
+        /// <summary>
+        /// 条件字典
+        /// </summary>
+        public List<FieldsDic> ConditionDic
+        {
+            get
+            {
+                if (_conditionDic == null)
+                {
+                    _conditionDic = new List<FieldsDic>();
+                    if ((OperType == Enum_operType.Update || OperType == Enum_operType.Seach) && !string.IsNullOrEmpty(_c))
+                    {
+                        string[] cs = _c.Split('|');//条件数组
+                        for (int i = 0; i < cs.Length; i++)
+                        {
+                            string[] value = cs[i].Split('@');
+                            int type;
+                            if (int.TryParse(value[1], out type))
+                            {
+                                if (value.Length == (int)EnumIsKeyValue.Yes)
+                                {
+                                    _conditionDic.Add(new FieldsDic(value[0], value[2]));
+                                }
+                            }
+                        }
+                    }
+                }
+                return _conditionDic;
+            }
+            set { _conditionDic = value; }
+        }
+
+        /// <summary>
+        /// 扩展参数
+        /// </summary>
+        public object ExpandKey
+        {
+            get
+            {
+                return _expandKey;
+            }
+            set
+            {
+                _expandKey = value;
+            }
+        }
+        #endregion
+
+        #region 分页
         private int _total;
         /// <summary>
         /// 总数据数
@@ -139,7 +399,8 @@ namespace We7.CMS.Web.Admin.Ajax.BusinessSubmit.Entity
         /// </summary>
         public int totalPage
         {
-            get {
+            get
+            {
                 return ((total % Rows) == 0) ? total / Rows : (total / Rows) + 1;
             }
         }
@@ -151,12 +412,8 @@ namespace We7.CMS.Web.Admin.Ajax.BusinessSubmit.Entity
         public int Page
         {
             get { return _page; }
-            set
-            {
-                if (value >= 1)
-                    _page = value;
-                else
-                    _page = 1;
+            set {
+                _page = value >= 1 ? value : 1;
             }
         }
         private int _rows;
@@ -166,169 +423,10 @@ namespace We7.CMS.Web.Admin.Ajax.BusinessSubmit.Entity
         public int Rows
         {
             get { return _rows; }
-            set
-            {
-                if (value >= 1)
-                    _rows = value;
-                else
-                    _rows = 1;
+            set {
+                _rows = value >= 1 ? value : 1;
             }
         }
-        private string _sort;
-        /// <summary>
-        /// 用于排序的列名索引（一个名称）
-        /// </summary>
-        public string Sort
-        {
-            get { return _sort; }
-            set { _sort = value; }
-        }
-        private int _sord;
-        /// <summary>
-        /// 排序的顺序（值为 asc(0) 或 desc(1)）
-        /// 默认为asc
-        /// </summary>
-        public int Sord
-        {
-            get { return _sord; }
-            set { _sord = value; }
-        }
-        private bool _search;
-        /// <summary>
-        /// 是否搜索（如果不搜索，其值为 false，）
-        /// </summary>
-        public bool Search
-        {
-            get { return _search; }
-            set { _search = value; }
-        }
-        private string _t;
-        /// <summary>
-        /// 一个用于禁止缓存的时间戳
-        /// </summary>
-        public string T
-        {
-            get { return _t; }
-            set { _t = value; }
-        }
-        private string _c;
-        /// <summary>
-        /// 条件
-        /// </summary>
-        public string C
-        {
-            get { return _c; }
-            set { _c = value; }
-        }
-        private string _tb;
-        /// <summary>
-        /// 表名
-        /// </summary>
-        public string Tb
-        {
-            get { return _tb; }
-            set { _tb = value; }
-        }
-        private string[] _f;
-        /// <summary>
-        /// 字段
-        /// </summary>
-        public string[] F
-        {
-            get
-            {
-                if (Enum_operType.Update==Oper)
-                {
-                    _f = new List<string>(conditionDic.Keys as IEnumerable<string>).ToArray();
-                }
-                return _f;
-            }
-            set { _f = value; }
-        }
-        private Criteria conditionForCriteria;
-        /// <summary>
-        /// 条件
-        /// </summary>
-        public Criteria ConditionForCriteria
-        {
-            get
-            {
-                if (null == conditionForCriteria && !string.IsNullOrEmpty(C))
-                {
-                    conditionForCriteria = MakeCondition(C);
-                }
-                return conditionForCriteria;
-            }
-            set
-            {
-                ConditionForCriteria = value;
-            }
-        }
-        private Criteria MakeCondition(string C)
-        {
-            string c = C;
-            string[] cs = c.Split('|');//条件数组
-            Criteria criteria = new Criteria(CriteriaType.None);
-            for (int i = 0; i < cs.Length; i++)
-            {
-                string[] value = cs[i].Split('@');
-
-                int type;
-                if (int.TryParse(value[1], out type))
-                {
-                    if (value.Length == (int)Enum_IsKeyValue.yes&&!string.IsNullOrEmpty(value[2])) //且值不为空
-                    {
-                        criteria.Add((CriteriaType)type, value[0], value[2]);
-                    }
-                    else if ((value.Length == (int)Enum_IsKeyValue.no))
-                    {
-                        criteria.Add((CriteriaType)type, value[0], null);
-                    }
-                }
-                else //如果表达式不是数字。则直接false
-                {
-                    criteria.Add(CriteriaType.Equals, "1", "2");
-                }
-            }
-            return criteria;
-        }
-
-        private Dictionary<string, string> conditionDic;
-        /// <summary>
-        /// 条件字段
-        /// </summary>
-        public Dictionary<string, string> ConditionDic
-        {
-            get
-            {
-                if (conditionDic == null)
-                {
-                    conditionDic = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-                    if (Oper == Enum_operType.Update)
-                    {
-                        string[] cs = C.Split('|');//条件数组
-                        for (int i = 0; i < cs.Length; i++)
-                        {
-                            string[] value = cs[i].Split('@');
-                            int type;
-                            if (int.TryParse(value[1], out type))
-                            {
-                                if (value.Length == (int)Enum_IsKeyValue.yes)
-                                {
-                                    if (!conditionDic.ContainsKey(value[0]))
-                                    {
-                                        conditionDic.Add(value[0], value[2]);
-                                    }
-
-                                }
-                            }
-                        }
-                    }
-                }
-                return conditionDic;
-            }
-        }
-
         /// <summary>
         /// 本页显示：从第几条开始
         /// </summary>
@@ -355,30 +453,259 @@ namespace We7.CMS.Web.Admin.Ajax.BusinessSubmit.Entity
         {
             get { return End - Begin + 1; }
         }
+        #endregion
 
+        #endregion
+
+        #region 表链接
+        
+        private string _toTableName;
+        private string _toField;
+        private string _mainField;
+        private IDictionary<string, IJoin> _joinInfo;
+
+        public string ToTableName
+        {
+            get
+            {
+                return _toTableName;
+            }
+            set
+            {
+                _toTableName = value;
+            }
+        }
+       
+        public string ToField
+        {
+            get
+            {
+                return _toField;
+            }
+            set
+            {
+                _toField = value;
+            }
+        }
+       
+        public string MainField
+        {
+            get
+            {
+                return _mainField;
+            }
+            set
+            {
+                _mainField = value;
+            }
+        }
+        
+        public IDictionary<string, IJoin> JoinInfo
+        {
+            get
+            {
+                return _joinInfo;
+            }
+            set
+            {
+                _joinInfo = value;
+            }
+        }
+        #endregion
+
+        #region private Method
+        private Criteria MakeCondition(string cS)
+        {
+            string c = cS;
+            string[] cs = c.Split('|');//条件数组
+            var criteria = new Criteria(CriteriaType.None);
+            for (int i = 0; i < cs.Length; i++)
+            {
+                string[] value = cs[i].Split('@');
+
+                int type;
+                if (int.TryParse(value[1], out type))
+                {
+                    if (value.Length == (int)EnumIsKeyValue.Yes && !string.IsNullOrEmpty(value[2])) //且值不为空
+                    {
+                        criteria.Add((CriteriaType)type, value[0], value[2]);
+                    }
+                    else if ((value.Length == (int)EnumIsKeyValue.No))
+                    {
+                        criteria.Add((CriteriaType)type, value[0], null);
+                    }
+                }
+                else //如果表达式不是数字。则直接false
+                {
+                    criteria.Add(CriteriaType.Equals, "1", "2");
+                }
+            }
+            return criteria;
+        }
+        /// <summary>
+        /// 实例化表连接操作
+        /// </summary>
+        /// <param name="querystring"></param>
+        private void InstanceJoin(string querystring)
+        {
+            if (string.IsNullOrEmpty(querystring)) return;
+
+            string[] joins = querystring.Split(new[] { "||" }, StringSplitOptions.RemoveEmptyEntries);
+            if (joins.Length == 0) return;
+            _joinInfo = new Dictionary<string, IJoin>();
+            foreach (var item in joins) //一组join
+            {
+                string[] join = item.Split('|');
+                if (@join.Length != 4)
+                {
+                    _joinInfo = null;
+                    break;
+                }
+                _mainField = join[0];
+                _toTableName = join[1];
+                _toField = join[2];
+                _priMaryKeyName = join[3];
+                if (!_joinInfo.ContainsKey(join[0]))
+                {
+                    _joinInfo.Add(join[0], MemberwiseClone() as QueryCondition);
+                }
+            }
+        }
+        #endregion
+
+        /// <summary>
+        /// 设置回发信息值
+        /// </summary>
+        /// <param name="condition">对象</param>
+        /// <param name="key">显示名（表名）</param>
+        /// <param name="isError">是否是错误信息</param>
+        /// <param name="msgKey">“删除”或者“修改”这样的关键字</param>
+        /// <param name="errorMsg">错误信息</param>
+        /// <param name="i">受影响的行数</param>
+        public static void SetMessage(IQueryCondition condition, string key, bool isError, string msgKey, string errorMsg = "", int i = 0)
+        {
+            /*
+             * ps:这个方法如果有时间，且正好看到的您不妨改改吧。太恶心了
+             */
+            if (!isError)
+            {
+                if (condition.JsonMessage.ContainsKey("code"))
+                {
+                    condition.JsonMessage["code"] = "200";
+                }
+                else
+                {
+                    condition.JsonMessage.Add("code", "200");
+                }
+                if (condition.JsonMessage.ContainsKey("message"))
+                {
+                    condition.JsonMessage["message"] += "|" + key + ":" + i + "条数据以" + msgKey;
+                }
+                else
+                {
+                    condition.JsonMessage.Add("message", key + ":" + i + "条数据以" + msgKey);
+                }
+            }
+            else
+            {
+                if (condition.JsonMessage.ContainsKey("code"))
+                {
+                    condition.JsonMessage["code"] = "300";
+                }
+                else
+                {
+                    condition.JsonMessage.Add("code", "300");
+                }
+                if (condition.JsonMessage.ContainsKey("message"))
+                {
+                    condition.JsonMessage["message"] += "|" + key + ":" + msgKey + "失败：" + errorMsg;
+                }
+                else
+                {
+                    condition.JsonMessage.Add("message", key + ":" + msgKey + "失败：" + errorMsg);
+                }
+            }
+
+        }
+
+        /// <summary>
+        /// 克隆此实例（浅拷贝）
+        /// </summary>
+        /// <returns></returns>
+        public object Clone()
+        {
+            return MemberwiseClone();
+        }
+
+        #region 树结构
+        private string _pIdKeyName;
+        private string _treeTitle;
+        private bool _hasNode;
+
+        public string PIDKeyName
+        {
+            get
+            {
+                return _pIdKeyName;
+            }
+            set
+            {
+                _pIdKeyName = value;
+            }
+        }
+       
+        public string TreeTitle
+        {
+            get
+            {
+                return _treeTitle;
+            }
+            set
+            {
+                _treeTitle = value;
+            }
+        }
+       
+        public bool HasNode
+        {
+            get
+            {
+                return _hasNode;
+            }
+            set
+            {
+                _hasNode = value;
+            }
+        }
+
+        //todo:有时间再来实现
+        public IDictionary<string, ITree> TreeInfo
+        {
+            get;
+            set;
+        }
+        public List<T> TreeList<T>() where T : class
+        {
+            return null;
+        }
+        #endregion
     }
+
+    #region 操作枚举
     /// <summary>
     /// 是否是KeyValue
     /// </summary>
-    public enum Enum_IsKeyValue
+    public enum EnumIsKeyValue
     {
         /// <summary>
         /// 是
         /// </summary>
-        yes = 3,
+        Yes = 3,
         /// <summary>
         /// 否
         /// </summary>
-        no = 2
+        No = 2
     }
-    /// <summary>
-    /// 操作类型
-    /// </summary>
-    public enum Enum_operType
-    {
-        Add = 0,
-        Del = 1,
-        Seach = 2,
-        Update = 3
-    }
+
+    #endregion
 }

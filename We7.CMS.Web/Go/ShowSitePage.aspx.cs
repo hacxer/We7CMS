@@ -129,11 +129,13 @@ namespace We7.CMS.Web
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (!BaseConfigs.ConfigFileExist())
-            {
-                Response.Write("您的数据库配置文件尚未生成，看起来数据库尚未建立，您需要建立数据库配置文件或生成数据库。现在开始吗？<a href='/install/index.aspx'><u>现在配置数据库</u></a>");
-                Response.End();
-            }
+            // FrontBasePage 中已经做处理，该方法会触发System.Threading.ThreadAbortException的异常  by Brina.G
+
+            //if (!BaseConfigs.ConfigFileExist())
+            //{
+            //    Response.Write("您的数据库配置文件尚未生成，看起来数据库尚未建立，您需要建立数据库配置文件或生成数据库。现在开始吗？<a href='/install/index.aspx'><u>现在配置数据库</u></a>");
+            //    Response.End();
+            //}
 
             AddStatistic(string.Empty, string.Empty);
         }

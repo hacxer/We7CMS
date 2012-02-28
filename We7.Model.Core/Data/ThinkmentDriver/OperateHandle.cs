@@ -53,26 +53,31 @@ namespace We7.Model.Core.Data.ThinkmentDriver
 
         public void AddFields(string f)
         {
-            ListField _f0 = new ListField(f);
-            ListFieldDict.Add(_f0.FieldName, _f0);
+            ListField f0 = new ListField(f);
+            ListFieldDict.Add(f0.FieldName, f0);
         }
 
         protected void BuildOrders()
         {
-            StringBuilder _f0 = new StringBuilder();
-            foreach (Order _f1 in orderList)
+            StringBuilder f0 = new StringBuilder();
+            foreach (Order f1 in orderList)
             {
-                CriteriaType ct = _f1.Mode == OrderMode.Desc ? CriteriaType.Desc : CriteriaType.Asc;
+                CriteriaType ct = f1.Mode == OrderMode.Desc ? CriteriaType.Desc : CriteriaType.Asc;
                 string ms = " " + Connect.Driver.GetCriteria(ct) + " ";
-                AddSplitString(_f0, _f1.Name + ms);
+                AddSplitString(f0, f1.Name + ms);
             }
-            orders = _f0.ToString();
+            orders = f0.ToString();
+        }
+
+
+        protected virtual void BuildFields()
+        {
+            BuildFields(false);
         }
 
         protected virtual void BuildFields(bool allowReadonly)
         {
             StringBuilder sb = new StringBuilder();
-
             foreach (We7DataColumn dc in Columns)
             {
                 if (dc.Direction == ParameterDirection.ReturnValue)
@@ -94,10 +99,26 @@ namespace We7.Model.Core.Data.ThinkmentDriver
             fields = sb.ToString();
         }
 
-        protected void BuildFields(bool allowReadonly, bool forContent)
+        protected  string GetSystemFields(string condition)
         {
             StringBuilder sb = new StringBuilder();
+            foreach (We7DataColumn dc in Columns)
+            {
+                if (dc.Direction == ParameterDirection.ReturnValue)
+                    continue;
+                string field = Connect.Driver.FormatField(Adorns.None, dc.Name);
+                if (!string.IsNullOrEmpty((condition)) && !condition.Contains(field) && dc.IsSystem)
+                {
+                    AddSplitString(sb, field);
+                }
+            }
+            return sb.ToString();
+        }
 
+
+        protected void BuildFields(bool allowReadonly, bool forConten)
+        {
+            StringBuilder sb = new StringBuilder();
             foreach (KeyValuePair<string, ConListField> item in ConListFieldDict)
             {
                 AddSplitString(sb, Connect.Driver.FormatField(item.Value));

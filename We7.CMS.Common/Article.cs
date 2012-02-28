@@ -745,6 +745,7 @@ namespace We7.CMS.Common
                         {
                             dataSet.ReadXml(reader);
                         }
+                        dataSet = new JoinHelper(ModelConfig).JoinField(dataSet);
                     }
                 }
                 return dataSet;

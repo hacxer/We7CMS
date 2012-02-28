@@ -37,18 +37,15 @@ namespace Thinkment.Data
     /// <summary>
     /// 映射对象执行SQL
     /// </summary>
+    [Serializable]
     public class ObjectAssistant
     {
         /// <summary>
         /// 数据库字段字典
         /// </summary>
-        public Dictionary<string, ObjectManager> DicForTable
+        public Dictionary<string, ObjectManager> DicForTable()
         {
-            get { return _d1.ObjColumnDic; }
-            set
-            {
-                _d1.ObjColumnDic = value;
-            }
+            return _d1.ObjColumnDic;
         }
 
         Dictionaries _d1;
@@ -122,6 +119,43 @@ namespace Thinkment.Data
         #endregion
 
         /// <summary>
+        /// 创建一个新的连接实例
+        /// 用于个性化一些设置
+        /// author:丁乐
+        /// time:2011/11/31
+        /// </summary>
+        /// <param name="key">类型（例如：Article）</param>
+        /// <param name="isTransfer">是否启用事物</param>
+        /// <returns></returns>
+        public IConnection CreateConnetion(Type key, bool isTransfer = false)
+        {
+            var dic = GetObjects()[key];
+            var conn = null != dic ? dic.CurDatabase.DbDriver.CreateConnection(dic.CurDatabase.ConnectionString, true) : null;
+            if (null != conn)
+            {
+                conn.IsTransaction = isTransfer;
+            }
+            return conn;
+        }
+        /// <summary>
+        /// 创建一个新的连接实例
+        /// 用于个性化一些设置
+        /// </summary>
+        /// <param name="key">表名</param>
+        /// <param name="isTransfer">是否启用事物</param>
+        /// <returns></returns>
+        public IConnection CreateConnetion(string key, bool isTransfer = false)
+        {
+            var dic = _d1.ObjColumnDic[key];
+            var conn = null != dic ? dic.CurDatabase.DbDriver.CreateConnection(dic.CurDatabase.ConnectionString, true) : null;
+            if (null != conn)
+            {
+                conn.IsTransaction = isTransfer;
+            }
+            return conn;
+        }
+
+        /// <summary>
         /// 插入一条记录
         /// </summary>
         /// <param name="obj"></param>
@@ -143,6 +177,16 @@ namespace Thinkment.Data
                 return Insert(conn, obj, fields);
             }
         }
+
+        public object Insert(object obj, string[] fields, string tablename)
+        {
+            using (IConnection conn = _d1.GetDBConnectionByTB(tablename))
+            {
+                return Insert(conn, obj, fields, tablename);
+            }
+        }
+
+
         /// <summary>
         /// 更新一条记录
         /// </summary>
@@ -178,6 +222,21 @@ namespace Thinkment.Data
         }
 
         /// <summary>
+        /// 更新满足条件的一组记录（仅列出字段有效）
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="fields"></param>
+        /// <param name="condition"></param>
+        /// <returns></returns>
+        public int Update(object obj, string[] fields, Criteria condition, string tablename)
+        {
+            using (IConnection conn = _d1.GetDBConnectionByTB(tablename))
+            {
+                return Update(conn, obj, fields, condition, tablename);
+            }
+        }
+
+        /// <summary>
         /// 选取一条记录
         /// </summary>
         /// <param name="obj"></param>
@@ -199,6 +258,20 @@ namespace Thinkment.Data
         }
 
         /// <summary>
+        /// 选取一条记录（仅列出字段有效）
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="fields"></param>
+        public void Select(object obj, string[] fields, string tablename)
+        {
+            using (IConnection conn = _d1.GetDBConnectionByTB(tablename))
+            {
+                Select(conn, obj, fields, tablename);
+            }
+        }
+
+
+        /// <summary>
         /// 计算满足条件的记录数
         /// </summary>
         /// <typeparam name="T">数据库对象</typeparam>
@@ -211,6 +284,21 @@ namespace Thinkment.Data
                 return Count<T>(conn, condition);
             }
         }
+
+        /// <summary>
+        /// 计算满足条件的记录数
+        /// </summary>
+        /// <typeparam name="T">数据库对象</typeparam>
+        /// <param name="condition"></param>
+        /// <returns></returns>
+        public int Count<T>(Criteria condition, string tablename)
+        {
+            using (IConnection conn = _d1.GetDBConnectionByTB(tablename))
+            {
+                return Count<T>(conn, condition, tablename);
+            }
+        }
+
         /// <summary>
         /// 按条件取得数据库记录列表
         /// </summary>
@@ -252,6 +340,15 @@ namespace Thinkment.Data
                 return List<T>(conn, condition, orders, from, count, fields);
             }
         }
+
+        public List<T> List<T>(Criteria condition, Order[] orders, int from, int count, string[] fields, string tablename)
+        {
+            using (IConnection conn = _d1.GetDBConnectionByTB(tablename))
+            {
+                return List<T>(conn, condition, orders, from, count, fields, tablename);
+            }
+        }
+
         /// <summary>
         ///  按条件取得数据库记录列表（其中部分）
         /// </summary>
@@ -269,6 +366,13 @@ namespace Thinkment.Data
                 return List<T>(conn, condition, orders, from, count, fields);
             }
         }
+        public List<T> List<T>(Criteria condition, Order[] orders, int from, int count, ListField[] fields, string tablename)
+        {
+            using (IConnection conn = _d1.GetDBConnectionByTB(tablename))
+            {
+                return List<T>(conn, condition, orders, from, count, fields, tablename);
+            }
+        }
         /// <summary>
         /// 删除一条记录
         /// </summary>
@@ -279,6 +383,13 @@ namespace Thinkment.Data
             using (IConnection conn = _d1.GetDBConnection(obj.GetType()))
             {
                 return Delete(conn, obj);
+            }
+        }
+        public bool Delete(object obj, string tablename)
+        {
+            using (IConnection conn = _d1.GetDBConnectionByTB(tablename))
+            {
+                return Delete(conn, obj, tablename);
             }
         }
         /// <summary>
@@ -292,6 +403,13 @@ namespace Thinkment.Data
             using (IConnection conn = _d1.GetDBConnection(typeof(T)))
             {
                 return DeleteList<T>(conn, condition);
+            }
+        }
+        public int DeleteList<T>(Criteria condition, string tablename)
+        {
+            using (IConnection conn = _d1.GetDBConnectionByTB(tablename))
+            {
+                return DeleteList<T>(conn, condition, tablename);
             }
         }
         /// <summary>
@@ -312,6 +430,13 @@ namespace Thinkment.Data
             object identity;
             return oa.MyInsert(conn, obj, fields, out identity);
         }
+        public object Insert(IConnection conn, object obj, string[] fields, string tablename)
+        {
+            ObjectManager oa = _d1.GetObjectManager(tablename);
+            object identity;
+            return oa.MyInsert(conn, obj, fields, out identity);
+        }
+
         /// <summary>
         /// 更新一组记录（指定数据库）
         /// </summary>
@@ -330,6 +455,13 @@ namespace Thinkment.Data
             ObjectManager oa = _d1.GetObjectManager(obj.GetType());
             return oa.MyUpdate(conn, obj, fields, condition);
         }
+
+        public int Update(IConnection conn, object obj, string[] fields, Criteria condition, string tablename)
+        {
+            ObjectManager oa = _d1.GetObjectManager(tablename);
+            return oa.MyUpdate(conn, obj, fields, condition);
+        }
+
         /// <summary>
         ///选取一条记录（仅列出字段有效）（指定数据库）
         /// </summary>
@@ -339,6 +471,11 @@ namespace Thinkment.Data
         public void Select(IConnection conn, object obj, string[] fields)
         {
             ObjectManager oa = _d1.GetObjectManager(obj.GetType());
+            oa.MySelect(conn, obj, fields);
+        }
+        public void Select(IConnection conn, object obj, string[] fields, string tablename)
+        {
+            ObjectManager oa = _d1.GetObjectManager(tablename);
             oa.MySelect(conn, obj, fields);
         }
         /// <summary>
@@ -351,6 +488,11 @@ namespace Thinkment.Data
         public int Count<T>(IConnection conn, Criteria condition)
         {
             ObjectManager oa = _d1.GetObjectManager(typeof(T));
+            return oa.MyCount(conn, condition);
+        }
+        public int Count<T>(IConnection conn, Criteria condition, string tanblename)
+        {
+            ObjectManager oa = _d1.GetObjectManager(tanblename);
             return oa.MyCount(conn, condition);
         }
         /// <summary>
@@ -370,6 +512,12 @@ namespace Thinkment.Data
             ObjectManager oa = _d1.GetObjectManager(typeof(T));
             return oa.MyList<T>(conn, condition, orders, from, count, fields);
         }
+        public List<T> List<T>(IConnection conn, Criteria condition,
+            Order[] orders, int from, int count, string[] fields, string tablename)
+        {
+            ObjectManager oa = _d1.GetObjectManager(tablename);
+            return oa.MyList<T>(conn, condition, orders, from, count, fields);
+        }
         /// <summary>
         ///  选取满足条件的记录（部分）（指定数据库）
         /// </summary>
@@ -387,6 +535,12 @@ namespace Thinkment.Data
             ObjectManager oa = _d1.GetObjectManager(typeof(T));
             return oa.MyList<T>(conn, condition, orders, from, count, fields);
         }
+        public List<T> List<T>(IConnection conn, Criteria condition,
+            Order[] orders, int from, int count, ListField[] fields, string tablename)
+        {
+            ObjectManager oa = _d1.GetObjectManager(tablename);
+            return oa.MyList<T>(conn, condition, orders, from, count, fields);
+        }
         /// <summary>
         ///  删除一条记录（指定数据库）
         /// </summary>
@@ -396,6 +550,11 @@ namespace Thinkment.Data
         public bool Delete(IConnection conn, object obj)
         {
             ObjectManager oa = _d1.GetObjectManager(obj.GetType());
+            return oa.MyDelete(conn, obj) == 1;
+        }
+        public bool Delete(IConnection conn, object obj, string tablename)
+        {
+            ObjectManager oa = _d1.GetObjectManager(tablename);
             return oa.MyDelete(conn, obj) == 1;
         }
         /// <summary>
@@ -408,6 +567,11 @@ namespace Thinkment.Data
         public int DeleteList<T>(IConnection conn, Criteria condition)
         {
             ObjectManager oa = _d1.GetObjectManager(typeof(T));
+            return oa.MyDeleteList(conn, condition);
+        }
+        public int DeleteList<T>(IConnection conn, Criteria condition, string tablename)
+        {
+            ObjectManager oa = _d1.GetObjectManager(tablename);
             return oa.MyDeleteList(conn, condition);
         }
 

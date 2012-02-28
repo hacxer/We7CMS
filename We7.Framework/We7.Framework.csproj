@@ -32,14 +32,10 @@
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <SccProjectName>
-    </SccProjectName>
-    <SccLocalPath>
-    </SccLocalPath>
-    <SccAuxPath>
-    </SccAuxPath>
-    <SccProvider>
-    </SccProvider>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -126,6 +122,10 @@
     <Compile Include="Config\SiteConfigFileManager.cs" />
     <Compile Include="Config\SiteConfigInfo.cs" />
     <Compile Include="Config\SiteConfigs.cs" />
+    <Compile Include="Events\EventAttribute.cs" />
+    <Compile Include="Events\EventsManager.cs" />
+    <Compile Include="Events\EventRegister.cs" />
+    <Compile Include="Events\RegistEvent.cs" />
     <Compile Include="Helper\BaseHelper.cs" />
     <Compile Include="Helper\DbHelper.cs" />
     <Compile Include="Helper\DbHelperOleDb.cs" />
@@ -146,6 +146,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Schedule\Scheduler.cs" />
     <Compile Include="Schedule\SimpleScheduler.cs" />
+    <Compile Include="Util\AssemblyHelper.cs" />
     <Compile Include="Util\HtmlWidgetHelper.cs" />
     <Compile Include="Util\NVelocityHelper.cs" />
     <Compile Include="UI\BaseAction.cs" />
@@ -161,6 +162,7 @@
     <Compile Include="Util\PinyinHelper.cs" />
     <Compile Include="Util\RequestHelper.cs" />
     <Compile Include="Util\SerializationHelper.cs" />
+    <Compile Include="Util\Serializer.cs" />
     <Compile Include="Util\SNGenerator.cs" />
     <Compile Include="Util\TypeConverter.cs" />
     <Compile Include="Util\TypeParse.cs" />
@@ -196,6 +198,7 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

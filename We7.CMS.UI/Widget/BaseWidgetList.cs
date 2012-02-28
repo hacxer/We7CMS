@@ -110,6 +110,11 @@ namespace We7.CMS.UI.Widget
         public virtual string ModelName { get; set; }
 
         /// <summary>
+        /// 查询字段
+        /// </summary>
+        public virtual string Fields { get; set; }
+
+        /// <summary>
         /// 输出的查询数据
         /// </summary>
         public DataRowCollection Items { get; set; }
@@ -124,9 +129,10 @@ namespace We7.CMS.UI.Widget
         {
             return new List<Order>
             {
-                new Order ("Index"),
-				new Order("Updated",OrderMode.Desc),
-                new Order("ID",OrderMode.Desc)
+                //new Order ("Index"),
+                //new Order("Updated",OrderMode.Desc),
+                //new Order("ID",OrderMode.Desc)
+                new Order("Updated",OrderMode.Desc),                new Order ("Index",OrderMode.Desc)
             };
         }
 
@@ -204,14 +210,7 @@ namespace We7.CMS.UI.Widget
         /// </summary>
         protected Channel Channel
         {
-            get
-            {
-                if (channel == null)
-                {
-                    channel = ChannelHelper.GetChannel(OwnerID, null) ?? new Channel();
-                }
-                return channel;
-            }
+            get { return channel ?? (channel = ChannelHelper.GetChannel(OwnerID, null) ?? new Channel()); }
         }
 
         /// <summary>

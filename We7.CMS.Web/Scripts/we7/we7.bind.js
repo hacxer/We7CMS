@@ -27,7 +27,7 @@
 			options.datatype = "local";
 			definedData = true;
 		} else {
-			options = $.extend(data || {}, options);
+			options = $.extend({}, data, options);
 		}
 
 		if (!options.pager) {
@@ -93,7 +93,8 @@
 				, addEditColumn: true
 				, editColumnHeader: '操作'
 				, deletableRow: false
-
+			// rowTemplate
+			// -- we7Models
 		};
 		function triggerEvent(type, data) {
 			var event = $.Event();
@@ -102,13 +103,11 @@
 			return event;
 		}
 		options = $.extend(defaultOptions, options);
-		if (!options.ajaxDelOptions) {
-			options.ajaxDelOptions = {};
-		}
 		options.loadError = function () {
 			triggerEvent("onLoadError", [].slice.apply(arguments));
 		};
 
+		options.postData["_isSiteGroup"] = options["isSiteGroup"] ? 1 : 0;
 		$.extend(this, {
 			destroy: function () {
 				var eBefore = triggerEvent("onBeforeDestroy");
@@ -121,6 +120,37 @@
 				if (eBefore.isDefaultPrevented()) { return false; }
 				$grid.trigger("reloadGrid");
 			}
+			, edit: function (result) {
+				_editing = result;
+				var index = we7.indexOfArray(dataRendered.rows, function () { return this.ID === result.ID }), id, row;
+				if (++index) {
+					id = dataRendered.rows[--index][options.jsonReader.id];
+					editRow(id);
+					$("tr:eq(" + (++index) + ")", $grid).attr("editable", "1");
+					$grid.saveRow(id);
+					jQuery.jgrid._operateEditUI(id, false);
+					this.refresh();
+				}
+			}
+			, options: function (name, value) {
+				var get = (we7.isUndef(name) || we7.isStr(name)) && we7.isUndef(value), set = (name && !we7.isUndef(value)) || we7.isObj(name), opt;
+				if (get) {
+					opt = $.extend(options, $grid.jqGrid('getGridParam'));
+					return name ? opt[name] : opt;
+				}
+				if (set) {
+					if (we7.isStr(name)) {
+						options[name] = value;
+						opt = {};
+						opt[name] = value;
+						$grid.jqGrid('setGridParam', opt);
+					} else {
+						opt = name;
+						options = $.extend(opt);
+						$grid.jqGrid('setGridParam', opt);
+					}
+				}
+			}
 		});
 		$.each("onBeforeLoad,onBeforeDelete,onBeforeEdit,onBeforeDestroy,onLoad,onLoadError,onDelete,onEdit,onDestroy".split(','), function (i, event) {
 			self[event] = function (fn) {
@@ -131,16 +161,16 @@
 			}
 		});
 		self.onLoadError(function (xhr, status, err) {
-			we7.log('#bxhr01\n' + (err ? (err.message ? err.message : '[bind error] http status:' +err.toString()) : ('unknow error:' + err.toString() + ' [' + status + ']')));
+			we7.log('#bxhr01\n' + (err ? (err.message ? err.message : '[bind error] http status:' + err.toString()) : ('unknow error:' + err.toString() + ' [' + status + ']')));
 		});
 		var editableGrid = false, modelCreated = false, templated = false, editableRow = false,
-			$grid, $gridview, self = this, lastSel, dataRendered, _search, _searchModels;
+			$grid, $gridview, self = this, lastSel, dataRendered, _firstLoad = true, _searchModels;
 
 		function buildTemplate() {
 			if (!options.rowTemplate) {					//	 未定义模板，启用服务器模板？
 				return;
 			}
-			var colRegex = /\<td[^>]*\>(((?!\<\/?td).)+)\<\/td\>/gi, fieldRegex = /^\$\{([a-z0-9_]+)\}$/i, colMRegex = /\$\{([a-z0-9_]+)\}/gi,
+			var colRegex = /<td[^>]*\>(((?!\<\/?td)[\s\S])+)\<\/td\>/mgi, fieldRegex = /^\$\{([a-z0-9_]+)\}$/i, colMRegex = /\$\{([a-z0-9_]+)\}/gi,
 				colModel = [], cols, searches = [], st;
 
 			while (cols = colRegex.exec(options.rowTemplate)) {
@@ -153,7 +183,7 @@
 					, width: c.attr('width') || parseInt(c.css("width")) || undefined
 				};
 				attr_e = c.attr('editable');
-				if (attr_e){
+				if (attr_e) {
 					if (attr_e !== "false") {
 						cm.editable = true;
 						if (attr_e !== "true") {
@@ -237,13 +267,10 @@
 					options.colModel.push(model);
 				}
 			});
-			
+
 			editableRow = !!(we7.findInArray(options.colModel, function (item) { return item.editable && !item.hidden }));
 			if (options.deletableRow || editableRow) {
 				editableGrid = true;
-				options.editurl = '/admin/ajax/BusinessSubmit/JsonForCondition.ashx';
-				options.serializeRowData = wrapperAjaxData;
-				options.serializeDelData = wrapperAjaxData;
 
 				if (options.addEditColumn) {
 					options.colModel.push({
@@ -253,10 +280,14 @@
 						, width: 50
 					});
 				}
-				if(editableRow){
+				if (editableRow) {
 					options.ondblClickRow = editRow;
 				}
 			}
+
+			!options.editurl && (options.editurl = options.url);
+			options.serializeRowData = wrapperAjaxData;
+			options.serializeDelData = wrapperAjaxData;
 			var ename, sortStart = we7.findInArray(options.colModel, function (item) { return !!item.sortOnLoad });
 			if (sortStart) {
 				options.sortname = sortStart.name;
@@ -323,24 +354,30 @@
 			}
 		}
 
-		var _tmpled = false;
+		var _rowRender, _editing = false, oldTmpl = /(\{\{|\$\{)/;
 		function injectRow(rowid, id) {
 			var el;
 			if (modelCreated) {
-				if (!_tmpled) {
-					_tmpled = true;
-					jQuery.template('we7_tmpl', options.rowTemplate);
+				if (!_rowRender) {
+					if (oldTmpl.test(options.rowTemplate)) {
+						options.rowTemplate = we7.render.tmplFromObsolete(options.rowTemplate);
+					}
+					_rowRender = we7.render(null, options.rowTemplate, { mode: -1, autoRender: false });
 				}
-				el = jQuery('<p>').append(jQuery.tmpl("we7_tmpl", this));
-				return rowid === true ? el.text() : el.html();
+				el = _rowRender.render(this);
+				return rowid === true ? $('<div>').append(el).text() : el;
 			} else {
 				return false; 									// 使用原有逻辑
 			}
 		}
 
 		function wrapperAjaxData(d) {								// 当 ajax 方式为 POST 时处理 data [不为 GET 请求处理]
-			if (!editableGrid) { return null; } 						// 不允许编辑时
+			if (!editableGrid && !_editing) { return null; } 						// 不允许编辑时
 			var _ps = [], newP = [];
+			if (_editing) {
+				d = $.extend({}, d, options.postData, _editing);
+				_editing = false;
+			}
 			for (var _p in d) {
 				if (d.hasOwnProperty(_p)) {
 					if (_p.substr(0, 1) != '_') {					// 筛选内置参数
@@ -365,8 +402,9 @@
 			if (newP.length) {
 				d["_c"] = newP.join('|'); 	// 使用 condition 一样的编码机制
 			}
-			d["_tb"] = options.postData["_tb"];
-			d = processDataBeforeReq(d);
+			d._tb = options.postData["_tb"];
+			d._isSiteGroup = options.postData["_isSiteGroup"];
+			d._id = d._id.replace('-_-', '{').replace('_-_', '}');
 			return d;
 		}
 
@@ -398,14 +436,14 @@
 			options.addEditColumn && jQuery.jgrid._operateEditUI(id, true);
 			args = args || {};
 			var rowData = dataRendered && dataRendered.rows ? we7.findInArray(dataRendered.rows, function (item) { return item[options.jsonReader.id] === id }) : undefined;
-			var fnOld = args.onsuccess, eBefore = triggerEvent("onBeforeEdit", [id,rowData]);
+			var fnOld = args.onsuccess, eBefore = triggerEvent("onBeforeEdit", [id, rowData]);
 			if (eBefore.isDefaultPrevented()) { return false; }
 			args.onsuccess = function () {
 				var cbArgs = [].slice.apply(arguments);
 				if (fnOld) {
 					fnOld.apply(this, cbArgs);
 				}
-				triggerEvent("onEdit", [id,rowData].push(cbArgs));
+				triggerEvent("onEdit", [id, rowData].push(cbArgs));
 			};
 			$grid.jqGrid('editRow', id, false, args.onedit, args.onsuccess, args.url, args.data, args.onsave, args.onerror, args.onrestore);
 		}
@@ -464,15 +502,11 @@
 			if (idCol) {
 				if (data && data.rows && data.rows.length) {
 					$.each(data.rows, function (i, row) {
-						data.rows[i]._gridID = row.ID.replace('{', '-_-').replace('}', '_-_'); 					// HACK: 为了提高效率直接写了 ID，而通用做法是 data.rows[i][idCol.name] 
+						data.rows[i]._gridID = row[idCol].replace('{', '-_-').replace('}', '_-_'); 					// HACK: 为了提高效率直接写了 ID，而通用做法是 data.rows[i][idCol.name] 
 					});
 				}
 			}
-			return data;
-		},
-		processDataBeforeReq = function (data) {
-			data._id = data._id.replace('-_-', '{').replace('_-_', '}');
-			return data;
+			return options.preProcessData ? options.preProcessData(data) || data : data;
 		},
 		loadComplete = function (d) {		// 对数据进行格式化处理
 			d.cols && (delete d.cols);
@@ -493,36 +527,36 @@
 				if (editableGrid) {
 					var ids = $grid.jqGrid('getDataIDs');
 					for (var i = 0; i < ids.length; i++) {
-						var eid = '#' + elemId, cl = ids[i], width=0, html=''
-							, be = '<span class="ui-icon ui-icon-pencil" title="编辑" style="cursor:pointer;float:left;" onclick="jQuery.jgrid._operateEditUI (\'{1}\',true);jQuery.jgrid._editRow(\'{1}\');" ></span>'
+						var eid = '#' + elemId, cl = ids[i], width = 0, html = ''
+							, be = '<span class="ui-icon ui-icon-pencil" title="编辑" style="cursor:pointer;float:left;" onclick="jQuery.jgrid._editRow(\'{1}\');" ></span>'
 							, de = '<span class="ui-icon ui-icon-trash" title="删除" style="cursor:pointer;float:left;" onclick="jQuery.jgrid._delRow(\'{1}\')" ></span>'
-							, se = '<span class="ui-icon ui-icon-disk" title="保存" style="cursor:pointer;float:left;display:none" onclick=\"jQuery(\'{0}\').saveRow(\'{1}\');jQuery.jgrid._operateEditUI (\'{1}\',false);" ></span>'
+							, se = '<span class="ui-icon ui-icon-disk" title="保存" style="cursor:pointer;float:left;display:none" onclick=\"jQuery(\'{0}\').saveRow(\'{1}\');jQuery.jgrid._operateEditUI(\'{1}\',false);" ></span>'
 							, ce = '<span class="ui-icon ui-icon-arrowreturnthick-1-w" title="取消编辑" style="cursor:pointer;float:left;display:none" onclick=\"jQuery.jgrid._operateEditUI (\'{1}\',false);" ></span>';
 						be = we7.formatStr(be, eid, cl);
 						de = we7.formatStr(de, eid, cl);
 						se = we7.formatStr(se, eid, cl);
 						ce = we7.formatStr(ce, eid, cl);
-						
-						if(editableRow){
+
+						if (editableRow) {
 							width += 40;
 							html += be;
 						}
-						
+
 						if (options.deletableRow) {
 							!editableRow && (width += 20);
 							html += de;
 						}
-						
-						if(editableRow){
+
+						if (editableRow) {
 							html += se + ce;
 						}
-						
-						getTd(i).css("text-align","center").append($('<div>').css({"margin":"5px auto","width": width+"px"}).html(html));
+
+						getTd(i).css("text-align", "center").append($('<div>').css({ "margin": "5px auto", "width": width + "px" }).html(html));
 					}
 				}
 
-				if (!_search) {
-					_search = true;
+				if (_firstLoad) {
+					_firstLoad = false;
 					var titleBar = $('#gview_' + elemId).find("div.ui-jqgrid-titlebar:first");
 					var searchBar = $('<div>查找：</div>').addClass("jqgrid-we7search"), searchInput = $('<input type="text" maxlength="30" style="border-style:inset" />').addClass("jqgrid-we7sinput"), searchTimer;
 
@@ -538,6 +572,8 @@
 							catch (ex) { }
 						}
 					}).appendTo(searchBar);
+				} else {
+					triggerEvent("onLoad", [dataRendered]);
 				}
 			}
 		},
@@ -551,9 +587,9 @@
 			$gridview = $grid[0];
 			initData && $gridview.addJSONData(initData); 	//初次载入时添加数据
 			dataRendered = initData;
+			triggerEvent("onLoad", [initData]);
 			self.grid = $grid;
 		};
-
 		buildTemplate(); 	// options.rowTemplate 意指已经 DOM 中定义的模板
 		if (dataUrl) {
 			options.postData && (options.postData["_rows"] = options.rowNum);
@@ -672,11 +708,15 @@
 	};
 	function BindOption(obj) {
 		var self = this;
-		this.tableName = (obj && obj.tableName) || '';
-		this.fields = (obj && obj.fields) || ''; 			// 定义一个 obj{Created:{}, ... } 这些对象的内容即为编辑用作 options
-		this.conditions = (obj && obj.conditions) || [];
-		this.sortField = (obj && obj.sortField) || '';
-		this.sortOrder = (obj && obj.sortOrder) || 1;
+
+		$.extend(this,{
+			tableName:'',
+			fields:'',			// 定义一个 obj{Created:{}, ... } 这些对象的内容即为编辑用作 options
+			conditions:[],
+			sortField:'',
+			sortOrder: 1
+		},obj);
+		
 		this.toURI = function () {
 			function encode(p) {
 				var ret = [];
@@ -690,7 +730,7 @@
 			return encode(this.toParam());
 		};
 		this.toParam = function () {
-			var params = {}, cd = [], order = self.sortOrder;
+			var params = {}, self = this, cd = [], order = self.sortOrder;
 			if (we7.isStr(order)) {
 				if (self.sortOrder.toLowerCase() === "desc") {
 					order = 1;
@@ -707,12 +747,12 @@
 				});
 				return f.join(',');
 			})();
-			if (self.sortField) {
+			if (this.sortField) {
 				params["_sort"] = self.sortField;
 				params["_sord"] = order;
 			}
 
-			$.each(self.conditions, function (i, condition) {
+			$.each(this.conditions, function (i, condition) {
 				if (condition) {
 					cd.push(condition.toParam());
 				}
@@ -731,15 +771,16 @@
 		if (!we7.isObj(we7bindData) || we7.isUndef(we7bindData.tableName)) {
 			throw new Error('Unknow bind data');
 		}
-		var baseUrl = '/admin/ajax/BusinessSubmit/JsonForCondition.ashx';
+		var baseUrl = (options && options.url) || '/admin/ajax/BusinessSubmit/JsonForCondition.ashx';
+		options.url && (delete options.url);
 		!options.postData && (options.postData = {});
-		$.extend(options.postData, we7bindData.toParam());
+		options.postData = $.extend({}, options.postData, we7bindData.toParam());
 		if (we7.isObj(we7bindData.fields)) {
 			options.we7Models = we7bindData.fields;
 		}
 		var metaScript = $('<div type="text/we7tmpl" />').append(elem.find('tr:first').children());
 		var rowTemplate = we7.browser.ff ? unescape(metaScript.html()) : metaScript.html();
-		rowTemplate = jQuery.trim(rowTemplate.replace('<tbody><tr>', '').replace('</tr></tbody>', ''));
+		rowTemplate = jQuery.trim(rowTemplate.replace(/\<tbody\>\s*\<tr\>/, '').replace(/\<\/tr\>\s*\<\/tbody\>/, ''));
 		if (rowTemplate) {
 			options.rowTemplate = rowTemplate;
 		}

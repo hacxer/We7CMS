@@ -1,19 +1,11 @@
 ﻿using System;
-using System.Collections;
-using System.Configuration;
-using System.Data;
-using System.Web;
-using System.Web.Security;
-using System.Web.UI;
-using System.Web.UI.HtmlControls;
-using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
-using We7.Framework;
-using We7.CMS.Common;
 using System.Collections.Generic;
+using System.Web.UI.WebControls;
 using Thinkment.Data;
-using We7.CMS.WebControls.Core;
+using We7.CMS.Common;
 using We7.CMS.WebControls;
+using We7.CMS.WebControls.Core;
+using We7.Framework;
 
 namespace We7.CMS.Web.Widgets
 {
@@ -110,7 +102,12 @@ namespace We7.CMS.Web.Widgets
                         if (channel.ParentID != We7Helper.EmptyGUID)
                         {
                             listChildren = GetChildren(channel.ParentID);
-                            channel = helper.GetChannel(channel.ParentID, null);
+                            channel = helper.GetChannel(channel.ParentID, new string[]
+                                                                              {
+                                                                                  "ID", "Title", "ChannelFullUrl",
+                                                                                  "Created",
+                                                                                  "SN"
+                                                                              });
                         }
                     }
 

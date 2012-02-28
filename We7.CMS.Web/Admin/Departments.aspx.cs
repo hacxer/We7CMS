@@ -55,7 +55,7 @@ namespace We7.CMS.Web.Admin
                 if (Request["state"] != null)
                 {
                     if (We7Helper.IsNumber(Request["state"].ToString()))
-                        s =(OwnerRank)int.Parse(Request["state"].ToString());
+                        s = (OwnerRank)int.Parse(Request["state"].ToString());
                 }
                 return s;
             }
@@ -75,11 +75,11 @@ namespace We7.CMS.Web.Admin
         /// </summary>
         public int PageNumber
         {
-            get 
+            get
             {
                 if (Request.QueryString[Keys.QRYSTR_PAGEINDEX] != null)
                     _resultsPageNumber = Convert.ToInt32(Request.QueryString[Keys.QRYSTR_PAGEINDEX]);
-                return _resultsPageNumber; 
+                return _resultsPageNumber;
             }
         }
 
@@ -104,7 +104,7 @@ namespace We7.CMS.Web.Admin
                 UPager.UrlFormat = We7Helper.AddParamToUrl(Request.RawUrl, Keys.QRYSTR_PAGEINDEX, "{0}");
                 UPager.PrefixText = "共 " + UPager.MaxPages + "  页 ·   第 " + UPager.PageIndex + "  页 · ";
 
-                if (UPager.ItemCount <=0)
+                if (UPager.ItemCount <= 0)
                 {
                     DepartmentsGridView.DataSource = null;
                     DepartmentsGridView.DataBind();
@@ -118,15 +118,15 @@ namespace We7.CMS.Web.Admin
             }
         }
 
+        public string siteID = SiteConfigs.GetConfig().SiteGroupEnabled ? SiteConfigs.GetConfig().SiteID : string.Empty;
 
-        List<ViewItem> GetItems( )
+        List<ViewItem> GetItems()
         {
             List<ViewItem> items = new List<ViewItem>();
             List<Department> dts = null;
             List<Account> acts = null;
-            string siteID = SiteConfigs.GetConfig().SiteGroupEnabled ? SiteConfigs.GetConfig().SiteID : string.Empty;
-                if (CurrentState == OwnerRank.All)
-                    dts = AccountHelper.GetDepartments(siteID, DepartmentID, Keyword, new string[] { "ID", "Name", "Description", "State" });
+            if (CurrentState == OwnerRank.All)
+                dts = AccountHelper.GetDepartments(siteID, DepartmentID, Keyword, new string[] { "ID", "Name", "Description", "State" });
 
 
             if (dts != null)
@@ -150,7 +150,7 @@ namespace We7.CMS.Web.Admin
 
 
         protected void DeleteDepartmentButton_Click(object sender, EventArgs e)
-        {           
+        {
             try
             {
                 if (DemoSiteMessage) return;//是否是演示站点
@@ -210,7 +210,7 @@ namespace We7.CMS.Web.Admin
             if (CurrentState == OwnerRank.Admin) css1 = "class=\"current\"";
 
             AccountQuery aq = new AccountQuery();
-            aq.UserType =(int)OwnerRank.All;
+            aq.UserType = (int)OwnerRank.All;
             int count = AccountHelper.QueryAccountCountByQuery(aq);
             aq.UserType = (int)OwnerRank.Normal;
             int count0 = AccountHelper.QueryAccountCountByQuery(aq);
@@ -249,7 +249,7 @@ namespace We7.CMS.Web.Admin
             }
         }
     }
-         
+
     #region Inner class
 
     [Serializable]

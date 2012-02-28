@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using We7.CMS.Common;
-using System.Xml;
-using System.IO;
-using We7.Framework.Util;
 using We7.Framework;
 using Thinkment.Data;
 using We7.CMS.WebControls.Core;
@@ -122,7 +118,7 @@ namespace We7.CMS.WebControls
 
             BindAdviceTypeList();
 
-            OnCommandComplete += new We7.Model.Core.ModelEventHandler(AdviceEditorProvider_OnCommandComplete);
+            OnCommandComplete += AdviceEditorProvider_OnCommandComplete;
             if (bttnUpdate != null)
                 bttnUpdate.Click += new EventHandler(bttnUpdate_Click);
 
@@ -182,18 +178,18 @@ namespace We7.CMS.WebControls
                 {
                     AdviceInfo advice = helper.GetAdvice(id);
                     lblPwd.Text = advice.MyQueryPwd;
-                    lblSN.Text = advice.SN.ToString();
+                    lblSN.Text = advice.SN;
                     AdviceID = id;
                 }
             }
             else if (lblSN != null)
             {
-                mvAdvice.ActiveViewIndex = 1;
+                if (mvAdvice != null) mvAdvice.ActiveViewIndex = 1;
                 string id = args.PanelContext.Row["ID"] as string;
                 if (!String.IsNullOrEmpty(id))
                 {
                     AdviceInfo advice = helper.GetAdvice(id);
-                    lblSN.Text = advice.SN.ToString();
+                    lblSN.Text = advice.SN;
                     AdviceID = id;
                 }
             }

@@ -1,19 +1,10 @@
-﻿using System;
-using System.Collections;
-using System.Configuration;
-using System.Data;
-using System.Web;
-using System.Web.Security;
-using System.Web.UI;
-using System.Web.UI.HtmlControls;
+﻿using System.Collections.Generic;
 using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
-using We7.CMS.Common;
-using System.Collections.Generic;
-using We7.Framework;
-using We7.CMS.WebControls;
 using Thinkment.Data;
+using We7.CMS.Common;
+using We7.CMS.WebControls;
 using We7.CMS.WebControls.Core;
+using We7.Framework;
 
 namespace We7.CMS.Web.Widgets
 {
@@ -76,7 +67,7 @@ namespace We7.CMS.Web.Widgets
         /// </summary>
         [Parameter(Title = "日期格式", Type = "String", DefaultValue = "[MM-dd]")]
         public string DateFormat = "[MM-dd]";
- 	/// </summary>
+        /// </summary>
         [Parameter(Title = "自定义边框样式", Type = "ColorSelector", DefaultValue = "")]
         public string BorderColor;
 
@@ -87,7 +78,7 @@ namespace We7.CMS.Web.Widgets
                 return BorderColor;
             }
         }
-	protected string SetBoxBorderColor()
+        protected string SetBoxBorderColor()
         {
             if (!string.IsNullOrEmpty(BoxBorderColor))
             {
@@ -118,7 +109,12 @@ namespace We7.CMS.Web.Widgets
             Criteria c = new Criteria(CriteriaType.Equals, "ChannelFullUrl", ch.FullUrl);
             c.Add(CriteriaType.Equals, "State", 1);
             Order[] os = new Order[] { new Order("Updated", OrderMode.Desc) };
-            List<Article> aList = Assistant.List<Article>(c, os, 0, 1);
+            List<Article> aList = Assistant.List<Article>(c, os, 0, 1, new string[]
+                                                                           {
+                                                                               "ID", "Title", "ChannelFullUrl",
+                                                                               "Created",
+                                                                               "SN"
+                                                                           });
             if (aList != null && aList.Count > 0)
             {
                 return aList[0];
@@ -143,7 +139,13 @@ namespace We7.CMS.Web.Widgets
                         Criteria c = new Criteria(CriteriaType.Equals, "ID", ArticleID);
                         c.Add(CriteriaType.Equals, "State", 1);
                         Order[] os = new Order[] { new Order("Updated", OrderMode.Desc) };
-                        List<Article> aList = Assistant.List<Article>(c, os, 0, 1);
+                        List<Article> aList = Assistant.List<Article>(c, os, 0, 1, new string[]
+                                                                                       {
+                                                                                           "ID", "Title",
+                                                                                           "ChannelFullUrl",
+                                                                                           "Created",
+                                                                                           "SN"
+                                                                                       });
                         if (aList != null && aList.Count > 0)
                         {
                             thisArticle = aList[0];
@@ -171,7 +173,12 @@ namespace We7.CMS.Web.Widgets
                     c.Add(CriteriaType.MoreThan, "Updated", ThisArticle.Updated);
                     c.Add(CriteriaType.Equals, "State", 1);
                     Order[] os = new Order[] { new Order("Updated", OrderMode.Asc) };
-                    List<Article> aList = Assistant.List<Article>(c, os, 0, 1);
+                    List<Article> aList = Assistant.List<Article>(c, os, 0, 1, new string[]
+                                                                                   {
+                                                                                       "ID", "Title", "ChannelFullUrl",
+                                                                                       "Created",
+                                                                                       "SN"
+                                                                                   });
                     if (aList != null && aList.Count > 0)
                     {
                         previousArticle = aList[0];
@@ -194,7 +201,12 @@ namespace We7.CMS.Web.Widgets
                     c.Add(CriteriaType.LessThan, "Updated", ThisArticle.Updated);
                     c.Add(CriteriaType.Equals, "State", 1);
                     Order[] os = new Order[] { new Order("Updated", OrderMode.Desc) };
-                    List<Article> aList = Assistant.List<Article>(c, os, 0, 1);
+                    List<Article> aList = Assistant.List<Article>(c, os, 0, 1, new string[]
+                                                                                   {
+                                                                                       "ID", "Title", "ChannelFullUrl",
+                                                                                       "Created",
+                                                                                       "SN"
+                                                                                   });
                     if (aList != null && aList.Count > 0)
                     {
                         nextArticle = aList[0];
@@ -219,13 +231,19 @@ namespace We7.CMS.Web.Widgets
                         c.Add(CriteriaType.Equals, "OwnerID", ThisArticle.OwnerID);
                         c.Add(CriteriaType.Equals, "State", 1);
                         Order[] os = new Order[] { new Order("Updated", OrderMode.Desc) };
-                        List<Article> aList = Assistant.List<Article>(c, os, 0, PageSize);
+                        List<Article> aList = Assistant.List<Article>(c, os, 0, PageSize, new string[]
+                                                                                              {
+                                                                                                  "ID", "Title",
+                                                                                                  "ChannelFullUrl",
+                                                                                                  "Created",
+                                                                                                  "SN"
+                                                                                              });
                         if (aList != null && aList.Count > 0)
                         {
                             relevantArticles = aList;
                         }
                     }
-                }                
+                }
                 return relevantArticles;
             }
         }

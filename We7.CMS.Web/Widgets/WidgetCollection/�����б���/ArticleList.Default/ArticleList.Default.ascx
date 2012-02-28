@@ -8,8 +8,9 @@
                 <img align="absmiddle" alt="更多" src="<%=ThemePath %>/images/more.gif" /></a></h3>
             </dt>
             <dd> <ul <%=SetBoxBorderColor() %>>
-           <a title="更多" target="_blank" href="<%=Channel.FullUrl %>"><% foreach (Article article in Articles)
-               { %></a>
+           <a title="更多" target="_blank" href="<%=Channel.FullUrl %>"></a>
+           <% foreach (Article article in Articles)
+               { %>
             <li><a target="_self" href="<%=article.Url %>">
                 <%=ToStr(article.Title,TitleLength) %></a><span class="datetime"><%=ToDateStr(article.Updated,DateFormat) %></span></li>
             <%} %>

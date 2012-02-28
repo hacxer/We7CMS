@@ -11,14 +11,10 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>We7.CMS.Web</RootNamespace>
     <AssemblyName>We7.CMS.Web</AssemblyName>
-    <SccProjectName>
-    </SccProjectName>
-    <SccLocalPath>
-    </SccLocalPath>
-    <SccAuxPath>
-    </SccAuxPath>
-    <SccProvider>
-    </SccProvider>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <OldToolsVersion>3.5</OldToolsVersion>
@@ -80,6 +76,7 @@
     <Content Include="App_Data\XML\CD.xml">
       <SubType>Designer</SubType>
     </Content>
+    <None Include="Config\AdviceJoinConfig.config" />
     <Content Include="Errors.aspx" />
     <Content Include="Go\Go.aspx" />
     <Content Include="Global.asax" />
@@ -185,7 +182,11 @@
     <Content Include="Scripts\we7\css\res\blue-loading.gif" />
     <Content Include="Scripts\we7\css\res\error.gif" />
     <Content Include="Scripts\we7\css\res\info.png" />
+    <Content Include="Scripts\we7\css\res\li-last.png" />
+    <Content Include="Scripts\we7\css\res\minus.png" />
+    <Content Include="Scripts\we7\css\res\plus.png" />
     <Content Include="Scripts\we7\css\res\trangles.png" />
+    <Content Include="Scripts\we7\css\res\tree.png" />
     <Content Include="Scripts\we7\css\ui.jqgrid.css" />
     <Content Include="Scripts\we7\css\ui.multiselect.css" />
     <Content Include="Scripts\we7\css\we7.tip.css" />
@@ -199,6 +200,8 @@
     <None Include="Scripts\we7\we7.loader.dev.js" />
     <Content Include="Scripts\we7\we7.loader.js" />
     <None Include="Scripts\we7\we7.tools.js" />
+    <Content Include="Scripts\we7\we7.render.js" />
+    <Content Include="Scripts\we7\we7.tree.js" />
     <Content Include="Scripts\we7\_ResourceSets.js" />
     <None Include="Scripts\we7\_testboard.js" />
     <Content Include="Web.config">
@@ -914,6 +917,7 @@
     <Folder Include="App_Data\DB\" />
     <Folder Include="Models\System\Article\" />
     <Folder Include="Widgets\WidgetCollection\内容模型类\" />
+    <Folder Include="Widgets\WidgetCollection\商城下载类\" />
     <Folder Include="Widgets\WidgetCollection\图文类\FlashShow.Default\Js\" />
     <Folder Include="Widgets\WidgetCollection\文章列表类\ArticleSingle.Default\images\" />
   </ItemGroup>

@@ -42,6 +42,11 @@ namespace We7.CMS.Common
         /// </summary>
         public string Options { get; set; }
 
+		/// <summary>
+		/// 显示路径信息
+		/// </summary>
+		public string FullPath { get; set; }
+
         /// <summary>
         /// 整数的配置信息
         /// </summary>

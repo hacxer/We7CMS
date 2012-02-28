@@ -679,7 +679,81 @@ function vbChannelItem() {
     this.setValue = function (v) {
         _input.value = v;
     }
-}
+      }
+
+      /* ***************************************************
+      * Category Item
+      */
+      function vbCategoryItem() {
+      	this.base = vbBaseItem;
+      	this.base();
+
+      	var me = this;
+      	var _input;
+      	var _href;
+      	var _div;
+      	this.createHtmlObject = function (id) {
+      		_div = document.createElement("DIV");
+      		_br = document.createElement("br");
+      		_input = document.createElement("INPUT");
+      		_input.size = 30;
+      		_input.id = id;
+      		_href = document.createElement("A");
+      		_href.innerHTML = "<img src='/admin/images/icon_column.gif'>选择类别";
+      		_href.href = "javascript:__doSelectCategory('" + me.getUniqueID() + "');";
+
+      		_div.appendChild(_input);
+      		_div.appendChild(_br);
+      		_div.appendChild(_href);
+      		return _div;
+      	}
+
+      	this.getValue = function () {
+      		return _input.value;
+      	}
+
+      	this.setValue = function (v) {
+      		_input.value = v;
+      	}
+      }
+
+      /* ***************************************************
+      * Category Item
+      */
+      function vbDepartmentItem() {
+      	this.base = vbBaseItem;
+      	this.base();
+
+      	var me = this;
+      	var _input;
+      	var _href;
+      	var _div;
+      	this.createHtmlObject = function (id) {
+      		_div = document.createElement("DIV");
+      		_br = document.createElement("br");
+      		_input = document.createElement("INPUT");
+      		_input.size = 30;
+      		_input.id = id;
+      		_href = document.createElement("A");
+      		_href.innerHTML = "<img src='/admin/images/icon_column.gif'>选择部门";
+      		_href.href = "javascript:__doSelectDepartment('" + me.getUniqueID() + "');";
+
+      		_div.appendChild(_input);
+      		_div.appendChild(_br);
+      		_div.appendChild(_href);
+      		return _div;
+      	}
+
+      	this.getValue = function () {
+      		return _input.value;
+      	}
+
+      	this.setValue = function (v) {
+      		_input.value = v;
+      	}
+      }
+
+
 
 /* ***************************************************
 * CustomImage Item
@@ -795,19 +869,27 @@ function vbColorSelectorItem() {
 
 var __CallerID = -1;
 function __doSelectChannels(uid) {
-    __CallerID = uid;
-    //showDialog("ChannelList.aspx", __OnChannelListCallback);
-    weShowModelDialog("/Admin/ChannelList.aspx", __OnChannelListCallback);
+	__CallerID = uid;
+	//showDialog("ChannelList.aspx", __OnChannelListCallback);
+	weShowModelDialog("/Admin/ChannelList.aspx", __OnChannelListCallback);
 }
-
+function __doSelectCategory(uid) {
+	__CallerID = uid;
+	weShowModelDialog("/Admin/CatDepartSelect.aspx", __OnChannelListCallback);
+}
+function __doSelectDepartment(uid) {
+	__CallerID = uid;
+	weShowModelDialog("/Admin/CatDepartSelect.aspx?type=dep", __OnChannelListCallback);
+}
 function __OnChannelListCallback(v, t) {
-    if (v) {
-        var item = $("#" + __CallerID);
-        if (item) {
-            item.val(v);
-        }
-    }
-    __CallerID = -1;
+	if (v) {
+		var item = $("#" + __CallerID);
+		if (item) {
+			item.val(v);
+			item.attr("title", t);
+		}
+	}
+	__CallerID = -1;
 }
 
 /* *******************************************************
@@ -928,6 +1010,8 @@ function InitialBuilder(BUILDER) {
     BUILDER.addCreator("String", "vbTextItem");
     BUILDER.addCreator("Boolean", "vbBooleanItem");
     BUILDER.addCreator("Channel", "vbChannelItem");
+    BUILDER.addCreator("Category", "vbCategoryItem");
+    BUILDER.addCreator("Department", "vbDepartmentItem");
     BUILDER.addCreator("Number", "vbNumberItem");
     BUILDER.addCreator("CssFile", "vbCssFileItem");
     BUILDER.addCreator("StyleSelector", "vbStyleSelectorItem");

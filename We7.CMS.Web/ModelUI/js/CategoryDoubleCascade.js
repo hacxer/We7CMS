@@ -16,7 +16,7 @@ function subcateChange(selectId) {
     var select = document.getElementById(selectId);
     var field2HiddenName = select.id.replace('Field2DropDownList', 'Field2Hidden');
     if (select.selectedIndex > -1) {
-        keyword = select.options[select.selectedIndex].text;
+        keyword = select.options[select.selectedIndex].value;
     }
     $("#" + field2HiddenName).val(keyword);
 }

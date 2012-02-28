@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using We7.CMS.WebControls;
 using System.Data;
 using We7.CMS.WebControls.Core;
@@ -9,9 +8,10 @@ using Thinkment.Data;
 using We7.CMS.Common;
 using System.Web;
 using We7.Model.Core;
-using We7.Framework.Util;
 using System.Collections;
 using System.IO;
+using We7.CMS.Data;
+using We7.Model.Core.UI;
 
 namespace We7.CMS.UI.Widget
 {
@@ -28,6 +28,11 @@ namespace We7.CMS.UI.Widget
         /// 模型名称
         /// </summary>
         public virtual string ModelName { get; set; }
+
+        /// <summary>
+        /// 查询字段
+        /// </summary>
+        public virtual string Fields { get; set; }
 
         [Parameter(Title = "自定义Css类名称", Type = "String", DefaultValue = "article")]
         public virtual string CssClass
@@ -76,8 +81,29 @@ namespace We7.CMS.UI.Widget
         {
             ModelDBHelper helper = ModelDBHelper.Create(ModelName);
             Criteria c = CreateEntryCriteria();
-            DataTable dt = helper.Query(CreateEntryCriteria(), CreateOrders(), 0, 0);
-            Item = dt.Rows.Count > 0 ? dt.Rows[0] : dt.NewRow();
+            DataTable dt = helper.Query(c, CreateOrders(), 0, 0, Fields);
+
+            if (null != dt)
+            {
+                JoinEx joinex = new JoinEx();
+                MoldPanel mp = new MoldPanel();
+                ColumnInfoCollection columns = mp.GetPanelContext(ModelName, "list").Panel.ListInfo.Groups[0].Columns;
+                foreach (ColumnInfo item in columns)
+                {
+                    if (!string.IsNullOrEmpty(item.Params["model"]))
+                    {
+                        joinex.JoinInfo.Add(item.Name, new JoinEx() { MainField = item.Name, PriMaryKeyName = item.Params["valuefield"], ToField = item.Params["textfield"], ToTableName = item.Params["model"] });
+                    }
+                }
+                if (joinex.JoinInfo != null && joinex.JoinInfo.Count > 0)
+                {
+                    DataBaseAssistant db = new DataBaseAssistant();
+                    dt = db.Join(dt, joinex);
+                }
+            }
+
+            /*end*/
+            Item = dt != null && dt.Rows.Count > 0 ? dt.Rows[0] : dt.NewRow();
 
             //更新点击次数
             if (dt.Columns.Contains("Clicks"))
@@ -104,7 +130,7 @@ namespace We7.CMS.UI.Widget
         protected virtual List<Order> CreateOrders()
         {
             List<Order> orders = new List<Order>();
-            orders.Add(new Order("ID", OrderMode.Desc));
+            orders.Add(new Order("Updated", OrderMode.Desc));
             return orders;
         }
 
@@ -162,24 +188,18 @@ namespace We7.CMS.UI.Widget
             get
             {
                 Dictionary<string, string> result = new Dictionary<string, string>();
-                Article a = new Article() { ID = ItemID };
-                string DialogPath = a.AttachmentUrlPath + "/Attachment";
-                ArrayList list = new ArrayList();
+                Article a = new Article { ID = ItemID };
+                string dialogPath = a.AttachmentUrlPath + "/Attachment";
 
-                DirectoryInfo di = new DirectoryInfo(HttpContext.Current.Server.MapPath(DialogPath));
-                try
+                DirectoryInfo di = new DirectoryInfo(HttpContext.Current.Server.MapPath(dialogPath));
+                if (di.Exists)
                 {
                     foreach (FileInfo f in di.GetFiles())
                     {
-                        string pathrelatively = DialogPath + "/" + f.Name;
+                        string pathrelatively = dialogPath + "/" + f.Name;
                         result.Add(pathrelatively, f.Name);
                     }
                 }
-                catch
-                {
-                    //对应目录下没有文件
-                }
-
                 return result;
             }
         }

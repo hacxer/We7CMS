@@ -34,6 +34,9 @@ namespace We7.Model.UI.Controls.system
             Field1DropDownList.Attributes.Add("onchange", "getSubcate(this)");
             Field2DropDownList.Attributes.Add("onchange", "subcateChange('" + Field2DropDownList.ClientID + "')");
 
+            //GTODO:二级联动，验证时是全部必填 还是主项必填？
+            Validator(Field1DropDownList);
+
             //已有内容还原
             if(Value!=null)
             {
@@ -57,6 +60,8 @@ namespace We7.Model.UI.Controls.system
                     Field1DropDownList.SelectedIndex = parentSelectIndex;
                 }
             }
+
+
         }
 
         public override object GetValue()

@@ -5,7 +5,8 @@
     TagPrefix="uc1" %>
 <%@ Register Assembly="System.Web.Extensions" Namespace="System.Web.UI" TagPrefix="asp" %>
 <asp:Content ID="We7Content" ContentPlaceHolderID="MyContentPlaceHolder" runat="server">
-    <asp:ScriptManager ID="ScriptManager" runat="server">
+ 
+     <asp:ScriptManager ID="ScriptManager" runat="server">
     </asp:ScriptManager>
     <link rel="stylesheet" type="text/css" href="../theme/classic/css/article.css" media="screen" />
 

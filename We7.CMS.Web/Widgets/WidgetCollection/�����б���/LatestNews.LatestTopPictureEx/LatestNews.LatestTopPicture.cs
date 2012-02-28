@@ -1,21 +1,13 @@
 ﻿using System;
-using System.Collections;
-using System.Configuration;
-using System.Data;
-using System.Web;
-using System.Web.Security;
-using System.Web.UI;
-using System.Web.UI.HtmlControls;
-using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
-using We7.CMS.Common;
 using System.Collections.Generic;
+using System.Text;
+using System.Web.UI.WebControls;
 using Thinkment.Data;
+using We7.CMS.Common;
+using We7.CMS.WebControls;
+using We7.CMS.WebControls.Core;
 using We7.Framework;
 using We7.Framework.Util;
-using System.Text;
-using We7.CMS.WebControls.Core;
-using We7.CMS.WebControls;
 
 namespace We7.CMS.Web.Widgets
 {
@@ -149,6 +141,12 @@ namespace We7.CMS.Web.Widgets
         public bool IsShow;
 
         /// <summary>
+        /// 
+        /// </summary>
+        [Parameter(Title = "包含子栏目", Type = "Boolean", DefaultValue = "0", Required = true)]
+        public bool HasChildrenChannel;
+
+        /// <summary>
         /// 自定义的css样式
         /// </summary>
         protected virtual string Css
@@ -200,7 +198,10 @@ namespace We7.CMS.Web.Widgets
                         c.Mode = CriteriaMode.And;
                         c.Add(CriteriaType.Equals, "State", 1);
                         c.Add(CriteriaType.Equals, "ID", ListOwnerID[i]);
-                        List<Channel> templist = Assistant.List<Channel>(c, null);
+                        List<Channel> templist = Assistant.List<Channel>(c, null, 0, ListOwnerID.Count, new string[]
+                                                                         {
+                                                                             "ID", "Title", "ChannelFullUrl", "Created", "SN"
+                                                                         });
                         if (templist != null || templist.Count > 0)
                         {
                             channellist.Add(templist[0]);
@@ -208,7 +209,7 @@ namespace We7.CMS.Web.Widgets
                     }
                     for (int i = 0; i < channellist.Count; i++)
                     {
-                        channellist[i].Articles = QueryArticlesByChannel(channellist[i], true, 0, PageSize);
+                        channellist[i].Articles = QueryArticlesByChannel(channellist[i], 0, PageSize);
                     }
                 }
                 return channellist;
@@ -222,11 +223,11 @@ namespace We7.CMS.Web.Widgets
         /// <param name="includechildren">包含子栏目</param>
         /// <param name="from"></param>
         /// <param name="PageSize">页大小</param>
-        List<Article> QueryArticlesByChannel(Channel ch, bool includechildren, int from, int PageSize)
+        List<Article> QueryArticlesByChannel(Channel ch, int from, int PageSize)
         {
             Criteria c = new Criteria(CriteriaType.None);
-            if (includechildren)
-            {                
+            if (HasChildrenChannel)
+            {
                 c.Add(CriteriaType.Like, "ChannelFullUrl", ch.FullUrl + "%");
                 c.Add(CriteriaType.Equals, "State", 1);
             }
@@ -239,8 +240,11 @@ namespace We7.CMS.Web.Widgets
             {
                 c.Add(CriteriaType.Like, "Tags", "%'" + Tags + "'%");
             }
-            Order[] os = IsShow ? new Order[] { new Order("IsShow", OrderMode.Desc), new Order("Updated", OrderMode.Desc) } : new Order[] { new Order("Updated", OrderMode.Desc) };
-            return Assistant.List<Article>(c, os, from, PageSize);
+            Order[] os = IsShow
+                             ? new Order[] { new Order("IsShow", OrderMode.Desc), new Order("Updated", OrderMode.Desc) }
+                             : new Order[] { new Order("Updated", OrderMode.Desc) };
+            return Assistant.List<Article>(c, os, from, PageSize,
+                                           new string[] { "ID", "Title", "Updated", "ChannelFullUrl", "Created", "SN" });
         }
 
         /// <summary>
@@ -273,9 +277,16 @@ namespace We7.CMS.Web.Widgets
                     Criteria c = new Criteria(CriteriaType.Equals, "ModelName", "System.Article");
                     c.Add(CriteriaType.Equals, "IsImage", 1);
                     c.Add(CriteriaType.Equals, "State", 1);
-                    Order[] os = new Order[] { new Order("Updated", OrderMode.Desc), new Order("Title") };
+                    Order[] os = new Order[] { new Order("Updated", OrderMode.Desc) };
                     int count = HelperFactory.Instance.Assistant.Count<Article>(c);
-                    pictureNews = HelperFactory.Instance.Assistant.List<Article>(c, os, 0, SliderSize) ?? new List<Article>();
+                    pictureNews =
+                        HelperFactory.Instance.Assistant.List<Article>(c, os, 0, SliderSize,
+                                                                       new string[]
+                                                                           {
+                                                                               "ID", "Title", "ChannelFullUrl",
+                                                                               "Created",
+                                                                               "SN", "Thumbnail"
+                                                                           }) ?? new List<Article>();
                 }
                 return pictureNews;
             }

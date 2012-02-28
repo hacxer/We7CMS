@@ -66,6 +66,8 @@ We7.Controls.DropdownList = We7.extend(We7.Controls.Field, {
             });
 
         }
+
+
         //append it to the warp
 
         $(this.warpEl).append(this.el);
@@ -95,4 +97,6 @@ We7.Controls.DropdownList = We7.extend(We7.Controls.Field, {
 
     }
 });
-We7.Control.registerType("Select", We7.Controls.DropdownList, [{ Type: "TextBox", Label: "数据项", Name: "Params.data", value: '选项1|选项2|选项3'}]);
+We7.Control.registerType("Select", We7.Controls.DropdownList, [
+{ Type: "TextBox", Label: "数据项", Name: "Params.data", value: '选项1|选项2|选项3' }
+]);

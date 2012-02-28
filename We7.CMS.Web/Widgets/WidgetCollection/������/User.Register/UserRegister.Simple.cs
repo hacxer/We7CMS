@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Web;
-using We7.CMS.WebControls.Core;
-using We7.CMS.WebControls;
 using System.IO;
 using System.Text;
+using We7.CMS.WebControls;
+using We7.CMS.WebControls.Core;
 
 namespace We7.CMS.Web.Widgets
 {

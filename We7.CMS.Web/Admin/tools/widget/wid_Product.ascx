@@ -57,7 +57,7 @@
 
         $("#insideProduct").html("<img src='/scripts/we7/css/res/blue-loading.gif' /> 连接商城中...");
 
-        $.getJSON("/admin/theme/classic/main.aspx?action=product",
+        $.getJSON("/admin/theme/classic/shopdata.aspx?action=product",
              function (json) {
                  var html = '<div class="wrap_div">';
                  for (var i = 0; i < json.length; i++) {

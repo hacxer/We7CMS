@@ -4,6 +4,7 @@ using System.Text;
 using System.Web.UI.WebControls;
 using System.Collections;
 using System.Xml.Serialization;
+using Thinkment.Data;
 
 namespace We7.Model.Core
 {
@@ -217,5 +218,10 @@ namespace We7.Model.Core
         /// </summary>
         [XmlIgnore]
         public CtrVersion CtrVersion { get; set; }
+
+        /// <summary>
+        /// 条件
+        /// </summary>
+        public Criteria c { get; set; }
     }
 }

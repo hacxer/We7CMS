@@ -1,18 +1,14 @@
 ﻿using System;
-using System.Collections;
-using System.Configuration;
-using System.Data;
-using System.Web;
-using System.Web.Security;
-using System.Web.UI;
-using System.Web.UI.HtmlControls;
-using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
 using We7.Model.Core.UI;
+using System.Data;
 using We7.Framework.Util;
-using We7;
+using System.Web.UI.WebControls;
+using System.Web;
 using We7.Framework;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using We7;
+
 
 namespace CModel.Controls.system
 {
@@ -29,11 +25,6 @@ namespace CModel.Controls.system
             {
                 txtInput.Height = Unit.Parse(Control.Height);
             }
-            txtInput.CssClass = Control.CssClass;
-            if (Control.Required && !txtInput.CssClass.Contains("required"))
-            {
-                txtInput.CssClass += " required";
-            }
 
             if (Column.DataType == TypeCode.String
                 || Column.DataType == TypeCode.Char)
@@ -45,6 +36,9 @@ namespace CModel.Controls.system
             {
                 txtInput.Text = Value == null ? Control.DefaultValue : Value.ToString();
             }
+
+            Validator(txtInput);
+
         }
 
         public override object GetValue()

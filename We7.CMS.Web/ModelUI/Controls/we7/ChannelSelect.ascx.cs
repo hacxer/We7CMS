@@ -39,11 +39,7 @@ namespace CModel.Controls.we7
                 ddlChannel.SelectedValue = Request["oid"];
             }
 
-            ddlChannel.CssClass = Control.CssClass;
-            if (Control.Required && !ddlChannel.CssClass.Contains("required"))
-            {
-                ddlChannel.CssClass += " required";
-            }
+            Validator(ddlChannel);
         }
 
         public override object GetValue()

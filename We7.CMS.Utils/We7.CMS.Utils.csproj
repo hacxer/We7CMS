@@ -10,14 +10,10 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>We7.CMS</RootNamespace>
     <AssemblyName>We7.CMS.Utils</AssemblyName>
-    <SccProjectName>
-    </SccProjectName>
-    <SccLocalPath>
-    </SccLocalPath>
-    <SccAuxPath>
-    </SccAuxPath>
-    <SccProvider>
-    </SccProvider>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <OldToolsVersion>3.5</OldToolsVersion>
@@ -78,6 +74,19 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Constants.cs" />
+    <Compile Include="Data\DataBaseAssiant.Remote.cs" />
+    <Compile Include="Data\DataBaseAssistant.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Data\DataBaseForThinkment.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Data\IDataBaseAssiant.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Data\IJoin.cs" />
+    <Compile Include="Data\ITree.cs" />
+    <Compile Include="Data\JoinEx.cs" />
     <Compile Include="Encoding\EncodingInfo.cs" />
     <Compile Include="Encoding\IdentifyEncoding.cs" />
     <Compile Include="Event\ShareEvent.cs" />

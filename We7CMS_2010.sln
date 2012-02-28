@@ -62,7 +62,71 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "We7.Framework", "We7.Framew
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "We7.Model.Core", "We7.Model.Core\We7.Model.Core.csproj", "{1EC274E4-3A87-4065-A5B3-3275221FB187}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UnitTest", "UnitTest", "{2961AF46-4370-445A-BAF5-EB15B3D4CB0D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "We7.CMS.UnitTest", "We7.CMS.UnitTest\We7.CMS.UnitTest.csproj", "{1ECD7502-2758-4740-B0B1-4616D908A101}"
+EndProject
 Global
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 18
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = http://192.168.2.168:8080/tfs/defaultcollection
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = We7.CMS.Accounts\\We7.CMS.Accounts.csproj
+		SccProjectName1 = We7.CMS.Accounts
+		SccLocalPath1 = We7.CMS.Accounts
+		SccProjectUniqueName2 = We7.CMS.Common\\We7.CMS.Common.csproj
+		SccProjectName2 = We7.CMS.Common
+		SccLocalPath2 = We7.CMS.Common
+		SccProjectUniqueName3 = We7.CMS.Config\\We7.CMS.Config.csproj
+		SccProjectName3 = We7.CMS.Config
+		SccLocalPath3 = We7.CMS.Config
+		SccProjectUniqueName4 = We7.CMS.Install\\We7.CMS.Install.csproj
+		SccProjectName4 = We7.CMS.Install
+		SccLocalPath4 = We7.CMS.Install
+		SccProjectUniqueName5 = We7.CMS.Report\\We7.CMS.Report.csproj
+		SccProjectName5 = We7.CMS.Report
+		SccLocalPath5 = We7.CMS.Report
+		SccProjectUniqueName6 = We7.CMS.UI\\We7.CMS.UI.csproj
+		SccProjectName6 = We7.CMS.UI
+		SccLocalPath6 = We7.CMS.UI
+		SccProjectUniqueName7 = We7.CMS.Utils\\We7.CMS.Utils.csproj
+		SccProjectName7 = We7.CMS.Utils
+		SccLocalPath7 = We7.CMS.Utils
+		SccProjectUniqueName8 = We7.CMS.Web\\Admin\\We7.CMS.Web.Admin.csproj
+		SccProjectName8 = We7.CMS.Web/Admin
+		SccLocalPath8 = We7.CMS.Web\\Admin
+		SccProjectUniqueName9 = We7.CMS.Web\\ModelUI\\We7.Model.UI.csproj
+		SccProjectName9 = We7.CMS.Web/ModelUI
+		SccLocalPath9 = We7.CMS.Web\\ModelUI
+		SccProjectUniqueName10 = We7.CMS.Web\\User\\We7.CMS.Web.User.csproj
+		SccProjectName10 = We7.CMS.Web/User
+		SccLocalPath10 = We7.CMS.Web\\User
+		SccProjectUniqueName11 = We7.CMS.Web\\We7.CMS.Web.csproj
+		SccProjectName11 = We7.CMS.Web
+		SccLocalPath11 = We7.CMS.Web
+		SccProjectUniqueName12 = We7.CMS.WebControls\\We7.CMS.WebControls.csproj
+		SccProjectName12 = We7.CMS.WebControls
+		SccLocalPath12 = We7.CMS.WebControls
+		SccProjectUniqueName13 = We7.Share\\Thinkment.Data\\Thinkment.Data.csproj
+		SccProjectTopLevelParentUniqueName13 = We7CMS_2010.sln
+		SccProjectName13 = We7.Share/Thinkment.Data
+		SccLocalPath13 = We7.Share\\Thinkment.Data
+		SccProjectUniqueName14 = We7.Share\\We7.UrlRewriter\\We7.UrlRewriter.csproj
+		SccProjectTopLevelParentUniqueName14 = We7CMS_2010.sln
+		SccProjectName14 = We7.Share/We7.UrlRewriter
+		SccLocalPath14 = We7.Share\\We7.UrlRewriter
+		SccProjectUniqueName15 = We7.Framework\\We7.Framework.csproj
+		SccProjectName15 = We7.Framework
+		SccLocalPath15 = We7.Framework
+		SccProjectUniqueName16 = We7.Model.Core\\We7.Model.Core.csproj
+		SccProjectName16 = We7.Model.Core
+		SccLocalPath16 = We7.Model.Core
+		SccProjectUniqueName17 = We7.CMS.UnitTest\\We7.CMS.UnitTest.csproj
+		SccProjectTopLevelParentUniqueName17 = We7CMS_2010.sln
+		SccProjectName17 = We7.CMS.UnitTest
+		SccLocalPath17 = We7.CMS.UnitTest
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
@@ -132,6 +196,10 @@ Global
 		{1EC274E4-3A87-4065-A5B3-3275221FB187}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1EC274E4-3A87-4065-A5B3-3275221FB187}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1EC274E4-3A87-4065-A5B3-3275221FB187}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1ECD7502-2758-4740-B0B1-4616D908A101}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1ECD7502-2758-4740-B0B1-4616D908A101}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1ECD7502-2758-4740-B0B1-4616D908A101}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1ECD7502-2758-4740-B0B1-4616D908A101}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -142,5 +210,6 @@ Global
 		{4BD0FFFA-0F75-40BA-8228-6C3E580AA340} = {302C85D7-C2B2-46E5-B61B-26BD87586610}
 		{2E72266B-AF13-46E4-917E-5915B76C6BA8} = {302C85D7-C2B2-46E5-B61B-26BD87586610}
 		{8DD30053-ED99-4940-88A9-0408AE2780A2} = {2E72266B-AF13-46E4-917E-5915B76C6BA8}
+		{1ECD7502-2758-4740-B0B1-4616D908A101} = {2961AF46-4370-445A-BAF5-EB15B3D4CB0D}
 	EndGlobalSection
 EndGlobal

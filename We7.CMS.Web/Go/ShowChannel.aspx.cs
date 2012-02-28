@@ -130,6 +130,7 @@ namespace We7.CMS.Web
             }
             else
                 Server.Transfer(TemplateGuideUrl, true);
+
         }
 
         protected void Page_Load(object sender, EventArgs e)

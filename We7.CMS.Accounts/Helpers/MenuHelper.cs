@@ -1309,6 +1309,7 @@ namespace We7.CMS.Accounts
 		public string CreateSubMenu(string nameText, string title, string url, int index, string parentID, string id, string entityID)
 		{
 			Context.Application.Remove("$Menu_AllMenuData");
+			Context.Session.Remove("ALLSHOWMEMUITEM");
 			MenuItem menuItem = new MenuItem();
 			menuItem.Href = url; ;
 			menuItem.Index = index;
@@ -1355,6 +1356,7 @@ namespace We7.CMS.Accounts
 		public string CreateSubMenu_User(string nameText, string title, string url, int index, string parentID, string id, string entityID, int menuType, string referenceID)
 		{
 			Context.Application.Remove("$Menu_AllMenuData");
+			Context.Session.Remove("ALLUSERMEMUITEMS");
 			MenuItem menuItem = new MenuItem();
 			menuItem.Href = url; ;
 			menuItem.Index = index;

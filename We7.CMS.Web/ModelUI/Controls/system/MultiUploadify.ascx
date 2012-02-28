@@ -21,6 +21,8 @@
 			'onComplete': function (event, response, status, d) {
 				var $photo = $("#example .photo:eq(0)").clone();
 				$photo.find(".thumb img:eq(0)").attr("src", d.substring(0, d.lastIndexOf('.')) + '_thumb' + d.substring(d.lastIndexOf('.'), d.length));
+				if ("<%=col1Name %>" == "") $photo.find(".editform tr:eq(0)").hide();
+				if ("<%=col2Name %>" == "") $photo.find(".editform tr:eq(1)").hide();
 				$("#multiEdit").append($photo);
 			},
 			'onAllComplete': function () { $('#actionCacel').hide(); setTimeout(function () { $("#multiEdit").show(); }, 500); GetValues(); },
@@ -35,8 +37,19 @@
 					alert('error ' + d.type + ": " + d.info);
 			}
 		});
-	});  
-
+	});
+	var flag_upload = 0;
+	$("input[value='保存']").live("click", function () {
+		if (flag_upload == 0) {
+			if ($("#fileQueue div").length <= 0) return false;
+			else {
+				$('#uploadify').uploadifyUpload();
+				$('#actionOK').hide();
+				flag_upload = 1;
+				return false;
+			}
+		}
+	});
 </script>
 <input type="file" name="uploadify" id="uploadify" /><div style="float: right; width: 100px;
 	margin-right: 20px; direction: rtl;">
@@ -54,18 +67,18 @@
 			<table>
 				<tr>
 					<td>
-						<%=PanelContext.DataSet.Tables[0].Columns[ Control.Params["col1"]].Label %>
+						<%=col1Name%>
 					</td>
 					<td>
-						<input onblur="GetValues();" maxlength="<%=PanelContext.DataSet.Tables[0].Columns[ Control.Params["col1"]].MaxLength %>" />
+						<input onblur="GetValues();" maxlength="<%=col1Len %>" />
 					</td>
 				</tr>
 				<tr>
 					<td>
-						<%=PanelContext.DataSet.Tables[0].Columns[ Control.Params["col2"]].Label %>
+						<%=col2Name%>
 					</td>
 					<td>
-						<input onblur="GetValues();" maxlength="<%=PanelContext.DataSet.Tables[0].Columns[ Control.Params["col2"]].MaxLength %>" />
+						<input onblur="GetValues();" maxlength="<%=col2Len %>" />
 					</td>
 				</tr>
 			</table>
@@ -76,6 +89,7 @@
 	<input id="pageValues" class="pageValues" type="hidden" runat="server" />
 </div>
 <script type="text/javascript">
+
 	function GetValues() {
 		var list = '';
 		$.each($("#multiEdit .photo"), function (i) {

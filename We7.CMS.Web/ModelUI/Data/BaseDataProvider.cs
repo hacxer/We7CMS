@@ -212,6 +212,10 @@ namespace We7.Model.UI.Data
 
         protected Criteria CreateCriteria(PanelContext data)
         {
+            if (null!=data.c) //新添条件可以从外边传递
+            {
+                return data.c;
+            }
             Criteria c = new Criteria(CriteriaType.None);
             c.Add(CriteriaType.Equals, "ModelName", data.Model.ModelName);
 

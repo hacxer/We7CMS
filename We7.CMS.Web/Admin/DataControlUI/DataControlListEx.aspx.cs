@@ -181,7 +181,7 @@ namespace We7.CMS.Web.Admin.DataControlUI
             DataControlInfo info = o as DataControlInfo;
             if (info != null)
             {
-                sb.Append("部件：<br/>");
+                sb.Append(info.Group+"：<br/>");
                 string pattern = @"【<a href='javascript:onSelectThis(""{0}"");'>{1}</a>】<br/>";
                 if (info.Group == "系统部件")
                 {

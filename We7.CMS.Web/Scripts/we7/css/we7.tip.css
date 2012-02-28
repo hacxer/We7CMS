@@ -17,6 +17,21 @@ TODO：组件 z-index 标准化
 	border-radius:4px;
 	display:none;
 }
+
+.tooltip-status-RightBottom
+{
+	background-color:#eee;
+	border:1px solid #cc9;
+	padding:3px 5px ;
+	position:fixed;
+	_position:absolute;		/* Fixed Hack For IE6，此案例中无需其他效果，不需脚本辅助 fixed */
+	bottom:10px;
+	right:20px;
+	z-index:500;
+	box-shadow:2px 2px 5px #666;
+	border-radius:4px;
+	display:none;
+}
 .tooltip-status p[rel="tipcontent"]
 {
 	font-size:12px;
@@ -160,3 +175,43 @@ input:invalid{border:interal}
 		z-index:10;		
 }
 
+
+.we7tree ul,.we7tree li
+{
+    list-style: none outside none;
+    margin: 0;
+    padding: 0;
+}
+.we7tree .parentNode{}           /* 有子节点的树节点（节点） */
+.we7tree .singleNode{}          /* 无子节点的树节点（节点） */
+.we7tree .ajaxNode{}            /* ajax 提示“请稍后”节点（节点） */
+.we7tree .nodeContent{}        /* 节点的内容（节点内容，可作单个树节点图标用） */
+.we7tree .subTree{margin-left:18px;}				 /* 节树（整个子树 UL） */
+.we7tree .hitarea{width:18px;height:15px;display:inline-block;}
+.we7tree .parentNode>.hitarea{cursor: pointer;}
+.we7tree .nodeContent:hover{background-color:#d0d0d0;color:#000;}
+.we7tree .expandable>.nodeContent{background-image:url("res/li-last.png");background-position: -1px -15px;background-repeat:no-repeat;padding-left:18px;}
+.we7tree .collapsible>.nodeContent{background-image:url("res/li-last.png");background-position: -1px -32px;background-repeat:no-repeat;padding-left:18px;}
+ .we7tree .expandable>.hitarea{background-image:url("res/tree.png");background-position: -2px -17px;background-repeat: no-repeat;} 
+.we7tree .collapsible>.hitarea{background-image:url("res/tree.png");background-position: -20px -17px;background-repeat: no-repeat; }
+.we7tree .subTree .expandable>.hitarea{background-position:-3px 0;}
+.we7tree .subTree .collapsible>.hitarea{background-position:-21px 0;}
+
+.we7tree .subTree  .singleNode>.hitarea{background-image:url("res/tree.png");background-position: 1px -55px;background-repeat: no-repeat;}
+.we7tree .subTree li[tree]{background-image:url("res/tree.png");background-position: -39px 0;background-repeat: repeat-y;}
+.we7tree .subTree>li.lastChildNode{background-image:url("res/li-last.png");background-position: -6px 2px;background-repeat:no-repeat;}
+.we7tree .subTree>li.lastNestedNode,.we7tree .subTree>li.lastChildNode>.hitarea{background-image:none;}
+
+
+.we7tree .ajaxNode>.hitarea{background-image:url("res/ajax-loading.gif");background-repeat:no-repeat;}
+.we7tree .currentNode{background-color: #3e4145;color:#fffef9;}
+
+
+.contextmenu{position:absolute;background-color: #d0d0d0;color:#000038;box-shadow:1px 1px 2px #828282;border-radius: 2px;margin:0;padding:0;}
+.menuitem{width:80px;height:20px;margin:5px;padding-left:12px;max-width:220px;line-height:150%;cursor: pointer;}
+.menuitem:hover{background-color:#464646;color:White}
+
+/* .we7tree .expandable>.hitarea{background-image:url("res/plus.png");background-position: 1px 3px;background-repeat: no-repeat;} 
+.we7tree .expandable>.hitarea:hover{background-position: 1px -12px;}
+.we7tree .collapsible>.hitarea{background-image:url("res/minus.png");background-position: 1px 3px;background-repeat: no-repeat; }
+.we7tree .collapsible>.hitarea:hover{background-position: 1px -12px;} */

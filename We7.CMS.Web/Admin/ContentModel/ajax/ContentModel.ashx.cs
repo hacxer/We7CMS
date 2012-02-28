@@ -57,8 +57,60 @@ namespace We7.CMS.Web.Admin.ContentModel.ajax
             {
                 case "DeleteModel": result = DeleteModel();
                     break;
+                case "CheckModelName":                     
+                    string groupname = We7Request.GetQueryString("group").Trim();
+                    string file = We7Request.GetQueryString("file").Trim();
+                    string modelname = We7Request.GetQueryString("model").Trim();
+                    bool isEdit = Convert.ToBoolean( We7Request.GetQueryString("isedit"));
+                    result = CheckModelName(isEdit, groupname, file, modelname);
+                    break;
             }
             context.Response.Write(result);
+        }
+
+        /// <summary>
+        /// 检查模型
+        /// </summary>
+        /// <param name="groupname">模板组</param>
+        /// <param name="file">配置文件名</param>
+        /// <param name="modelname">模板名称</param>
+        /// <returns></returns>
+        public string CheckModelName(bool isEdit, string groupname,string file ,string modelname)
+        {
+            string result = "";
+
+            ContentModelCollection cmc = ModelHelper.GetAllContentModel();
+            foreach (We7.Model.Core.ContentModel cm in cmc)
+            {
+                if (!isEdit)
+                {
+                    if (String.Compare(cm.Name, String.Format("{0}.{1}", groupname, file), true) == 0)
+                    {
+                        result = "当前模型配置文件名已存在，请改更配置文件名称";
+                        return result;
+                    }
+
+                    if (String.Compare(cm.Label, modelname, true) == 0)
+                    {
+                        result = "当前模型名称已存在,请更改模型名称";
+                        return result;
+                    }
+                }
+                else
+                {
+                    string defaultModelName = RequestHelper.Get<string>("modelname");
+                    ModelInfo modelInfo = ModelHelper.GetModelInfoByName(defaultModelName);
+
+                    if (String.Compare(cm.Label, modelname , true) == 0 &&
+                        String.Compare(cm.Label, modelInfo.Label, true) != 0)
+                    {
+                        result = "当前模型名称已存在,请更改模型名称";
+                        return result;
+                    }
+                }
+            }
+
+            return result;
         }
 
         /// <summary>
@@ -90,7 +142,7 @@ namespace We7.CMS.Web.Admin.ContentModel.ajax
                 {
                     success = false;
                     msg = "当前模型尚有绑定的反馈类型，请先解除绑定再进行删除！";
-                    return "{\"success\":\"" + success.ToString().ToLower() + "\",\"msg\":\"" + msg + "\"}";
+                    return "{\"success\":" + success.ToString().ToLower() + ",\"msg\":\"" + msg + "\"}";
                 }
             }
             //布局控件
@@ -182,7 +234,7 @@ namespace We7.CMS.Web.Admin.ContentModel.ajax
 
             //删除XML节点及文件
             success = !ModelHelper.DeleteContentModel(modelName, ref msg) ? false : success;
-            string strResult = "{\"success\":\"" + success.ToString().ToLower() + "\",\"msg\":\"" +Utils.JsonCharFilter(msg) + "\"}";
+            string strResult = "{\"success\":" + success.ToString().ToLower() + ",\"msg\":\"" +Utils.JsonCharFilter(msg) + "\"}";
             //return JavaScriptConvert.SerializeObject(strResult).Replace("null", "\"\""); ;
             return strResult;
         }

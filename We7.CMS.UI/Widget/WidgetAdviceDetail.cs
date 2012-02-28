@@ -14,14 +14,9 @@ namespace We7.CMS.UI.Widget
 
         public List<AdviceReplyInfo> Replies
         {
-            get
-            {
-                if (replies == null)
-                {
-                    replies = AdviceFactory.Create().QueryReplies(GetAdviceID());
-                    if (replies == null) replies = new List<AdviceReplyInfo>();
-                }
-                return replies;
+            get {
+                return replies ??
+                       (replies = AdviceFactory.Create().QueryReplies(GetAdviceID()) ?? new List<AdviceReplyInfo>());
             }
         }
 

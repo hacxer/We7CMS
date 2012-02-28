@@ -179,7 +179,7 @@ namespace We7.CMS.Web.Widgets
                 return string.Format("style=\"background:url({0}) no-repeat;\"", CustomIcon);
             }
             return string.Empty;
-        }       
+        }
 
         protected virtual string BoxBorderColor
         {
@@ -249,7 +249,10 @@ namespace We7.CMS.Web.Widgets
                         c.Mode = CriteriaMode.And;
                         c.Add(CriteriaType.Equals, "State", 1);
                         c.Add(CriteriaType.Equals, "ID", ListOwnerID[i]);
-                        List<Channel> templist = Assistant.List<Channel>(c, null);
+                        List<Channel> templist = Assistant.List<Channel>(c, null, 0, 1, new string[]
+                                                                         {
+                                                                             "ID", "Title", "ChannelFullUrl", "Created", "SN"
+                                                                         });
                         if (templist != null || templist.Count > 0)
                         {
                             channellist.Add(templist[0]);
@@ -289,7 +292,8 @@ namespace We7.CMS.Web.Widgets
                 c.Add(CriteriaType.Like, "Tags", "%'" + Tags + "'%");
             }
             Order[] os = IsShow ? new Order[] { new Order("IsShow", OrderMode.Desc), new Order("Updated", OrderMode.Desc) } : new Order[] { new Order("Updated", OrderMode.Desc) };
-            return Assistant.List<Article>(c, os, from, PageSize);
+            return Assistant.List<Article>(c, os, from, PageSize,
+                                           new string[] {"ID", "Title", "ChannelFullUrl", "Created", "SN"});
         }
         #endregion
     }

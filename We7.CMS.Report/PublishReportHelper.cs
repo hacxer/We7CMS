@@ -85,7 +85,7 @@ namespace We7.CMS
            GROUP BY [AccountID]  ORDER BY COUNT([ID])  DESC";
                     if (keyValue == "all")
                     {
-                        strWhere = " WHERE [AccountID] <> '' or [AccountID] is not null";
+                        strWhere = " WHERE ([AccountID] <> '' or [AccountID] is not null)";
 
                     }
                     else
@@ -98,7 +98,7 @@ namespace We7.CMS
               @"SELECT DISTINCT [AccountID], COUNT([ID]) AS [pubcount], SUM([Clicks]) AS [clickcount]
            FROM [Article]  {0}  
            GROUP BY [AccountID]  ORDER BY COUNT([ID])  DESC";
-                    strWhere = " WHERE [AccountID] <> '' or [AccountID] is not null";
+                    strWhere = " WHERE ([AccountID] <> '' or [AccountID] is not null)";
                     break;
 
                 case "Channel":
@@ -108,7 +108,7 @@ namespace We7.CMS
                         GROUP BY  [ChannelFullUrl] ORDER BY COUNT(*) DESC";
                     if (keyValue == "{00000000-0000-0000-0000-000000000000}")
                     {
-                        strWhere = " WHERE [OwnerID] <> '' or [OwnerID] is not null";
+                        strWhere = " WHERE ([OwnerID] <> '' or [OwnerID] is not null)";
 
                     }
                     else

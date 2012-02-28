@@ -13,6 +13,7 @@ using System.IO;
 using We7.CMS.Common;
 using We7.CMS.Config;
 using We7.Framework.Config;
+using System.Text.RegularExpressions;
 
 namespace We7.CMS.Web.Admin
 {
@@ -33,6 +34,18 @@ namespace We7.CMS.Web.Admin
         {
             get { return ViewState["$VS_SKIN_DATA"] as SkinInfo; }
             set { ViewState["$VS_SKIN_DATA"] = value; }
+        }
+
+        /// <summary>
+        /// ²úÆ·°æ±¾ºÅ
+        /// </summary>
+        public string productVersion
+        {
+            get
+            {
+                string fullVersion =  GeneralConfigs.GetConfig().ProductVersion;
+                return Regex.Replace(fullVersion, @"\.\d+\.\d+\s+[\u4e00-\u9fa5]+", "");
+            }
         }
 
         protected void Page_Load(object sender, EventArgs e)
@@ -103,7 +116,7 @@ namespace We7.CMS.Web.Admin
             }
             Data.Name = NameTextBox.Text;
             Data.Description = DescriptionTextBox.Text;
-            Data.Ver = GeneralConfigs.GetConfig().ProductVersion;
+            Data.Ver = productVersion;
 
             string folderName = NameTextBox.Text.ToLower().Trim();
             string fileName = "";

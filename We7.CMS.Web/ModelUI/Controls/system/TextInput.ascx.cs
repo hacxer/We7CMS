@@ -5,6 +5,8 @@ using We7.Framework.Util;
 using System.Web.UI.WebControls;
 using System.Web;
 using We7.Framework;
+using System.Collections.Generic;
+
 
 namespace We7.CMS.UI.Controls
 {
@@ -23,11 +25,7 @@ namespace We7.CMS.UI.Controls
             {
                 txtInput.Height = Unit.Parse(Control.Height);
             }
-            txtInput.CssClass = Control.CssClass;
-            if (Control.Required && !txtInput.CssClass.Contains("required"))
-            {
-                txtInput.CssClass += " required";
-            }
+            Validator(txtInput);
         }
 
         public override object GetValue()

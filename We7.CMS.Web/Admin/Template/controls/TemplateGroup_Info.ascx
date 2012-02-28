@@ -2,21 +2,32 @@
     Inherits="We7.CMS.Web.Admin.TemplateGroup_Info" %>
 <%@ Register Assembly="We7.CMS.UI" Namespace="We7.CMS.Controls"
     TagPrefix="WEC" %>
-    
+    <script type="text/javascript" src="/scripts/we7/we7.loader.js">
+        $(document).ready(function () {
+            we7("#form-region").attachValidator({
+                inputEvent: 'blur',
+                errorInputEvent:null
+		    });
+        });
+    </script>
     <script type="text/javascript">
         function SaveButtonClick() {
-            document.getElementById("<%=SaveButton.ClientID %>").click();
+            var submitBtn = document.getElementById("<%=SaveButton.ClientID %>");
+            var div = $("#form-region");
+            var enable = we7(div).validate();
+            if (enable) {
+                submitBtn.click();
+            }
         }
 
         function Register() {
             parent.UxEvents.reload = 1;
         }
     </script>
-    
 <div>
     <WEC:MessagePanel ID="Messages" runat="server">
     </WEC:MessagePanel>
-    <table>
+    <table id="form-region">
         <tr>
             <th style="width: 20%">
                 项目
@@ -30,16 +41,8 @@
                 名称：
             </td>
             <td style="width: 443px">
-                <asp:TextBox ID="NameTextBox" runat="server" Text="" Columns="50" MaxLength="64" CssClass="required"></asp:TextBox>
-                <asp:RequiredFieldValidator ID="NameRequiredFieldValidator" runat="server" ControlToValidate="NameTextBox"
-                    ErrorMessage="必须指定名称．" ValidationGroup="Detail" Display="Dynamic"></asp:RequiredFieldValidator>
-                <asp:RegularExpressionValidator ID="NameRegularExpressionValidator" runat="server"
-                    Display="Dynamic" ErrorMessage="RegularExpressionValidator" ValidationExpression="^[a-zA-Z0-9_-\u4e00-\u9fa5]+$"
-                    ControlToValidate="NameTextBox" ValidationGroup="Detail">输入的名称非法</asp:RegularExpressionValidator><br />
-                &nbsp;<asp:Image ID="TNameImage" runat="server" ImageUrl="~/admin/Images/icon_warning.gif"
-                    Visible="false" />
-                <asp:Label ID="TNameLabel" runat="server" Text="" Style="position: relative" Width="162px"
-                    Visible="False" ForeColor="Red"></asp:Label>
+                <asp:TextBox ID="NameTextBox" runat="server" Text="" Columns="50" MaxLength="64" CssClass="required"
+                     required="required" pattern="[a-zA-Z0-9_]+" errmsg="模型配置文件名称，请使用英文字母数字和下划线" />
             </td>
         </tr>
         <tr>
@@ -85,7 +88,7 @@
                     版本号：
                 </td>
                 <td style="width: 443px">
-                    V2.7
+                    <%= productVersion %>
                 </td>
             </tr>
             <tr>

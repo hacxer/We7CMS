@@ -412,8 +412,8 @@
 
 #adminmenu li.we7-has-current-submenu a.we7-has-current-submenu, #adminmenu .menu-top li.current
 {
-    /*background: #6d6d6d url(../images/menu-bits.gif) top left repeat-x; border-color: #6d6d6d;*/
-    color: #fff;
+    /*background: #6d6d6d url(../images/menu-bits.gif) top left repeat-x; border-color: #6d6d6d;
+    color: #fff;*/
     text-shadow: rgba(0,0,0,0.4) 0px -1px 0px;
 }
 

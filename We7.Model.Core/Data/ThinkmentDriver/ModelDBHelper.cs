@@ -61,11 +61,11 @@ namespace We7.Model.Core.Data
         /// <param name="from"></param>
         /// <param name="count"></param>
         /// <returns></returns>
-        public DataTable Query(Criteria ct,List<Order> orders,int from ,int count)
+        public DataTable Query(Criteria ct, List<Order> orders, int from, int count, string fields = null)
         {
             ClearOrders(orders);
             ListSelectHandle handle = new ListSelectHandle(ModelName);
-            return handle.Execute(ct, orders, from, count);
+            return handle.Execute(ct, orders, from, count, fields);
         }
 
         /// <summary>
@@ -75,11 +75,12 @@ namespace We7.Model.Core.Data
         /// <param name="orders">排序</param>
         /// <param name="pageIndex">起始页</param>
         /// <param name="pageSize">每页记录</param>
+        /// <param name="files"> </param>
         /// <returns></returns>
-        public DataTable QueryPagedList(Criteria ct, List<Order> orders, int pageIndex, int pageSize)
+        public DataTable QueryPagedList(Criteria ct, List<Order> orders, int pageIndex, int pageSize,string fields=null)
         {
             int recordcount;
-            return QueryPagedList(ct, orders, pageIndex, pageSize, out recordcount);
+            return QueryPagedList(ct, orders, pageIndex, pageSize, out recordcount, fields);
         }
 
         /// <summary>
@@ -91,12 +92,12 @@ namespace We7.Model.Core.Data
         /// <param name="pageSize">每页记录</param>
         /// <param name="recordcount">返回总条数</param>
         /// <returns></returns>
-        public DataTable QueryPagedList(Criteria ct, List<Order> orders, int pageIndex, int pageSize, out int recordcount)
+        public DataTable QueryPagedList(Criteria ct, List<Order> orders, int pageIndex, int pageSize, out int recordcount, string fields = null)
         {
             int startIndex,pageItemsCount;
             recordcount = Count(ct);
             Utils.BuidlPagerParam(recordcount, pageSize, ref pageIndex, out startIndex, out pageItemsCount);
-            return Query(ct, orders, startIndex, pageItemsCount);
+            return Query(ct, orders, startIndex, pageItemsCount, fields);
         }
 
         /// <summary>

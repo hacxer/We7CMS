@@ -4,6 +4,7 @@ using System.Text;
 using System.Xml.Serialization;
 using System.IO;
 using System.Xml;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace We7.Framework.Util
 {
@@ -186,6 +187,41 @@ namespace We7.Framework.Util
                     fs.Dispose();
                 }
             }
+        }
+
+
+        /// <summary>
+        /// 转byte[]
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public static byte[] ObjToArr(Object obj)
+        {
+            if (obj == null)
+                return null;
+            BinaryFormatter bf = new BinaryFormatter();
+            MemoryStream ms = new MemoryStream();
+            bf.Serialize(ms, obj);
+            return ms.ToArray();
+        }
+
+        /// <summary>
+        /// byte[]转obj
+        /// </summary>
+        /// <param name="bytes"></param>
+        /// <returns></returns>
+        public static Object ArrToObj(byte[] bytes)
+        {
+            if (bytes==null)
+            {
+                return null;
+            }
+            MemoryStream ms = new MemoryStream();
+            BinaryFormatter bf = new BinaryFormatter();
+            ms.Write(bytes, 0, bytes.Length);
+            ms.Seek(0, SeekOrigin.Begin);
+            Object obj = (Object)bf.Deserialize(ms);
+            return obj;
         }
     }
 }

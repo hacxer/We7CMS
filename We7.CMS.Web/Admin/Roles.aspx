@@ -141,6 +141,7 @@
                 autowidth:true,
                 rowNum:10,
                 editColumnHeader:"№ЬАн",
+                isSiteGroup: true
 			};
 			
 			we7("#ModelList").bind(bindDestination, options);

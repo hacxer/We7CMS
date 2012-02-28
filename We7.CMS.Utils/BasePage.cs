@@ -1,25 +1,17 @@
 using System;
-using System.Data;
-using System.Configuration;
-using System.Web;
-using System.Web.Security;
-using System.Web.UI;
-using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
-using System.Web.UI.HtmlControls;
-using System.IO;
 using System.Collections.Generic;
-
-using We7.CMS.Config;
+using System.IO;
+using System.Text;
+using System.Web;
+using System.Web.UI;
+using We7.CMS.Accounts;
 using We7.CMS.Common.Enum;
 using We7.CMS.Common.PF;
-using System.Xml;
+using We7.CMS.Config;
+using We7.CMS.ShopService;
 using We7.Framework;
 using We7.Framework.Config;
-using We7.CMS.Accounts;
-using Thinkment.Data;
-using We7.CMS.ShopService;
-using System.Text;
+using We7.Framework.Util;
 
 namespace We7.CMS
 {
@@ -145,10 +137,10 @@ namespace We7.CMS
         /// <summary>
         /// 链接业务对象
         /// </summary>
-		//protected LinkHelper LinkHelper
-		//{
-		//    get { return HelperFactory.GetHelper<LinkHelper>(); }
-		//}
+        //protected LinkHelper LinkHelper
+        //{
+        //    get { return HelperFactory.GetHelper<LinkHelper>(); }
+        //}
 
         /// <summary>
         /// 信息业务对象
@@ -412,7 +404,7 @@ namespace We7.CMS
         {
             try
             {
-                string result = ShopService.Ping();                     
+                string result = ShopService.Ping();
                 return result.Equals("Pong");
             }
             catch (Exception ex)
@@ -528,7 +520,7 @@ namespace We7.CMS
             try
             {
                 List<ProductInfo> listProducts = null;
-                ProductInfo[] products = ShopService.GetRecommendProductByType(count,"mb",-1);
+                ProductInfo[] products = ShopService.GetRecommendProductByType(count, "mb", -1);
                 if (products.Length > 0)
                 {
                     listProducts = new List<ProductInfo>(products);
@@ -549,7 +541,7 @@ namespace We7.CMS
         /// <returns></returns>
         public string GetProductFileSize(string productSize)
         {
-            string result=string.Empty;
+            string result = string.Empty;
             int sizes;
             int.TryParse(productSize, out sizes);
             if (sizes == 0)
@@ -591,9 +583,9 @@ namespace We7.CMS
                     return true;
                 return false;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                We7.Framework.LogHelper.WriteLog(typeof(BasePage),ex);
+                We7.Framework.LogHelper.WriteLog(typeof(BasePage), ex);
                 return false;
             }
         }
@@ -632,7 +624,7 @@ namespace We7.CMS
                 We7.Framework.LogHelper.WriteLog(typeof(BasePage), ex);
             }
         }
-         
+
         /// <summary>
         /// 是否检查已安装
         /// </summary>
@@ -677,7 +669,8 @@ namespace We7.CMS
                     a = AccountHelper.GetAuthenticatedAccount();
                 if (a == null)
                 {
-                    Response.Redirect(AppPath + "/Signin.aspx?returnURL=" + Server.UrlEncode(HttpContext.Current.Request.RawUrl), false);
+                    //Response.Redirect(AppPath + "/Signin.aspx?returnURL=" + Server.UrlEncode(HttpContext.Current.Request.RawUrl), false);
+                    Utils.Redirect(AppPath + "/Signin.aspx?returnURL=" + Server.UrlEncode(HttpContext.Current.Request.RawUrl));
                 }
             }
         }
@@ -706,12 +699,12 @@ namespace We7.CMS
                 return;
             }
             string errorPage = Request.Url.Host + ":" + Request.Url.Port.ToString() + AppPath + "/Errors.aspx";
-            if (HttpContext.Current.Session["ALLMENUURL"]!=null && HttpContext.Current.Session["ALLMENUURL"].ToString() == errorPage)
+            if (HttpContext.Current.Session["ALLMENUURL"] != null && HttpContext.Current.Session["ALLMENUURL"].ToString() == errorPage)
                 return;
 
             // 检查权限
-           if(!MenuHelper.URLHavePermission(HttpContext.Current,MenuOwner))
-           {
+            if (!MenuHelper.URLHavePermission(HttpContext.Current, MenuOwner))
+            {
                 HanldeNoPermission();
             }
         }
@@ -723,11 +716,13 @@ namespace We7.CMS
         {
             HttpContext context = HttpContext.Current;
             if (context.Request["iframe"] != null)
-                Response.Redirect("/Errors.aspx?t=permission&iframe=1",false);
-               // Server.Transfer("/Errors.aspx?t=permission&iframe=1");
+                //Response.Redirect("/Errors.aspx?t=permission&iframe=1",false);
+                // Server.Transfer("/Errors.aspx?t=permission&iframe=1");
+                Utils.Redirect("/Errors.aspx?t=permission&iframe=1");
             else
-                Response.Redirect("/Errors.aspx?t=permission&iframe=1", false);
+                //Response.Redirect("/Errors.aspx?t=permission&iframe=1", false);
                 //Server.Transfer("/Errors.aspx?t=permission");
+                Utils.Redirect("/Errors.aspx?t=permission&iframe=1");
         }
 
         /// <summary>
@@ -780,7 +775,7 @@ namespace We7.CMS
                 }
                 return false;
             }
-        } 
+        }
 
     }
 }

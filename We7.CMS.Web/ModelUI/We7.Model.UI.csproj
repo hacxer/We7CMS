@@ -31,14 +31,10 @@
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
     <OldToolsVersion>3.5</OldToolsVersion>
-    <SccProjectName>
-    </SccProjectName>
-    <SccLocalPath>
-    </SccLocalPath>
-    <SccAuxPath>
-    </SccAuxPath>
-    <SccProvider>
-    </SccProvider>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -409,6 +405,13 @@
     <Compile Include="Controls\system\RelationSelect.ascx.designer.cs">
       <DependentUpon>RelationSelect.ascx</DependentUpon>
     </Compile>
+    <Compile Include="Controls\system\RelationSelectEx.ascx.cs">
+      <DependentUpon>RelationSelectEx.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\system\RelationSelectEx.ascx.designer.cs">
+      <DependentUpon>RelationSelectEx.ascx.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\system\Request.ascx.cs">
       <DependentUpon>Request.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -521,6 +524,13 @@
     <Compile Include="Controls\we7\ThreeCascade.ascx.designer.cs">
       <DependentUpon>ThreeCascade.ascx</DependentUpon>
     </Compile>
+    <Compile Include="Controls\we7\ThreeCascadeText.ascx.cs">
+      <DependentUpon>ThreeCascadeText.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\we7\ThreeCascadeText.ascx.designer.cs">
+      <DependentUpon>ThreeCascadeText.ascx</DependentUpon>
+    </Compile>
     <Compile Include="Controls\we7\Thumbnail.ascx.cs">
       <DependentUpon>Thumbnail.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -563,8 +573,16 @@
     <Compile Include="Controls\we7\AttachView.ascx.designer.cs">
       <DependentUpon>AttachView.ascx</DependentUpon>
     </Compile>
+    <Compile Include="Controls\we7\ThumbnailExText.ascx.cs">
+      <DependentUpon>ThumbnailExText.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\we7\ThumbnailExText.ascx.designer.cs">
+      <DependentUpon>ThumbnailExText.ascx</DependentUpon>
+    </Compile>
     <Compile Include="Converter\CategoryConvert.cs" />
     <Compile Include="Converter\DepartmentConvert.cs" />
+    <Compile Include="Converter\ModelToAdviceConvert.cs" />
     <Compile Include="Converter\TagFormatConverter.cs" />
     <Compile Include="Converter\UserIdToNameConvert.cs" />
     <Compile Include="Converter\ChannelConvert.cs" />
@@ -624,6 +642,13 @@
     </Compile>
     <Compile Include="Panel\system\ListPanel.ascx.designer.cs">
       <DependentUpon>ListPanel.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Panel\system\ListUIPanel.ascx.cs">
+      <DependentUpon>ListUIPanel.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Panel\system\ListUIPanel.ascx.designer.cs">
+      <DependentUpon>ListUIPanel.ascx.cs</DependentUpon>
     </Compile>
     <Compile Include="Panel\system\MultiPanel.ascx.cs">
       <DependentUpon>MultiPanel.ascx</DependentUpon>
@@ -692,7 +717,9 @@
     </Content>
     <Content Include="Controls\system\GUID.ascx" />
     <Content Include="Controls\system\ModelToAdviceLable.ascx" />
-    <Content Include="Controls\system\MultiUploadify.ascx" />
+    <Content Include="Controls\system\MultiUploadify.ascx">
+      <SubType>ASPXCodeBehind</SubType>
+    </Content>
     <Content Include="Controls\system\Number.ascx">
       <SubType>ASPXCodeBehind</SubType>
     </Content>
@@ -722,6 +749,9 @@
     <Content Include="Controls\system\RadioButton.ascx">
       <SubType>ASPXCodeBehind</SubType>
     </Content>
+    <Content Include="Controls\system\RelationSelectEx.ascx">
+      <SubType>ASPXCodeBehind</SubType>
+    </Content>
     <Content Include="Controls\system\Request.ascx" />
     <Content Include="Controls\system\Select.ascx" />
     <Content Include="Controls\system\SelectInput.ascx" />
@@ -734,10 +764,19 @@
     <Content Include="Controls\we7\ChannelSelect.ascx">
       <SubType>ASPXCodeBehind</SubType>
     </Content>
+    <Content Include="Controls\we7\ThreeCascadeText.ascx">
+      <SubType>ASPXCodeBehind</SubType>
+    </Content>
+    <Content Include="Controls\we7\ThumbnailExText.ascx">
+      <SubType>ASPXCodeBehind</SubType>
+    </Content>
     <Content Include="Panel\system\EditorPanel.ascx">
       <SubType>ASPXCodeBehind</SubType>
     </Content>
     <Content Include="Panel\system\ListPanel.ascx">
+    </Content>
+    <Content Include="Panel\system\ListUIPanel.ascx">
+      <SubType>ASPXCodeBehind</SubType>
     </Content>
     <Content Include="Panel\system\MultiPanel.ascx">
       <SubType>ASPXCodeBehind</SubType>
@@ -779,7 +818,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Config\Controls.xml" />
-    <Content Include="Config\ModelConfig.xml" />
+    <Content Include="Config\ModelConfig.xml">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Config\Template\AccountModel.xml" />
     <Content Include="Config\Template\AdviceModel.xml" />
     <Content Include="Config\Template\AdviceModelEditDataControl.xml" />
@@ -826,6 +867,7 @@
       <SubType>ASPXCodeBehind</SubType>
     </Content>
     <Content Include="Controls\system\Text.ascx">
+      <SubType>ASPXCodeBehind</SubType>
     </Content>
     <Content Include="Controls\system\Thumbnail.ascx">
       <SubType>ASPXCodeBehind</SubType>

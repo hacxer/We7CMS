@@ -114,7 +114,7 @@ namespace We7.CMS.UI.Widget
                 {
                     try
                     {
-                        string sp = Request != null ? Request["PageIndex"] : "0";
+                        string sp = Request["PageIndex"] ?? "0";
                         pageIndex = String.IsNullOrEmpty(sp) ? 1 : Convert.ToInt32(sp);
                     }
                     catch { pageIndex = 1; }
@@ -147,21 +147,7 @@ namespace We7.CMS.UI.Widget
         /// </summary>
         public List<AdviceInfo> Items
         {
-            get
-            {
-                if (items == null)
-                {
-                    try
-                    {
-                        items = GetItems();
-                    }
-                    catch
-                    {
-                        items = null;
-                    }
-                }
-                return items;
-            }
+            get { return items ?? (items = GetItems()); }
         }
 
         /// <summary>
@@ -169,16 +155,7 @@ namespace We7.CMS.UI.Widget
         /// </summary>
         public AdviceInfo Item
         {
-            get
-            {
-                if (item == null)
-                {
-                    item = GetItem();
-                    //if (item != null)
-                    //    item.ModelName = GetModelName();
-                }
-                return item;
-            }
+            get { return item ?? (item = GetItem()); }
         }
 
         /// <summary>
@@ -210,14 +187,7 @@ namespace We7.CMS.UI.Widget
         public string GetAccountName(string accountID)
         {
             Account act = AccountHelper.GetAccount(accountID, new[] { "FirstName", "MiddleName", "LastName" });
-            if (act != null)
-            {
-                return String.Format("{0}{1}{2}", act.FirstName, act.MiddleName, act.LastName);
-            }
-            else
-            {
-                return String.Empty;
-            }
+            return act != null ? String.Format("{0}{1}{2}", act.FirstName, act.MiddleName, act.LastName) : String.Empty;
         }
 
         /// <summary>
@@ -237,7 +207,7 @@ namespace We7.CMS.UI.Widget
                 }
                 else
                 {
-                    paths.Add(this.TemplateSourceDirectory + "/js/" + file);
+                    paths.Add(TemplateSourceDirectory + "/js/" + file);
                 }
             }
             JavaScriptManager.Include(paths.ToArray());
@@ -304,10 +274,11 @@ namespace We7.CMS.UI.Widget
         /// <returns></returns>
         public virtual List<AdviceInfo> GetItems()
         {
-            List<AdviceInfo> items = null;
+            List<AdviceInfo> list = null;
+            Criteria c = CreateListCriteria();
             RecordCount = HelperFactory.Assistant.Count<AdviceInfo>(CreateListCriteria());
-            items = HelperFactory.Assistant.List<AdviceInfo>(CreateListCriteria(), CreateOrderArray(), StartItem, PageItemsCount);
-            return items != null ? items : new List<AdviceInfo>();
+            list = HelperFactory.Assistant.List<AdviceInfo>(CreateListCriteria(), CreateOrderArray(), StartItem, PageItemsCount);
+            return list ?? new List<AdviceInfo>();
         }
 
         /// <summary>

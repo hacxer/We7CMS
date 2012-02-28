@@ -130,31 +130,32 @@ namespace We7.Framework
 
         public void WriteLog()
         {
-            //try
-            //{
-                FileInfo file = new FileInfo(LogPath);
-                if (!file.Directory.Exists)
-                {
-                    file.Directory.Create();
-                }
-                using (StreamWriter writer = !file.Exists ? new StreamWriter(file.Create(), Encoding.UTF8) : file.AppendText())
-                {
-                    string msg = "";
-                    while (!String.IsNullOrEmpty(msg = queue.Dequeue()))
-                    {
-                        writer.WriteLine();
-                        writer.Write(msg);
-                        writer.WriteLine();
-                        Thread.Sleep(10);
-                    }
-                    writer.Flush();
-                    writer.Close();
-                    writer.Dispose();
-                }
+			try
+			{
+				if (queue == null || queue.Count <= 0) return;
+				FileInfo file = new FileInfo(LogPath);
+				if (!file.Directory.Exists)
+				{
+					file.Directory.Create();
+				}
+				using (StreamWriter writer = !file.Exists ? new StreamWriter(file.Create(), Encoding.UTF8) : file.AppendText())
+				{
+					string msg = "";
+					while (!String.IsNullOrEmpty(msg = queue.Dequeue()))
+					{
+						writer.WriteLine();
+						writer.Write(msg);
+						writer.WriteLine();
+						Thread.Sleep(10);
+					}
+					writer.Flush();
+					writer.Close();
+					writer.Dispose();
+				}
 
-            //捕获了异常无处理，不如暴露出来
-            //}
-            //catch (Exception ex) { }
+				//捕获了异常无处理，不如暴露出来
+			}
+			catch (Exception ex) { LogHelper.WriteLog(typeof(FileLog), ex); }
         }
         public void Append(string msg)
         {

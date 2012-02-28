@@ -1,27 +1,25 @@
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Text;
-using System.Web.UI;
+using System.Text.RegularExpressions;
 using System.Web;
-
-using We7.CMS.Config;
-using We7.CMS.Common;
-using We7.Framework;
-using We7.Framework.Config;
-using We7.CMS.Accounts;
-using System.IO;
+using System.Web.UI;
 using System.Web.UI.HtmlControls;
 using Thinkment.Data;
+using We7.CMS.Accounts;
+using We7.CMS.Common;
+using We7.CMS.Config;
+using We7.Framework;
+using We7.Framework.Config;
 using We7.Framework.Util;
-using System.Text.RegularExpressions;
-using System.Reflection;
 
 namespace We7.CMS
 {
     /// <summary>
     /// 前台页面基础类
     /// </summary>
-    public class FrontBasePage : Page,IDataAccessPage
+    public class FrontBasePage : Page, IDataAccessPage
     {
 
         /// <summary>
@@ -221,42 +219,42 @@ namespace We7.CMS
         /// </summary>
         protected override void OnLoad(EventArgs e)
         {
-            try
+            //try
+            //{
+            Response.Expires = -1;
+            base.OnLoad(e);
+
+            if (!BaseConfigs.ConfigFileExist())
             {
-                Response.Expires = -1;
-                base.OnLoad(e);
-
-                if (!BaseConfigs.ConfigFileExist())
-                {
-                    Response.Write("您的数据库配置文件尚未生成，看起来数据库尚未建立，您需要建立数据库配置文件或生成数据库。现在开始吗？<a href='/install/index.aspx'><u>现在配置数据库</u></a>");
-                    return;
-                }
-
-                if (UnLoginCheck())
-                {
-                    Response.Redirect("/login.aspx?returnURL=" + Server.UrlEncode(HttpContext.Current.Request.RawUrl),false);
-                    return;
-                }
-
-                if (!CheckIPStrategy())
-                {
-                    Response.Write("IP受限，您的IP没有在受访范围内！");                    
-                    return;
-                }
-
-                if (!CheckPermission())
-                {
-                    Response.Write("您没有权限访问此栏目！");                    
-                    return;
-                }
-
-                Initialize();
+                Response.Write("您的数据库配置文件尚未生成，看起来数据库尚未建立，您需要建立数据库配置文件或生成数据库。现在开始吗？<a href='/install/index.aspx'><u>现在配置数据库</u></a>");
+                Response.End();
             }
-            catch (Exception ex)
+
+            if (UnLoginCheck() && !Request.RawUrl.ToLower().Contains("/login.aspx"))
             {
-                We7.Framework.LogHelper.WriteLog(typeof(FrontBasePage), ex);
-                DisplayError(ex.Message);
+                //Response.Redirect("/login.aspx?returnURL=" + Server.UrlEncode(HttpContext.Current.Request.RawUrl), false);
+                Utils.Redirect("/login.aspx?returnURL=" + Server.UrlEncode(HttpContext.Current.Request.RawUrl));
             }
+
+            if (!CheckIPStrategy())
+            {
+                Response.Write("IP受限，您的IP没有在受访范围内！");
+                Response.End();
+            }
+
+            if (!CheckPermission())
+            {
+                Response.Write("您没有权限访问此栏目！");
+                Response.End();
+            }
+
+            Initialize();
+            //}
+            //catch (Exception ex)
+            //{
+            //    We7.Framework.LogHelper.WriteLog(typeof(FrontBasePage), ex);
+            //    //DisplayError(ex.Message);
+            //}
         }
 
         /// <summary>
@@ -297,7 +295,8 @@ namespace We7.CMS
                     {
                         if (string.IsNullOrEmpty(AccountID))
                         {
-                            Response.Redirect("/login.aspx?ReturnURL=" + Server.UrlEncode(HttpContext.Current.Request.RawUrl),false);
+                            //Response.Redirect("/login.aspx?ReturnURL=" + Server.UrlEncode(HttpContext.Current.Request.RawUrl), false);
+                            Utils.Redirect("/login.aspx?ReturnURL=" + Server.UrlEncode(HttpContext.Current.Request.RawUrl));
                         }
                         else
                             return ThisChannel.ID;
@@ -540,7 +539,7 @@ namespace We7.CMS
         {
             string ErrMsg = error;
             Response.Write(ErrMsg);
-            Response.End();
+            //Response.End();
         }
 
         #region 过滤错误部件
@@ -592,7 +591,7 @@ namespace We7.CMS
         /// <returns></returns>
         private Control InstanceControl(Control ctl, string templateHtml, Dictionary<string, templetaInfo> dic)
         {
-            if (dic != null && dic.Count != 0)
+            if (dic != null)
             {
                 foreach (var item in dic)
                 {
@@ -654,6 +653,7 @@ namespace We7.CMS
 
                 }
             }
+
             return ctl;
         }
 

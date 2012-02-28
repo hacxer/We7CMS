@@ -252,49 +252,49 @@ namespace We7.CMS.Web.Admin
             else
             {
                 string itemId=MenuHelper.CreateSubMenu(firstNameText, firstTitle, firstUrl, firstIndex, parentID, id,EntityID);
-                MenuItemXmlHelper helper = new MenuItemXmlHelper(Server.MapPath("/user/Resource/menuItems.xml"));
+                //MenuItemXmlHelper helper = new MenuItemXmlHelper(Server.MapPath("/user/Resource/menuItems.xml"));
                 if (MenuID != null && MenuID != "")
                 {
-                    if (EntityID == "System.User")
-                    {
-                        string xPath="/root/items/item[@oldid='" + id + "']";
-                        MenuItemXml node = helper.GetMenuItemXml(xPath);
-                        node.Lable = firstTitle;
-                        node.Url = firstUrl;
-                        node.Oldparent = parentID;
-                        node.Parent = helper.GetMenuItemXml("/root/items/item[@oldid='" + parentID + "']").ID;
-                        helper.UpdateMenuItemXml(node, xPath);
-                    }
+                    //if (EntityID == "System.User")
+                    //{
+                    //    string xPath="/root/items/item[@oldid='" + id + "']";
+                    //    MenuItemXml node = helper.GetMenuItemXml(xPath);
+                    //    node.Lable = firstTitle;
+                    //    node.Url = firstUrl;
+                    //    node.Oldparent = parentID;
+                    //    node.Parent = helper.GetMenuItemXml("/root/items/item[@oldid='" + parentID + "']").ID;
+                    //    helper.UpdateMenuItemXml(node, xPath);
+                    //}
                     Messages.ShowMessage("您成功修改" + firstTitle + "菜单,更新成功之后请退出重新登陆才能生效");
                 }
                 else
                 {
                     string xPath = "/root/items/item[@id='" + parentID + "']";
-                    string oldParent = helper.GetMenuItemXml(xPath).Oldid;
-                    string oldId = MenuHelper.CreateModelMenu(oldParent, firstIndex, firstNameText, firstTitle, firstUrl, firstIndex, EntityID);
+                    //string oldParent = helper.GetMenuItemXml(xPath).Oldid;
+                    //string oldId = MenuHelper.CreateModelMenu(oldParent, firstIndex, firstNameText, firstTitle, firstUrl, firstIndex, EntityID);
 
-                    MenuItemXml item1 = new MenuItemXml();
-                    item1.ID = firstIndex.ToString();
-                    item1.Lable = firstNameText;
-                    item1.MatchParameter = "true";
-                    item1.Name = "";
-                    item1.NodeName = "item";
-                    item1.Oldid = oldId;
-                    item1.Oldparent = oldParent;
-                    item1.Parent = parentID;
-                    item1.Url = firstUrl;
-                    helper.AddMenuItemXmls(item1, "/root/items");
+                    //MenuItemXml item1 = new MenuItemXml();
+                    //item1.ID = firstIndex.ToString();
+                    //item1.Lable = firstNameText;
+                    //item1.MatchParameter = "true";
+                    //item1.Name = "";
+                    //item1.NodeName = "item";
+                    //item1.Oldid = oldId;
+                    //item1.Oldparent = oldParent;
+                    //item1.Parent = parentID;
+                    //item1.Url = firstUrl;
+                    //helper.AddMenuItemXmls(item1, "/root/items");
 
-                    MenuItemXml item2 = new MenuItemXml();
-                    item2.ID = firstIndex.ToString();
-                    item2.Lable = firstNameText;
-                    item2.NodeName = "menu";
-                    item2.Link = "";
-                    xPath = "/root/menuTree/menu[@id='" + rootID + "']/menu[@id='" + parentID + "']";
+                    //MenuItemXml item2 = new MenuItemXml();
+                    //item2.ID = firstIndex.ToString();
+                    //item2.Lable = firstNameText;
+                    //item2.NodeName = "menu";
+                    //item2.Link = "";
+                    //xPath = "/root/menuTree/menu[@id='" + rootID + "']/menu[@id='" + parentID + "']";
 
-                    helper.AddMenuItemDisplay(item2, xPath);
+                    //helper.AddMenuItemDisplay(item2, xPath);
 
-                    Messages.ShowMessage("您成功创建" + firstTitle + "菜单,生成成功之后请退出重新登陆才能生效");
+                    Messages.ShowMessage("您成功创建" + firstTitle + "菜单,生成成功之后请退出重新登录才能生效");
                 }
             }
         }

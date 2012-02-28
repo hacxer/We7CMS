@@ -21,6 +21,13 @@ namespace We7.CMS.Web.Admin
 {
     public partial class DepartmentDetail : BasePage
     {
+        protected override Common.Enum.MasterPageMode MasterPageIs
+        {
+            get
+            {
+                return Request.QueryString["notiframe"] == "1" ? Common.Enum.MasterPageMode.NoMenu : Common.Enum.MasterPageMode.FullMenu;
+            }
+        }
 
         string DepartmentID
         {

@@ -9,13 +9,13 @@
 <body>
     <form id="form1" runat="server">
     <div style="text-align: center; padding: 150px 0 0 0;">
-        该功能需要安装<a href="http://shop.we7.cn/Shop/goods/7e9c6a59_e91c_4188_a078_56860734ad45.html?u=Brain"
-            target="_blank">文件管理</a>插件才可使用，这是一款免费的插件，<a href="http://shop.we7.cn/Shop/goods/7e9c6a59_e91c_4188_a078_56860734ad45.html?u=Brain"
+        该功能需要安装<a href="<%=shopUrl %>/Shop/goods/7e9c6a59_e91c_4188_a078_56860734ad45.html?u=Brain"
+            target="_blank">文件管理</a>插件才可使用，这是一款免费的插件，<a href="<%=shopUrl %>/Shop/goods/7e9c6a59_e91c_4188_a078_56860734ad45.html?u=Brain"
                 target="_blank">点此下载</a>
         <br />
         <br />
         <br />
-        更多精彩尽在<a href="http://m.we7.cn/" target="_blank">We7插件商场</a>
+        更多精彩尽在<a href="<%=shopUrl %>" target="_blank">We7插件商场</a>
     </div>
     </form>
 </body>

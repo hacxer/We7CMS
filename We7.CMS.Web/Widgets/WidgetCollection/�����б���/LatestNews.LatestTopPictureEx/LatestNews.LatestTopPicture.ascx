@@ -4,15 +4,14 @@
     <div class="content">
         <div class="news">
             <ul>
-                <%for (int i = 0; i < ChannelList.Count; i++)
+                <%
+                  for (int i = 0; i < ChannelList.Count; i++)
                   {
-                      Channel channel = ChannelList[i]; string sxc = "";%>
-                <% 
                   string tmp = string.Empty;
                   if (i == 0) tmp = "on";
                 %>
-                <li class=" <%=tmp %>"><a href="<%=channel.FullUrl %>">
-                    <%=channel.Name%></a></li>
+                <li class=" <%=tmp %>"><a href="<%=ChannelList[i].FullUrl %>">
+                    <%=ChannelList[i].Name%></a></li>
                 <%} %>
             </ul>
         </div>

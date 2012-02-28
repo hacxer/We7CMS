@@ -192,6 +192,7 @@ namespace Thinkment.Data
             cs.Execute();
             return cs.ReturnCode;
         }
+
         /// <summary>
         /// 执行列出记录列表
         /// </summary>
@@ -252,7 +253,10 @@ namespace Thinkment.Data
             {
                 foreach (ListField f in fields)
                 {
-                    ls.ListFieldDict.Add(f.FieldName, f);
+                    if (!ls.ListFieldDict.ContainsKey(f.FieldName))
+                    {
+                        ls.ListFieldDict.Add(f.FieldName, f);
+                    }
                 }
             }
             ls.Execute();
@@ -480,6 +484,7 @@ namespace Thinkment.Data
             DataTable dt = Connect.Query(SQL);
             if (EntityObject.IsDataTable)  //如果是输出TableInfo
             {
+                dt.TableName = EntityObject.TableName;
                 table = dt;
                 //object o = Activator.CreateInstance(EntityObject.TypeForDT, table);
                 object o = new TableInfo(table, EntityObject.PropertyDict);
@@ -594,6 +599,7 @@ namespace Thinkment.Data
         Dictionary<string, Property> propertyDict;
         bool isDataTable = false;
         Type typeForDT;
+        string description;
 
         public EntityObject()
         {
@@ -633,6 +639,16 @@ namespace Thinkment.Data
         {
             get { return typeName; }
             set { typeName = value; }
+        }
+
+
+        /// <summary>
+        /// Description
+        /// </summary>
+        public string Description
+        {
+            get { return description; }
+            set { description = value; }
         }
 
         /// <summary>
@@ -693,6 +709,7 @@ namespace Thinkment.Data
             UpdateXmlElement.SetXEAttribute(xe, "table", tableName);
             UpdateXmlElement.SetXEAttribute(xe, "type", typeName);
             UpdateXmlElement.SetXEAttribute(xe, "identity", primaryKeyName);
+            UpdateXmlElement.SetXEAttribute(xe, "description", description);
             foreach (Property p in propertyDict.Values)
             {
                 xe.AppendChild(p.ToXml(doc));
@@ -711,6 +728,7 @@ namespace Thinkment.Data
             tableName = UpdateXmlElement.GetXEAttribute(xe, "table", "");
             primaryKeyName = UpdateXmlElement.GetXEAttribute(xe, "primaryKey", "");
             identityName = UpdateXmlElement.GetXEAttribute(xe, "identity", "");
+            description = UpdateXmlElement.GetXEAttribute(xe, "description", "");
             foreach (XmlElement el in xe.SelectNodes("Property"))
             {
                 Property p = new Property().FromXml(el);
@@ -732,15 +750,23 @@ namespace Thinkment.Data
            */
             if (obj.GetType() == typeof(TableInfo))
             {
-                if (name.ToUpper()=="ID")
+                TableInfo ti = obj as TableInfo;
+                if (name.ToUpper() == ti.PrimaryKeyName)
                 {
-                    return TableInfo.ID;
+                    return ti.ID;
                 }
-                else if (!TableInfo.Fileds.ContainsKey(name))
-                {
-                    throw new DataException(name, ErrorCodes.UnknownProperty);
-                }
-                return TableInfo.Fileds[name];
+                /* 由字典检索变为自定义的东西。如果您试图维护此段代码，最好先保证您用的成员能序列化成XML。
+                 * 因为站群需要用到这些东西。(webservice)
+                 */
+                /*
+                    else if (!ti.Fields.ContainsKey(name))
+                    {
+                        throw new DataException(name, ErrorCodes.UnknownProperty);
+                    }
+                    return ti.Fields[name];
+                */
+                return ti.GetFieldValue(name);
+
             }
 
             else
@@ -872,7 +898,7 @@ namespace Thinkment.Data
         public OperateHandle()
         {
             orderList = new List<Order>();
-            listFieldDict = new Dictionary<string, ListField>();
+            listFieldDict = new Dictionary<string, ListField>(StringComparer.OrdinalIgnoreCase); //modify:不区分大小写.
             conListFieldDict = new Dictionary<string, ConListField>();
         }
 
@@ -979,7 +1005,7 @@ namespace Thinkment.Data
             foreach (Property p in EntityObject.PropertyDict.Values)
             {
                 if (ListFieldDict.Count > 0 &&
-                    !ListFieldDict.ContainsKey(p.Name))
+                    !ListFieldDict.ContainsKey(p.Field))
                 {
                     continue;
                 }
@@ -1475,7 +1501,6 @@ namespace Thinkment.Data
             objectManagerDict = new Dictionary<Type, ObjectManager>();
             connectionDict = new Dictionary<IDatabase, IConnection>();
             objColumnDic = new Dictionary<string, ObjectManager>(StringComparer.InvariantCultureIgnoreCase);
-            //type = Assembly.Load("We7.CMS.Common, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null").CreateInstance("We7.CMS.Common.ResponseJson").GetType();
         }
 
         /// <summary>
@@ -1648,6 +1673,17 @@ namespace Thinkment.Data
             //return pa3[mgo(type).md1];
         }
 
+        public IConnection GetDBConnection<T>(IParametExtension<T> param) where T : class
+        {
+            return GetObjectManager<T>(param).CurDatabase.CreateConnection();
+        }
+
+        public IConnection GetDBConnectionByTB(string tablename)
+        {
+            return GetObjectManager(tablename).CurDatabase.CreateConnection();
+        }
+
+
         public IDatabase GetDatabase(string database)
         {
             if (!DatabaseDict.ContainsKey(database))
@@ -1661,14 +1697,28 @@ namespace Thinkment.Data
         /// 获取SQL构造类
         /// author:丁乐 2011/11/9
         /// </summary>
-        /// <param name="type">Key(如类为TableInfo则返回表信息)</param>
         /// <returns></returns>
         public ObjectManager GetObjectManager(Type type)
         {
-            if (type == typeof(TableInfo))  //如果是需要返回表信息类型(DataTable)
+            if (!ObjectManagerDict.ContainsKey(type))  //系统内置：以类型为KEY
             {
-                // string key = type.GetField("TableName").GetValue(Activator.CreateInstance(type)).ToString().ToUpper();  //远程实例化TableInfo获取静态字段的值（表名）Key
-                string key = TableInfo.TableName.ToUpper();
+                throw new DataException(ErrorCodes.UnkownObject);
+            }
+            return ObjectManagerDict[type];
+        }
+
+        /// <summary>
+        /// 获取SQL构造类
+        /// author:丁乐 2011/12/23
+        /// </summary>
+        /// <param name="T">(如类为TableInfo则返回表信息)</param>
+        /// <returns></returns>
+        public ObjectManager GetObjectManager<T>(IParametExtension<T> param) where T : class
+        {
+            if (typeof(T) == typeof(TableInfo))  //如果是需要返回表信息类型(DataTable)
+            {
+                TableInfo ti = (param as TableInfo);
+                string key = ti != null ? ti.TableName : string.Empty;
                 if (!objColumnDic.ContainsKey(key))  //如果找不到当前表
                 {
                     throw new DataException(ErrorCodes.UnkownObject);
@@ -1680,11 +1730,29 @@ namespace Thinkment.Data
             }
             else
             {
-                if (!ObjectManagerDict.ContainsKey(type))  //系统内置：以类型为KEY
+                if (!ObjectManagerDict.ContainsKey(typeof(T)))  //系统内置：以类型为KEY
                 {
                     throw new DataException(ErrorCodes.UnkownObject);
                 }
-                return ObjectManagerDict[type];
+                return ObjectManagerDict[typeof(T)];
+            }
+        }
+
+        /// <summary>
+        /// 获取SQL构造类
+        /// </summary>
+        /// <typeparam name="tablename">表名</typeparam>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public ObjectManager GetObjectManager(string tablename)
+        {
+            if (!objColumnDic.ContainsKey(tablename))  //如果找不到当前表
+            {
+                throw new DataException(ErrorCodes.UnkownObject);
+            }
+            else
+            {
+                return objColumnDic[tablename];
             }
         }
     }

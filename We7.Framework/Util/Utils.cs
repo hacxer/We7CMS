@@ -789,11 +789,11 @@ namespace We7.Framework.Util
             return GetStandardDateTime(fDateTime, "yyyy-MM-dd HH:mm:ss");
         }
 
-       /// <summary>
+        /// <summary>
         /// 返回标准时间 yyyy-MM-dd
-       /// </summary>
-       /// <param name="fDate"></param>
-       /// <returns></returns>
+        /// </summary>
+        /// <param name="fDate"></param>
+        /// <returns></returns>
         public static string GetStandardDate(string fDate)
         {
             return GetStandardDateTime(fDate, "yyyy-MM-dd");
@@ -2708,9 +2708,9 @@ namespace We7.Framework.Util
 
         public static string GetRootUrl()
         {
-            string url=HttpContext.Current.Request.Url.ToString();
+            string url = HttpContext.Current.Request.Url.ToString();
             Regex regex = new Regex(@"http\s*:\s*//[^/]+", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-            Match mc=regex.Match(url);
+            Match mc = regex.Match(url);
             return mc.Success ? mc.Value : String.Empty;
         }
 
@@ -2813,5 +2813,19 @@ namespace We7.Framework.Util
             }
             return (Re_Str.Replace("\\r\\n", "")).Replace("\\r", "");
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="url"></param>
+        /// <param name="endResponse"></param>
+        public static void Redirect(string url, bool endResponse = true)
+        {
+            if(HttpContext.Current!=null)
+            {
+                HttpContext.Current.Response.Redirect(url, endResponse);
+            }
+        }
+
     }
 }

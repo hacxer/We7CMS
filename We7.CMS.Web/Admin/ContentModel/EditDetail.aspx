@@ -18,7 +18,7 @@
             <%if (Action == "widget")
               { %>
             <dl id="createWidget">
-                <dt>» <span class="stitle">创建部件</span><br />
+                <dt>» <span class="stitle">生成部件</span> <span rel="xml-hint" title="勾选下面的列表及字段，点击生成，生成的部件可在【可视化模板】中看到"></span><br />
                 </dt>
                 <dd>
                     <div class="detail">
@@ -26,7 +26,7 @@
                             <tr>
                                 <td style="font-weight: bold;">
                                     <input type="checkbox" onclick="checkAll('#<%=chklstWidgetList.ClientID %>',this)" />
-                                    列表部件显示字段
+                                    列表部件 <span rel="xml-hint" title="列表部件：多条数据以列表的形式展示数据"></span>
                                 </td>
                             </tr>
                             <tr>
@@ -38,7 +38,7 @@
                             <tr>
                                 <td style="font-weight: bold;">
                                     <input type="checkbox" onclick="checkAll('#<%=chklstWidgetView.ClientID %>',this)" />
-                                    详细信息控件显示字段
+                                    详细信息部件 <span rel="xml-hint" title="详细信息部件：展示单条数据的详细信息"></span>
                                 </td>
                             </tr>
                             <tr>
@@ -59,10 +59,10 @@
                 </dd>
             </dl>
             <%} %>
-            <%if (isArticle && Action == "layout")
+            <%if (Action == "layout")
               { %>
             <dl id="createLayout">
-                <dt>» <span class="stitle">自定义布局 </span><span rel="xml-hint" title="您可以通过自定义布局，自己定制内容模型的排列方式和样式等">
+                <dt>» <span class="stitle">自定义布局 </span><span rel="xml-hint" title="通过自定义布局，可以自由定制内容模型的布局和样式等">
                 </span>
                     <br />
                     <input type="hidden" id="lpath" />
@@ -276,7 +276,7 @@
         //    var form;
         function newForm(url, title, w, h) {
             $.colorbox({ width: w, height: h, href: url, iframe: true,
-                overlayClose: false, escKey: false,
+                overlayClose: false,scrolling:false, escKey: false,
                 onClosed: function () {
                 }
             });
@@ -317,7 +317,7 @@
             $(".editCss").live("click", function () {
                 EditLayoutCss($(this).attr("ref"));
             });
-            existMsg=<%=strScript %>;
+            existMsg=<%=StrScript %>;
             existMsg = eval("(" + existMsg + ")");
             model = existMsg.modelName;
             $.each(existMsg.Data, function (i) {

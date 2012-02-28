@@ -44,16 +44,18 @@ namespace We7.Model.UI.Controls.system
             DdlXml.Items.Insert(0, new ListItem("请选择", ""));
             DdlXml.SelectedValue = Value != null ? Value.ToString() : Control.DefaultValue;
 
-            if (Control.Required)
-            {
-                RequiredFieldValidator rfv = new RequiredFieldValidator();
-                rfv.ControlToValidate = "DdlXml";
-                rfv.Display = ValidatorDisplay.Dynamic;
-                rfv.Text = "*";
-                rfv.InitialValue = "";
-                phValidate.Controls.Clear();
-                phValidate.Controls.Add(rfv);
-            }
+            //if (Control.Required)
+            //{
+            //    RequiredFieldValidator rfv = new RequiredFieldValidator();
+            //    rfv.ControlToValidate = "DdlXml";
+            //    rfv.Display = ValidatorDisplay.Dynamic;
+            //    rfv.Text = "该项必须填写!";
+            //    rfv.InitialValue = "";
+            //    phValidate.Controls.Clear();
+            //    phValidate.Controls.Add(rfv);
+            //}
+
+            Validator(DdlXml);
         }
         public override object GetValue()
         {

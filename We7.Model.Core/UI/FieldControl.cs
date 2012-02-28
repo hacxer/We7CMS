@@ -6,6 +6,8 @@ using System.Web;
 using We7.Model.Core.Config;
 using System.Xml;
 using System.IO;
+using Newtonsoft.Json;
+using System.Web.UI.WebControls;
 
 namespace We7.Model.Core.UI
 {
@@ -60,6 +62,33 @@ namespace We7.Model.Core.UI
                 return column;
             }
         }
+
+
+        /// <summary>
+        /// 验证控件是否绑定了验证规则 如果绑定了， 加入到控件属性中
+        /// </summary>
+        /// <param name="c">继承了WebControl或是IAttributeAccessor接口的控件 </param>
+        protected void Validator(IAttributeAccessor c)
+        {
+            string validator = Control.Params["validator"] ?? "";
+            if (validator.Length > 0)
+            {
+                List<Dictionary<string, string>> list = JavaScriptConvert.DeserializeObject<List<Dictionary<string, string>>>(validator);
+                foreach (Dictionary<string, string> t in list)
+                {
+                    if (t.ContainsKey("rule") && t.ContainsKey("val"))
+                    {
+                        c.SetAttribute(t["rule"], t["val"]);
+                    }
+                }
+            }
+            //匹配以前的验证方式
+            if (Control.Required && c.GetAttribute("required") == null)
+            {
+                c.SetAttribute("required", "required");
+            }
+        }
+
 
         private DataField dataField;
         private DataField DataField

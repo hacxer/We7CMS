@@ -49,11 +49,7 @@ namespace We7.Model.UI.Controls.system
                 ddlCategory.Height = Unit.Parse(Control.Height);
             }
 
-            ddlCategory.CssClass = Control.CssClass;
-            if (Control.Required && !ddlCategory.CssClass.Contains("required"))
-            {
-                ddlCategory.CssClass += " required";
-            }
+            Validator(ddlCategory);
         }
 
         public override object GetValue()

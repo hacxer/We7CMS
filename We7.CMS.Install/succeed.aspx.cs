@@ -28,6 +28,7 @@ namespace We7.CMS.Install
                    SummaryLiteral.Text = "恭喜! 您的更新操作已成功完成。";
 
                ApplicationHelper.ResetApplication();
+			   AccountFactory.Instance.SignOut();
                SetupPage.DeleteLockFile();
             }
         }

@@ -14,8 +14,9 @@
   <control type="SelectInput" label="多选下拉框" defaultValue="{Type:'SelectInput',Label:'请输入标题',Name:''}"/>
   <control type="we7.Thumbnail" label="上传图片器" defaultValue="{Type:'We7.Thumbnail',Label:'请输入标题',Name:''}"/>
   <control type="XMLSelect" label="读Xml下拉框"  defaultValue="{Type:'XMLSelect',Label:'请输入标题',Name:''}"/>
-  <control type="Number" label="数值输入" defaultValue="{Type:'Number',Label:'请输入标题',Name:''}"/>
+  <!--新的验证框架添加后，不再使用number控件 <control type="Number" label="数值输入" defaultValue="{Type:'Number',Label:'请输入标题',Name:''}"/>-->
   <control type="RelationSelect" label="关联控件" defaultValue="{Type:'RelationSelect',Label:'请输入标题',Name:''}"/>
+	<!--<control type="RelationSelectEx" label="关联控件(扩展)" defaultValue="{Type:'RelationSelectEx',Label:'请输入标题',Name:''}"/>-->
 	<control type="MultiUploadify" label="批量上传" defaultValue="{Type:'MultiUploadify',Label:'请输入标题',Name:'',Params:[{'Name':'col1','Text':'','Value':''},{'Name':'col2','Text':'','Value':''}]}"/>
 	<control type="Attachment" label="附件上传" defaultValue="{Type:'Attachment',Label:'请输入标题',Name:''}"/>
   <control type="we7.ChannelSelect" label="栏目控件" defaultValue="{Type:'We7.ChannelSelect',Label:'请输入标题',Name:''}"/>

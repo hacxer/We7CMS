@@ -13,7 +13,10 @@ namespace We7.CMS.UI.Widget
     [ControlDescription(Desc = "反馈模型详细列表部件(自动生成)")]
     public class WidgetAdviceList : AdviceProvider
     {
-        [Parameter(Title = "反馈类型", Type = "KeyValueSelector", Data = "advice", DefaultValue = "",Required=true)]
+        /// <summary>
+        /// 选择反馈类型
+        /// </summary>
+        [Parameter(Title = "反馈类型", Type = "KeyValueSelector", Data = "adviceTypeId", DefaultValue = "", Required = true)]
         public string AdviceType;
 
         /// <summary>
@@ -21,14 +24,14 @@ namespace We7.CMS.UI.Widget
         /// </summary>
         [Children]
         public ControlPager Pager = new ControlPager();
-        
+
         /// <summary>
         /// 获取列表
         /// </summary>
         /// <returns></returns>
         public override List<AdviceInfo> GetItems()
         {
-            
+            //string[] fieldsArray=(Fields.Length>0?(Fields.Contains(",")?Fields.Split(','):new string[]{Fields}):null);
             List<AdviceInfo> items = null;
             int pageSize = Pager.PageSize <= 0 ? 10 : Pager.PageSize;
             int pageIndex = Pager.PageIndex, startIndex, pageItemsCount;
@@ -36,7 +39,7 @@ namespace We7.CMS.UI.Widget
             Order[] os = IsShow ? new Order[] { new Order("IsShow", OrderMode.Desc), new Order("Updated", OrderMode.Desc), new Order("ID", OrderMode.Desc) } : new Order[] { new Order("Updated", OrderMode.Desc), new Order("ID", OrderMode.Desc) };
             Criteria c = CreateListCriteria();
             items = HelperFactory.Assistant.List<AdviceInfo>(c, os, startIndex, pageItemsCount);
-            return items != null ? items : new List<AdviceInfo>();
+            return items ?? new List<AdviceInfo>();
         }
 
         /// <summary>
@@ -58,13 +61,25 @@ namespace We7.CMS.UI.Widget
         {
             get
             {
-                return new AdviceTypeHelper().GetAdviceTypeByModelName(AdviceType).ID;
+                try
+                {
+                    return new AdviceTypeHelper().GetAdviceTypeByModelName(AdviceType).ID;
+                }
+                catch { return AdviceType; }
             }
         }
 
-        protected override Thinkment.Data.Criteria CreateListCriteria()
+        /// <summary>
+        /// 生成查询条件
+        /// </summary>
+        /// <returns></returns>
+        protected override Criteria CreateListCriteria()
         {
-            Criteria c = new Criteria(CriteriaType.Equals, "TypeID", AdviceTypeID);
+            string modelName;
+            try { modelName = new AdviceTypeHelper().GetAdviceType(AdviceType).ModelName; }
+            catch { modelName = AdviceType; }
+            Criteria c = new Criteria(CriteriaType.Equals, "ModelName", modelName);
+            c.Add(CriteriaType.Equals, "TypeID", AdviceTypeID);
             if (IsShow)
             {
                 c.Add(CriteriaType.Equals, "IsShow", 1);

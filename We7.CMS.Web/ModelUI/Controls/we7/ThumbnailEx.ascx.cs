@@ -12,16 +12,28 @@ using We7.Model.UI.Controls;
 using We7.Framework;
 using We7.CMS.Common;
 using System.Xml;
+using System.Text.RegularExpressions;
 
 namespace We7.CMS.Web.Admin.ContentModel.Controls
 {
     public partial class ThumbnailEx : We7FieldControl
     {
+        string pattern = "src:\'(?<img>[^\']*)";
+
         public override void InitControl()
         {
             hfValue.Value = Value != null ? Value.ToString() : "[]";
             RegisterResource();
             InitImageBuilder();
+
+            if (Value != null)
+            {
+                MatchCollection ms = Regex.Matches(Value.ToString(), pattern, RegexOptions.Compiled | RegexOptions.IgnoreCase);
+                if (ms.Count > 0)
+                {
+                    Img.ImageUrl = ms[1].Groups["img"].Value;
+                }
+            }
         }
 
         public override object GetValue()

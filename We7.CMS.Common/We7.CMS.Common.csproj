@@ -12,14 +12,10 @@
     <AssemblyName>We7.CMS.Common</AssemblyName>
     <StartupObject>
     </StartupObject>
-    <SccProjectName>
-    </SccProjectName>
-    <SccLocalPath>
-    </SccLocalPath>
-    <SccAuxPath>
-    </SccAuxPath>
-    <SccProvider>
-    </SccProvider>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <OldToolsVersion>3.5</OldToolsVersion>
@@ -59,6 +55,7 @@
     <Compile Include="AdviceType.cs" />
     <Compile Include="Category.cs" />
     <Compile Include="ChannelModule.cs" />
+    <Compile Include="Join\JoinHelper.cs" />
     <Compile Include="Link.cs" />
     <Compile Include="Tags.cs">
       <SubType>Code</SubType>

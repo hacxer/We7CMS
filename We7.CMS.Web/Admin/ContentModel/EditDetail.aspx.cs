@@ -1,19 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-
-using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
 using System.Web.Script.Serialization;
 using System.Text;
 using System.IO;
-using Newtonsoft.Json;
 using We7.Framework.Util;
-using We7.Model.Core.Data;
 using We7.Model.Core;
-using We7.CMS.Accounts;
-using We7.Framework;
 using We7.Model.Core.Config;
 using System.Data;
 using We7.CMS.Common.Enum;
@@ -36,11 +30,11 @@ namespace We7.CMS.Web.Admin.ContentModel
         /// <summary>
         /// 向客户端输出脚本
         /// </summary>
-        protected string strScript;
+        protected string StrScript;
         /// <summary>
         /// True:文章类型，False :反馈
         /// </summary>
-        public bool isArticle;
+        public bool IsArticle;
 
         /// <summary>
         /// 操作类型：widget:部件,layout:布局
@@ -60,7 +54,7 @@ namespace We7.CMS.Web.Admin.ContentModel
             }
         }
 
-        private ModelInfo modelInfo;
+        private ModelInfo _modelInfo;
         /// <summary>
         /// Model  Info Entity
         /// </summary>
@@ -68,48 +62,46 @@ namespace We7.CMS.Web.Admin.ContentModel
         {
             get
             {
-                if (modelInfo == null)
+                if (_modelInfo == null)
                 {
                     string modelName = Request["modelname"];
                     if (String.IsNullOrEmpty(modelName))
                         throw new Exception("当前模型不存在");
-                    modelInfo = ModelHelper.GetModelInfo(modelName);
-                    if (modelInfo.Type == We7.Model.Core.ModelType.ARTICLE)
+                    _modelInfo = ModelHelper.GetModelInfo(modelName);
+                    switch (_modelInfo.Type)
                     {
-                        isArticle = true;
-                    }
-                    //反馈模型只支持 生成部件功能
-                    else if (modelInfo.Type == We7.Model.Core.ModelType.ADVICE)
-                    {
-                        isArticle = false;
-                    }
-                    //用户模型不支持
-                    else
-                    {
-                        ScriptManager.RegisterStartupScript(this, this.GetType(), "tip", "alert('内容模型不支持高级应用!');", true);
+                        case ModelType.ARTICLE:
+                            IsArticle = true;
+                            break;
+                        case ModelType.ADVICE:
+                            IsArticle = false;
+                            break;
+                        default:
+                            ScriptManager.RegisterStartupScript(this, GetType(), "tip", "alert('内容模型不支持高级应用!');", true);
+                            break;
                     }
                 }
-                return modelInfo;
+                return _modelInfo;
             }
         }
 
         /// <summary>
         /// 检查各项是否已经创建
         /// </summary>
-        void Exist(string Action)
+        void Exist(string action)
         {
-            IDataBaseHelper helper = DataBaseHelperFactory.Create();
-            StringBuilder sb = new StringBuilder();
+            //IDataBaseHelper helper = DataBaseHelperFactory.Create();
+            var sb = new StringBuilder();
             sb.Append("{\"modelName\":\"" + ModelInfo.ModelName + "\",\"Data\":[");
 
-            if (Action == "widget")
+            if (action == "widget")
             {
                 #region 检查部件
                 //部件
                 int widgetCount = 0;
-                string viewPath = ModelHelper.GetWidgetDirectory(modelInfo, "View");
-                string listPath = ModelHelper.GetWidgetDirectory(modelInfo, "List");
-                string pageListPath = ModelHelper.GetWidgetDirectory(modelInfo, "PagedList");
+                string viewPath = ModelHelper.GetWidgetDirectory(_modelInfo, "View");
+                string listPath = ModelHelper.GetWidgetDirectory(_modelInfo, "List");
+                string pageListPath = ModelHelper.GetWidgetDirectory(_modelInfo, "PagedList");
                 if (Directory.Exists(viewPath))
                 {
                     widgetCount++;
@@ -123,18 +115,14 @@ namespace We7.CMS.Web.Admin.ContentModel
                     widgetCount++;
                 }
                 //存在至少一个部件
-                if (widgetCount > 0)
-                {
-                    sb.Append("{\"name\":\"createWidget\",\"exist\":true},");
-                }
-                else
-                {
-                    sb.Append("{\"name\":\"createWidget\",\"exist\":false},");
-                }
+                sb.Append(widgetCount > 0
+                              ? "{\"name\":\"createWidget\",\"exist\":true},"
+                              : "{\"name\":\"createWidget\",\"exist\":false},");
+
                 #endregion
             }
 
-            if (isArticle)
+            if (IsArticle)
             {
 
                 #region 检查表结构
@@ -163,43 +151,43 @@ namespace We7.CMS.Web.Admin.ContentModel
                 //    sb.Append("{\"name\":\"addLeftMenu\",\"exist\":false},");
                 //}
                 #endregion
+            }
 
-                if (Action == "layout")
+            if (action == "layout")
+            {
+                #region 检查布局
+
+                string layoutPath = ModelHelper.GetModelLayoutDirectory(ModelInfo.ModelName) + "GenerateLayout.ascx";
+                if (File.Exists(layoutPath))
                 {
-                    #region 检查布局
+                    layoutPath = String.Format("{0}/{1}/{2}/{3}", ModelConfig.ModelsDirectory, ModelInfo.GroupName, ModelInfo.Name, "GenerateLayout.ascx");
+                    EditInfo entity = ModelInfo.Layout.Panels["edit"].EditInfo;
+                    sb.Append("{\"name\":\"createLayout\",\"exist\":true,\"path\":\"" + layoutPath + "\"},");
 
-                    string layoutPath = ModelHelper.GetModelLayoutDirectory(ModelInfo.ModelName) + "GenerateLayout.ascx";
-                    if (File.Exists(layoutPath))
-                    {
-                        layoutPath = String.Format("{0}/{1}/{2}/{3}", ModelConfig.ModelsDirectory, ModelInfo.GroupName, ModelInfo.Name, "GenerateLayout.ascx");
-                        EditInfo entity = ModelInfo.Layout.Panels["edit"].EditInfo;
-                        sb.Append("{\"name\":\"createLayout\",\"exist\":true,\"path\":\"" + layoutPath + "\"},");
+                    //ModelInfo.Layout.Panels["edit"].EditInfo.Layout;
+                    if (!string.IsNullOrEmpty(entity.Layout))
+                        chkAE.Checked = true;
 
-                        //ModelInfo.Layout.Panels["edit"].EditInfo.Layout;
-                        if (!string.IsNullOrEmpty(entity.Layout))
-                            chkAE.Checked = true;
+                    if (!string.IsNullOrEmpty(entity.ViewerLayout))
+                        chkView.Checked = true;
 
-                        if (!string.IsNullOrEmpty(entity.ViewerLayout))
-                            chkView.Checked = true;
-
-                        if (!string.IsNullOrEmpty(entity.UcLayout))
-                            chkUC.Checked = true;
-                    }
-                    else
-                    {
-                        sb.Append("{\"name\":\"createLayout\",\"exist\":false},");
-                    }
-
-
-                    #endregion
+                    if (!string.IsNullOrEmpty(entity.UcLayout))
+                        chkUC.Checked = true;
+                }
+                else
+                {
+                    sb.Append("{\"name\":\"createLayout\",\"exist\":false},");
                 }
 
+
+                #endregion
             }
             sb.Append("]}");
-            strScript = sb.ToString();
-            strScript = strScript.Remove(strScript.LastIndexOf(","), 1);
+            StrScript = sb.ToString();
+            if (StrScript.Length > StrScript.LastIndexOf(",", StringComparison.Ordinal))
+                StrScript = StrScript.Remove(StrScript.LastIndexOf(",", StringComparison.Ordinal), 1);
 
-            strScript = new JavaScriptSerializer().Serialize(strScript);
+            StrScript = new JavaScriptSerializer().Serialize(StrScript);
 
         }
 
@@ -212,11 +200,11 @@ namespace We7.CMS.Web.Admin.ContentModel
            if (Action == "widget")
 
             {
-                List<string> DisplayFields = new List<string>();
+                List<string> displayFields = new List<string>();
                 We7DataColumnCollection dcs = new We7DataColumnCollection();
                 foreach (We7DataColumn col in ModelInfo.DataSet.Tables[0].Columns)
                 {
-                    if (col.Direction == ParameterDirection.ReturnValue || (col.IsSystem && !DisplayFields.Contains(col.Name)))
+                    if (col.Direction == ParameterDirection.ReturnValue || (col.IsSystem && !displayFields.Contains(col.Name)))
                         continue;
                     dcs.Add(col);
                 }
@@ -240,18 +228,15 @@ namespace We7.CMS.Web.Admin.ContentModel
                     {
                         item.Attributes["mvalue"] = item.Value;
                         if (ModelInfo.Layout.UCContrl.WidgetDetailFieldArray != null)
-                        {
-                            item.Selected = Array.Exists(ModelInfo.Layout.UCContrl.WidgetDetailFieldArray, s => s == item.Value);
-                        }
+                            item.Selected = Array.Exists(ModelInfo.Layout.UCContrl.WidgetDetailFieldArray,
+                                                         s => s == item.Value);
                     }
 
                     foreach (ListItem item in chklstWidgetList.Items)
                     {
                         item.Attributes["mvalue"] = item.Value;
                         if (ModelInfo.Layout.UCContrl.WidgetListFieldArray != null)
-                        {
                             item.Selected = Array.Exists(ModelInfo.Layout.UCContrl.WidgetListFieldArray, s => s == item.Value);
-                        }
                     }
                 }
            

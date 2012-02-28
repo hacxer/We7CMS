@@ -83,16 +83,24 @@ namespace We7.CMS
                      * 添加内容模型表结构(系统内置字段已在LoadDataSource里添加)
                      * author:丁乐
                      */
-                    ModelHelper.ReCreateModelIndex();
-                    MoudelMonitoring.SetModelDataDic(assistat);
-
+                    if (FileHelper.Exists(context.Server.MapPath("~/ModelUI/Config/ModelConfig.xml")))
+                    {
+                        ModelHelper.ReCreateModelIndex();
+                        MoudelMonitoring.SetModelDataDic(assistat);
+                        MoudelMonitoring ml = new MoudelMonitoring();  //监控内容模型
+                    }
+                   
                     hf.Assistant = assistat;
                     hf.Root = root;
                     hf.Initialize();
                     context.Application.Add("We7.HelperFactory", hf);
                     AppCtx.Cache.AddObject(HelperFactory.CacheKey, hf);
 
-                    MoudelMonitoring ml = new MoudelMonitoring();  //监控内容模型
+                    /*
+                     * 添加事件监控
+                     * author:赵常伟
+                     */
+                    EventsManager.Instance.Start();
                 }
             }
 

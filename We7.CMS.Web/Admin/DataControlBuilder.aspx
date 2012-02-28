@@ -13,10 +13,10 @@
 	<script src="fckeditor/editor/dialog/common/fck_dialog_common.js" type="text/javascript"></script>
 	
 	<script src="<%=AppPath%>/cgi-bin/DialogHelper.js" type="text/javascript"></script>
-    <script src="cgi-bin/controls/datacontrol.js" type="text/javascript" charset="gb2312"></script>
-    <script src="cgi-bin/controls/datacontrol/Common.js" type="text/javascript" charset="gb2312"></script>
+    <script src="cgi-bin/datacontrol/datacontrol.new.js" type="text/javascript" charset="gb2312"></script>
+    <script src="cgi-bin/datacontrol/datacontrol/Common.new.js" type="text/javascript" charset="gb2312"></script>
     
-   <script src="<%=AppPath%>/ajax/jquery/jquery.simplemodal-1.1.1.js" type="text/javascript"></script> 
+
    
 	<script type="text/javascript">
 //debugger;

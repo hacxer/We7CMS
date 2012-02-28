@@ -316,6 +316,8 @@
       <Property name="MonthClicks" field="MonthClicks" size="6" type="Int32" description="月点击量" />
       <Property name="QuarterClicks" field="QuarterClicks" size="6" type="Int32" description="季点击量" />
       <Property name="YearClicks" field="YearClicks" size="6" type="Int32" description="年点击量" />
+      <Property name="RelationID" field="RelationID" size="50" type="String" description="关联ID" />
+      <Property name="RelationModelName" field="RelationModelName" size="100" type="String" description="关联内容模型" />
     </Object>
     
     <!--留言反馈-回复表AdviceReply-->

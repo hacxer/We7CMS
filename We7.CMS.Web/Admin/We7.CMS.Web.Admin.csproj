@@ -17,14 +17,10 @@
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
     <OldToolsVersion>3.5</OldToolsVersion>
-    <SccProjectName>
-    </SccProjectName>
-    <SccLocalPath>
-    </SccLocalPath>
-    <SccAuxPath>
-    </SccAuxPath>
-    <SccProvider>
-    </SccProvider>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
     <UseIISExpress>false</UseIISExpress>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -62,11 +58,6 @@
     <Reference Include="HtmlAgilityPack, Version=1.4.0.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Solution Items\DLL\HtmlAgilityPack\1.4.0\HtmlAgilityPack.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Office.Interop.Word, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-      <HintPath>..\..\Solution Items\DLL\Microsoft.Office.Interop.Word.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=1.3.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -178,6 +169,13 @@
     </Compile>
     <Compile Include="Addins\ModelHandler.aspx.designer.cs">
       <DependentUpon>ModelHandler.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Addins\ModelListForObsolete.aspx.cs">
+      <DependentUpon>ModelListForObsolete.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Addins\ModelListForObsolete.aspx.designer.cs">
+      <DependentUpon>ModelListForObsolete.aspx</DependentUpon>
     </Compile>
     <Compile Include="Addins\ModelList.aspx.cs">
       <DependentUpon>ModelList.aspx</DependentUpon>
@@ -319,16 +317,27 @@
     <Compile Include="Advice\SendEmailDetail.aspx.designer.cs">
       <DependentUpon>SendEmailDetail.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Ajax\BusinessSubmit\Data\DataBaseAssistant.cs" />
-    <Compile Include="Ajax\BusinessSubmit\Data\IDataBase.cs" />
+    <Compile Include="Ajax\BusinessSubmit\ExpandHandle\ContentModel\GetModelCount.ashx.cs">
+      <DependentUpon>GetModelCount.ashx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Ajax\BusinessSubmit\ExpandHandle\ExpandClass.cs" />
+    <Compile Include="Ajax\BusinessSubmit\JsonAssistant\TreeAssistant.cs" />
+    <Compile Include="Ajax\BusinessSubmit\QueryAssistant\IPages.cs" />
     <Compile Include="Ajax\BusinessSubmit\QueryAssistant\QueryCondition.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Ajax\BusinessSubmit\QueryAssistant\IQueryCondition.cs" />
     <Compile Include="Ajax\BusinessSubmit\JsonForCondition.ashx.cs">
       <DependentUpon>JsonForCondition.ashx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Ajax\BusinessSubmit\JsonAssistant\JsonResult.cs" />
+    <Compile Include="Ajax\BusinessSubmit\XMLAssistant\XMLAssistant.cs" />
+    <Compile Include="Ajax\BusinessSubmit\ExpandHandle\ContentModel\SubmitAudit.ashx.cs">
+      <DependentUpon>SubmitAudit.ashx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
     <Compile Include="Ajax\CategoryRepeatCheck.aspx.cs">
       <DependentUpon>CategoryRepeatCheck.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -419,6 +428,13 @@
     <Compile Include="CategoryList.aspx.designer.cs">
       <DependentUpon>CategoryList.aspx</DependentUpon>
     </Compile>
+    <Compile Include="CatDepartSelect.aspx.cs">
+      <DependentUpon>CatDepartSelect.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="CatDepartSelect.aspx.designer.cs">
+      <DependentUpon>CatDepartSelect.aspx</DependentUpon>
+    </Compile>
     <Compile Include="CatTypeAdd.aspx.cs">
       <DependentUpon>CatTypeAdd.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -457,6 +473,13 @@
     <Compile Include="ContentModel\ajax\ModelSort.ashx.cs">
       <DependentUpon>ModelSort.ashx</DependentUpon>
     </Compile>
+    <Compile Include="ContentModel\ChooseTableColumn.aspx.cs">
+      <DependentUpon>ChooseTableColumn.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ContentModel\ChooseTableColumn.aspx.designer.cs">
+      <DependentUpon>ChooseTableColumn.aspx</DependentUpon>
+    </Compile>
     <Compile Include="ContentModel\EditDetail.aspx.cs">
       <DependentUpon>EditDetail.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -477,6 +500,13 @@
     </Compile>
     <Compile Include="ContentModel\UxStyleEditor.aspx.designer.cs">
       <DependentUpon>UxStyleEditor.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="ContentModel\ValidatorManage.aspx.cs">
+      <DependentUpon>ValidatorManage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ContentModel\ValidatorManage.aspx.designer.cs">
+      <DependentUpon>ValidatorManage.aspx</DependentUpon>
     </Compile>
     <Compile Include="controls\PhotoUpload.ascx.cs">
       <DependentUpon>PhotoUpload.ascx</DependentUpon>
@@ -1463,6 +1493,13 @@
     <Compile Include="SystemStrategy.aspx.designer.cs">
       <DependentUpon>SystemStrategy.aspx</DependentUpon>
     </Compile>
+    <Compile Include="TagsManage.aspx.cs">
+      <DependentUpon>TagsManage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="TagsManage.aspx.designer.cs">
+      <DependentUpon>TagsManage.aspx</DependentUpon>
+    </Compile>
     <Compile Include="TemplateDetail.aspx.cs">
       <DependentUpon>TemplateDetail.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1538,6 +1575,13 @@
     </Compile>
     <Compile Include="Template\TemplateGroupEdit.aspx.designer.cs">
       <DependentUpon>TemplateGroupEdit.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="theme\classic\ShopData.aspx.cs">
+      <DependentUpon>ShopData.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="theme\classic\ShopData.aspx.designer.cs">
+      <DependentUpon>ShopData.aspx</DependentUpon>
     </Compile>
     <Compile Include="tools\Update.aspx.cs">
       <DependentUpon>Update.aspx</DependentUpon>
@@ -1785,6 +1829,7 @@
     <Content Include="Addins\Articles.aspx" />
     <Content Include="Addins\ArticlesMy.aspx" />
     <Content Include="Addins\Comment.aspx" />
+    <Content Include="Addins\ModelList.aspx" />
     <Content Include="ADInterface\CertificationCreate.aspx" />
     <Content Include="Ajax\CodeMirror\contrib\csharp\css\csharpcolors.css" />
     <Content Include="Ajax\CodeMirror\contrib\csharp\index.html" />
@@ -1862,11 +1907,14 @@
     <Content Include="Ajax\CodeMirror\js\unittests.js" />
     <Content Include="Ajax\CodeMirror\js\util.js" />
     <Content Include="Ajax\TagAjax.aspx" />
+    <Content Include="CatDepartSelect.aspx" />
+    <Content Include="ContentModel\ChooseTableColumn.aspx" />
     <Content Include="ContentModel\EditDetail.aspx" />
     <Content Include="ContentModel\js\FormBuilder\ChildrenTableHorizontal.js" />
     <Content Include="ContentModel\js\FormBuilder\MultiUploadify.js" />
     <Content Include="ContentModel\Sort.aspx" />
     <Content Include="ContentModel\UxStyleEditor.aspx" />
+    <Content Include="ContentModel\ValidatorManage.aspx" />
     <Content Include="controls\StrategySet.ascx" />
     <Content Include="default.aspx" />
     <Content Include="Advice\AdviceList.aspx" />
@@ -2730,6 +2778,7 @@
     </Content>
     <Content Include="system.aspx" />
     <Content Include="SystemStrategy.aspx" />
+    <Content Include="TagsManage.aspx" />
     <Content Include="TemplateDetail.aspx" />
     <Content Include="TemplateGroupDetail.aspx" />
     <Content Include="TemplateGroupDonwload.aspx" />
@@ -2784,6 +2833,7 @@
     <Content Include="theme\classic\main.aspx">
       <SubType>ASPXCodeBehind</SubType>
     </Content>
+    <Content Include="theme\classic\ShopData.aspx" />
     <Content Include="tools\widget\SiteProfile.ascx" />
     <Content Include="tools\widget\wid_myarticle.ascx" />
     <Content Include="tools\widget\wid_myprocess.ascx" />
@@ -2812,6 +2862,8 @@
     <Content Include="Ajax\advicecheck.js" />
     <Content Include="Ajax\CheckAdvicePwd.ashx" />
     <Content Include="Ajax\BusinessSubmit\JsonForCondition.ashx" />
+    <Content Include="Ajax\BusinessSubmit\ExpandHandle\ContentModel\SubmitAudit.ashx" />
+    <Content Include="Ajax\BusinessSubmit\ExpandHandle\ContentModel\GetModelCount.ashx" />
     <None Include="Ajax\CodeMirror\contrib\freemarker\LICENSE" />
     <None Include="Ajax\CodeMirror\contrib\java\LICENSE" />
     <None Include="Ajax\CodeMirror\contrib\lua\LICENSE" />
@@ -2831,7 +2883,7 @@
     <Content Include="Addins\ModelEditor.aspx" />
     <Content Include="Addins\ModelEmpty.aspx" />
     <Content Include="Addins\ModelHandler.aspx" />
-    <Content Include="Addins\ModelList.aspx" />
+    <Content Include="Addins\ModelListForObsolete.aspx" />
     <Content Include="Addins\ModelListNoMenu.aspx" />
     <Content Include="Addins\ModelViewer.aspx" />
     <Content Include="Advice\AdviceAccept.aspx" />

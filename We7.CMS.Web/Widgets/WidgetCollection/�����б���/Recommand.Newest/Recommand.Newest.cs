@@ -1,21 +1,13 @@
 ﻿using System;
-using System.Collections;
-using System.Configuration;
-using System.Data;
-using System.Web;
-using System.Web.Security;
-using System.Web.UI;
-using System.Web.UI.HtmlControls;
-using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
-using We7.CMS.Common;
 using System.Collections.Generic;
-using We7.Framework;
-using We7.CMS.WebControls;
-using Thinkment.Data;
-using We7.CMS.WebControls.Core;
-using We7.Framework.Util;
 using System.Text;
+using System.Web.UI.WebControls;
+using Thinkment.Data;
+using We7.CMS.Common;
+using We7.CMS.WebControls;
+using We7.CMS.WebControls.Core;
+using We7.Framework;
+using We7.Framework.Util;
 
 namespace We7.CMS.Web.Widgets
 {
@@ -113,7 +105,10 @@ namespace We7.CMS.Web.Widgets
                     {
                         OwnerID = helper.GetChannelIDFromURL();
                     }
-                    channel = helper.GetChannel(OwnerID, null) ?? new Channel();
+                    channel = helper.GetChannel(OwnerID, new string[]
+                                                         {
+                                                             "ID", "Title", "ChannelFullUrl", "Created", "SN"
+                                                         }) ?? new Channel();
                 }
                 return channel;
             }
@@ -181,68 +176,14 @@ namespace We7.CMS.Web.Widgets
                         c.Add(CriteriaType.Like, "Tags", "%'" + Tags + "'%");
                     }
                     Order[] os = IsShow ? new Order[] { new Order("IsShow", OrderMode.Desc), new Order("Updated", OrderMode.Desc) } : new Order[] { new Order("Updated", OrderMode.Desc) };
-                    articles = Assistant.List<Article>(c, os, 0, PageSize) ?? new List<Article>();
+                    articles =
+                        Assistant.List<Article>(c, os, 0, PageSize,
+                                                new string[] {"ID", "Title", "ChannelFullUrl", "Created", "SN"}) ??
+                        new List<Article>();
                 }
                 return articles;
             }
             set { articles = value; }
-        }
-
-        /// <summary>
-        /// 图片新闻
-        /// </summary>
-        protected List<Article> Pictures
-        {
-            get
-            {
-                if (pictureNews == null)
-                {
-                    Criteria c = new Criteria(CriteriaType.Equals, "ModelName", "System.Article");
-                    c.Add(CriteriaType.Equals, "IsImage", 1);
-                    c.Add(CriteriaType.Equals, "State", 1);
-                    if (IncludeChildren)
-                    {
-                        c.Add(CriteriaType.Like, "ChannelFullUrl", Channel.FullUrl + "%");
-                    }
-                    else
-                    {
-                        c.Add(CriteriaType.Equals, "OwnerID", Channel.ID);
-                    }
-                    if (!String.IsNullOrEmpty(Tags))
-                    {
-                        c.Add(CriteriaType.Like, "Tags", "%" + Tags + "%");
-                    }
-                    Order[] os = IsShow ? new Order[] { new Order("IsShow", OrderMode.Desc), new Order("Updated", OrderMode.Desc) } : new Order[] { new Order("Updated", OrderMode.Desc) };
-                    int count = HelperFactory.Instance.Assistant.Count<Article>(c);
-                    int pageIndex = 0, start, pageitemcount;
-                    Utils.BuidlPagerParam(count, PageSize, ref pageIndex, out start, out pageitemcount);
-                    pictureNews = HelperFactory.Instance.Assistant.List<Article>(c, os, 0, pageitemcount) ?? new List<Article>();
-                }
-                return pictureNews;
-            }
-        }
-
-        /// <summary>
-        /// 图片flash
-        /// </summary>
-        protected string FlashSlideData
-        {
-            get
-            {
-                StringBuilder sb = new StringBuilder();
-                StringBuilder sb2 = new StringBuilder();
-                StringBuilder sb3 = new StringBuilder();
-                for (int i = 0; i < Pictures.Count && i < SliderSize; i++)
-                {
-                    sb.AppendFormat("{0}|", Pictures[i].Thumbnail);
-                    sb2.AppendFormat("{0}|", Pictures[i].Url);
-                    sb3.AppendFormat("{0}|", Pictures[i].Title);
-                }
-                Utils.TrimEndStringBuilder(sb, "|");
-                Utils.TrimEndStringBuilder(sb2, "|");
-                Utils.TrimEndStringBuilder(sb3, "|");
-                return "pics=" + sb + "&amp;links=" + sb2 + "&amp;texts=" + sb3;
-            }
         }
 
         /// <summary>

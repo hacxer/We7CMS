@@ -1,7 +1,6 @@
 ﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="ModelList.aspx.cs" MasterPageFile="~/Admin/theme/classic/content.Master"
-    Inherits="We7.CMS.Web.Admin.Addins.ModelList" %>
-
-<%@ Register Src="~/ModelUI/Panel/system/ListPanel.ascx" TagName="ListPanel" TagPrefix="uc1" %>
+    Inherits="We7.CMS.Web.Admin.Addins.ModelListing" %>
+<%@ Register Src="~/ModelUI/Panel/system/ListUIPanel.ascx" TagName="ListUIPanel" TagPrefix="uc2" %>
 <asp:Content ID="We7Content" ContentPlaceHolderID="MyContentPlaceHolder" runat="server">
 
     <script type="text/javascript" src="/Admin/Ajax/My97DatePicker/WdatePicker.js"></script>
@@ -20,6 +19,7 @@
         <asp:Literal ID="PagePathLiteral" runat="server"></asp:Literal>
     </div>
     <div id="mycontent">
-        <uc1:ListPanel ID="ucList" runat="server" />
+        <uc2:ListUIPanel ID="ucList" runat="server" />
+		<asp:PlaceHolder ID="PucList" runat="server"></asp:PlaceHolder>
     </div>
 </asp:Content>

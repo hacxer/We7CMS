@@ -40,18 +40,23 @@ namespace We7.Model.UI.Controls.page
 				Response.CacheControl = "no-cache";
 				Response.Expires = 0;
 
-				if (Request["NewName"] != null && Request["NewID"] != null && Request["Model"] != null)
+				if (Request["NewName"] != null && Request["NewID"] != null && Request["NewIDkey"] != null && Request["NewNamekey"] != null && Request["Model"] != null)
 				{
+					string newIDkey = Request["NewIDkey"].ToString();
+					string newNamekey = Request["NewNamekey"].ToString();
 					string newName = Request["NewName"].ToString();
 					string newID = Request["NewID"].ToString();
 					string model = Request["Model"].ToString();
 					ModelDBHelper helper = ModelDBHelper.Create(model);
 					Dictionary<string, object> dic = new Dictionary<string, object>();
-					dic.Add("Name", newName);
-					dic.Add("ID", newID);
+					dic.Add(newNamekey, newName);
+					if (newIDkey == "ID")
+						dic.Add(newIDkey, newID);
+					if (newIDkey != "ID" && newNamekey != "ID")
+						dic.Add("ID", newID);
 					dic.Add("AccountID", We7.CMS.Accounts.Security.CurrentAccountID);
-					dic.Add("State",1);
-					dic.Add("Index",999);
+					dic.Add("State", 1);
+					dic.Add("Index", 999);
 					dic.Add("Created", DateTime.Now);
 					dic.Add("Updated", DateTime.Now);
 					helper.Insert(dic);

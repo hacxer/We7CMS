@@ -454,7 +454,7 @@ function vbStyleSelectorItem() {
         var obj = this;
         _a.onclick = function() {
             var result = window.showModalDialog("DataControlCssEditor.aspx?cmd=edit&ctr=" + _input.data.fileName + "&style=" + _input.value + "&gp=" + dc.gp, "修改样式", 'scrollbars=no;resizable=no;help=no;status=no;center=1; dialogHeight=490px;dialogwidth=700px;');
-            if (typeof result == "object") {
+            if (result && typeof result == "object") {
                 i = _input.options.length;
                 _input.options[i] = me.createOption(result.value, result.key);
             }

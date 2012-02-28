@@ -1,6 +1,8 @@
-<%@ Page Language="C#" AutoEventWireup="true" Codebehind="UpdatePassword.aspx.cs" Inherits="We7.CMS.Web.Admin.UpdatePassword" %>
+<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="UpdatePassword.aspx.cs"
+    Inherits="We7.CMS.Web.Admin.UpdatePassword" %>
+
 <%@ Register Assembly="We7.CMS.UI" Namespace="We7.CMS.Controls" TagPrefix="WEC" %>
-<asp:Content ID="We7Content" ContentPlaceHolderID="MyContentPlaceHolder" runat="server">
+<asp:content id="We7Content" contentplaceholderid="MyContentPlaceHolder" runat="server">
 <script type="text/javascript" src="/Scripts/we7/we7.loader.js"></script>
     <h2 class="title">
     <asp:Image ID="LogoImage" runat="server" ImageUrl="~/admin/Images/icons_tools.gif" />
@@ -17,8 +19,7 @@
                             登录名：
                         </td>
                         <td style="width: 197px">
-                            <asp:TextBox ID="LoginNameTextBox" runat="server" Columns="40" 
-                                Width="165px" required="required" errmsg="请输入用户名"></asp:TextBox>
+                            <asp:TextBox ID="LoginNameTextBox" runat="server" Columns="40"    Width="165px" ></asp:TextBox>
                         </td>
                     </tr>
                     <tr>
@@ -68,30 +69,30 @@
             </span>
         </p>
 <script type="text/javascript">
-	function checkEnable() {
-		var form = $("#update-passowrd-form");
-		if (we7 && we7.fn.validate && we7(form).validate()) {
-			return true;
-		} else {
-			return false;
-		}
-	}
+    function checkEnable() {
+        var form = $("#update-passowrd-form");
+        if (we7 && we7.fn.validate && we7(form).validate()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
-	we7.load.ready(function () {
-		var form = $("#update-passowrd-form"), newPw = $("#<%=NewPasswordTextBox.ClientID %>"), cfmNewPw = $("#<%=AgainPasswordTextBox.ClientID %>");
-		we7(cfmNewPw).customValidator(function (validator) {
-			var val = this.val();
-			if (val !== newPw.val()) {
-				return "两次输入的密码不一致";
-			} else {
-				return true;
-			}
-		});
+    we7.load.ready(function () {
+        var form = $("#update-passowrd-form"), newPw = $("#<%=NewPasswordTextBox.ClientID %>"), cfmNewPw = $("#<%=AgainPasswordTextBox.ClientID %>");
+        we7(cfmNewPw).customValidator(function (validator) {
+            var val = this.val();
+            if (val !== newPw.val()) {
+                return "两次输入的密码不一致";
+            } else {
+                return true;
+            }
+        });
 
-		we7(form).attachValidator({
-			inputEvent: null,
-			errorInputEvent: null
-		});
-	});
+        we7(form).attachValidator({
+            inputEvent: null,
+            errorInputEvent: null
+        });
+    });
 </script>
-</asp:Content>
+</asp:content>

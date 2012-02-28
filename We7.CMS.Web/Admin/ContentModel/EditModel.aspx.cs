@@ -51,7 +51,7 @@ namespace We7.CMS.Web.Admin.ContentModel
         {
             get
             {
-                return Request["type"];
+                return Request["type"].ToUpper();
             }
         }
 
@@ -62,7 +62,7 @@ namespace We7.CMS.Web.Admin.ContentModel
         {
             get
             {
-                switch (MyModelType.ToUpper())
+                switch (MyModelType)
                 {
                     case "ACCOUNT": return "用户模型";
                     case "ARTICLE": return "信息模型";
@@ -77,6 +77,7 @@ namespace We7.CMS.Web.Admin.ContentModel
             //绑定控件
 
             BindModelGroup();
+            BindRelationModelName();
             //新建内容模型
             if (Action == ActionType.Add)
             {
@@ -114,6 +115,19 @@ namespace We7.CMS.Web.Admin.ContentModel
                 this.GroupDropDownList.SelectedValue = Request[GroupDropDownList.UniqueID];
             }
         }
+
+        private void BindRelationModelName()
+        {
+            //ddlRelationModelName
+            ContentModelCollection contentCollection = ModelHelper.GetContentModel(ModelType.ADVICE);
+            ddlRelationModelName.DataSource = contentCollection;
+            ddlRelationModelName.DataTextField = "Label";
+            ddlRelationModelName.DataValueField = "Name";
+            ddlRelationModelName.DataBind();
+            ddlRelationModelName.Items.Insert(0, new ListItem("请选择", ""));
+            ddlRelationModelName.Items[0].Selected = true;
+        }
+
         //修改时绑定字段
         private void BindControlsValue()
         {
@@ -135,6 +149,7 @@ namespace We7.CMS.Web.Admin.ContentModel
                 if (mi != null)
                 {
                     this.AuthorityTypeCheckBox.Checked = mi.AuthorityType;
+                    this.ddlRelationModelName.SelectedValue = mi.RelationModelName;
                 }
                 if (!string.IsNullOrEmpty(mi.Parameters))
                 {
@@ -238,11 +253,11 @@ namespace We7.CMS.Web.Admin.ContentModel
             model.Label = ModelLabelTextBox.Text.Trim();
             model.DefaultContentName = defaultModelName;
             ModelType modelType = ModelType.ARTICLE;
-            if (defaultModelName == "Template.AdviceModel" || MyModelType.ToLower() == "advice")
+            if (defaultModelName == "Template.AdviceModel" || MyModelType == "ADVICE")
             {
                 modelType = ModelType.ADVICE;
             }
-            else if (defaultModelName == "Template.AccountModel" || MyModelType.ToLower() == "account")
+            else if (defaultModelName == "Template.AccountModel" || MyModelType == "ACCOUNT")
             {
                 modelType = ModelType.ACCOUNT;
                 if (!string.IsNullOrEmpty(RoleTextBox.Text))
@@ -267,16 +282,19 @@ namespace We7.CMS.Web.Admin.ContentModel
                 modelInfo.Type = modelType;
                 modelInfo.AuthorityType = AuthorityTypeCheckBox.Checked;
 
-                if (defaultModelName == "Template.ArticleModel")
+                if (defaultModelName == "Template.ArticleModel" || MyModelType == "ARTICLE")
                 {
                     string tempvalue = modelInfo.Layout.Panels["list"].ListInfo.Groups[0].Columns["Manage"].Params["cmd"].Replace("Template.ArticleModel", model.Name);
                     modelInfo.Layout.Panels["list"].ListInfo.Groups[0].Columns["Manage"].Params["cmd"] = tempvalue;
+                    modelInfo.RelationModelName = ddlRelationModelName.SelectedValue;
                 }
-                ModelHelper.SaveModelInfo(modelInfo, model.Name);
-            }
 
-            if (success)
-            {
+                ModelHelper.SaveModelInfo(modelInfo, model.Name);
+                if (defaultModelName == "Template.ArticleModel" || MyModelType == "ARTICLE")
+                {
+                    //更新表结构
+                    ModelHelper.CreateModelTable(modelInfo);
+                }
                 string tempName = RequestHelper.Get<string>("modelname");
                 string msg = ModelTypeName + " {0} 成功！继续 <a href='EditLayout.aspx?modelname={1}' target='_blank'>编辑模型布局</a> ";
                 if (Action == ActionType.Add)

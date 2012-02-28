@@ -71,9 +71,10 @@ namespace We7.CMS.Accounts
             We7Helper.AssertNotNull(act, "AddAccount.act");
 
                         //利用事务进行帐户的相关权限删除
-            IDatabase db = Assistant.GetDatabases()["We7.CMS.Common"];
-            IConnection ic = Assistant.GetConnections()[db];
-            ic.IsTransaction = true;
+            //IDatabase db = Assistant.GetDatabases()["We7.CMS.Common"];
+            //IConnection ic = Assistant.GetConnections()[db];
+            //ic.IsTransaction = true;
+            IConnection ic = Assistant.CreateConnetion(typeof(Account), true);//上边连接无效，此方法为重构方法
             try
             {
                 act.ID = We7Helper.CreateNewID();
@@ -230,9 +231,12 @@ namespace We7.CMS.Accounts
             We7Helper.AssertNotNull(accountID, "DeleteAccont.accountID");
 
             //利用事务进行帐户的相关权限删除
-            IDatabase db = Assistant.GetDatabases()["We7.CMS.Common"];
-            IConnection ic = Assistant.GetConnections()[db];
-            ic.IsTransaction = true;
+            //IDatabase db = Assistant.GetDatabases()["We7.CMS.Common"];  
+            //IConnection ic = Assistant.GetConnections()[db];
+
+            IConnection ic = Assistant.CreateConnetion(typeof(Account),true);//上边连接无效，此方法为重构方法
+
+            //ic.IsTransaction = true;
             try
             {
                 //删除Permissions
@@ -246,7 +250,6 @@ namespace We7.CMS.Accounts
                 act.ID = accountID;
                 Assistant.Delete(ic, act);
                 OnUserDeleted(act);
-
                 ic.Commit();
             }
             catch (Exception)

@@ -44,27 +44,70 @@ namespace We7.CMS.WebControls
 
         protected sealed override void LoadContainer()
         {
-            if (!Page.ClientScript.IsClientScriptIncludeRegistered(Page.GetType(), "jquery1.3.2"))
+            #region 已废弃 2011-12-21 V2.8版本，几个小版本后将删除 by Brian.G
+            //if (!Page.ClientScript.IsClientScriptIncludeRegistered(Page.GetType(), "jquery1.3.2"))
+            //{
+            //    Page.ClientScript.RegisterClientScriptInclude(Page.GetType(), "jquery1.3.2", "/Admin/Ajax/jquery/jquery-1.3.2.min.js");
+            //}
+            //if (!Page.ClientScript.IsClientScriptIncludeRegistered(Page.GetType(), "jquery_validate"))
+            //{
+            //    Page.ClientScript.RegisterClientScriptInclude(Page.GetType(), "jquery_validate", "/Admin/Ajax/jquery/jquery.validate.js");
+            //}
+            //if (!Page.ClientScript.IsStartupScriptRegistered(Page.GetType(), "jquery_valform"))
+            //{
+            //    if (Page != null && Page.Form != null)
+            //    {
+            //        Page.ClientScript.RegisterStartupScript(Page.GetType(), "jquery_valform", @"$(function(){$('#" + this.Page.Form.ClientID + "').validate();});", true);
+            //    }
+            //    else
+            //    {
+            //        Page.ClientScript.RegisterStartupScript(Page.GetType(), "jquery_valform", @"$(function(){$('form').validate();});", true);
+            //    }
+            //}
+            #endregion 
+            
+            if (ContainsValidator())
             {
-                Page.ClientScript.RegisterClientScriptInclude(Page.GetType(), "jquery1.3.2", "/Admin/Ajax/jquery/jquery-1.3.2.min.js");
-            }
-            if (!Page.ClientScript.IsClientScriptIncludeRegistered(Page.GetType(), "jquery_validate"))
-            {
-                Page.ClientScript.RegisterClientScriptInclude(Page.GetType(), "jquery_validate", "/Admin/Ajax/jquery/jquery.validate.js");
-            }
-            if (!Page.ClientScript.IsStartupScriptRegistered(Page.GetType(), "jquery_valform"))
-            {
-                if (Page != null && Page.Form != null)
+                if (!Page.ClientScript.IsClientScriptIncludeRegistered(Page.GetType(), "we7_loader"))
                 {
-                    Page.ClientScript.RegisterStartupScript(Page.GetType(), "jquery_valform", @"$(function(){$('#" + this.Page.Form.ClientID + "').validate();});", true);
+                     Page.ClientScript.RegisterClientScriptInclude(Page.GetType(), "we7_loader", "/Scripts/we7/we7.loader.js");
+                 //Page.ClientScript.RegisterClientScriptInclude(Page.GetType(), "we7_loader", "/Scripts/we7/we7.loader.dev.js");
+
                 }
-                else
-                {
-                    Page.ClientScript.RegisterStartupScript(Page.GetType(), "jquery_valform", @"$(function(){$('form').validate();});", true);
-                }
+                Page.ClientScript.RegisterStartupScript(Page.GetType(), "t", @";we7.load.ready(function(){we7('form').attachValidator({
+                                                            inputEvent: 'blur',
+                                                            formEvent:'submit',
+                                                            ajaxOnSoft:true,
+                                                            errorInputEvent:null
+                		                                })});", true);
             }
+
             ModelHelper.UpdateFields(PanelContext, null);
             InitContainer(null);
+        }
+        /// <summary>
+        ///Content: 检测内容模型控件中是否含有需要验证的控件
+        ///Author : Brian.G
+        ///Date   : 2011-12-21
+        /// </summary>
+        /// <returns></returns>
+        private bool ContainsValidator()
+        {
+            bool isValidator = false;
+            foreach (Group group in PanelContext.Panel.EditInfo.Groups)
+            {
+                if (isValidator)
+                    break;
+                foreach (We7Control ctr in group.Controls)
+                {
+                    //判断是否含有需要添加验证的控件
+                    isValidator = ctr != null && (ctr.Required || (ctr.Params != null && ctr.Params.Count > 0 && ctr.Params.Contains("validator")));
+                    if (isValidator)
+                        break;
+
+                }
+            }
+            return isValidator;
         }
 
         public void SetData(DataRow row, IOrderedDictionary datakeys)

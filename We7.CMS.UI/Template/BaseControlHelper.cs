@@ -558,8 +558,8 @@ namespace We7.CMS.WebControls.Core
                             dci.Desc = dci.Controls[0].Description;
                             if (string.IsNullOrEmpty(dci.Name))
                                 dci.Name = new CNspellTranslator().GetSpells(prefixPath.Substring(prefixPath.LastIndexOf('/') + 1, prefixPath.Length - (prefixPath.LastIndexOf('/') + 1))) + DateTime.Now.Ticks;
-                            if (string.IsNullOrEmpty(dci.GroupLabel))
-                                dci.GroupLabel = dci.Desc;
+							if (string.IsNullOrEmpty(dci.GroupLabel))
+								dci.GroupLabel = di.Name;//dci.Desc;
                             if (string.IsNullOrEmpty(dci.GroupIcon))
                                 dci.GroupIcon = dci.Desc;
                             if (string.IsNullOrEmpty(dci.GroupDesc))

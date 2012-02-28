@@ -91,6 +91,7 @@ namespace We7.Framework.Config
         private bool enableHtmlTemplate = true;
         private string theme = "theme";
 
+        bool enableSingleTable = true;
 
         /// <summary>
         /// 是否启用Html静态化的模板
@@ -848,8 +849,11 @@ namespace We7.Framework.Config
         /// <summary>
         /// 是否启用单表存储
         /// </summary>
-        public bool EnableSingleTable { get; set; }
-
+        public bool EnableSingleTable
+        {
+            get { return enableSingleTable; }
+            set { enableSingleTable = value; }
+        }
         /// <summary>
         /// 插件商店服务地址
         /// </summary>
@@ -907,5 +911,21 @@ namespace We7.Framework.Config
         /// 是否是演示站点
         /// </summary>
         public bool IsDemoSite { get; set; }
+
+        private string eventCallbackTime = "6";
+        /// <summary>
+        ///事件检查时间
+        /// </summary>
+        public string EventCallbackTime
+        {
+            get
+            {
+                return eventCallbackTime;
+            }
+            set
+            {
+                eventCallbackTime = value;
+            }
+        }
     }
 }

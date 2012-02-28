@@ -34,6 +34,16 @@ namespace We7.CMS.Accounts.WD {
         
         private System.Threading.SendOrPostCallback helloOperationCompleted;
         
+        private System.Threading.SendOrPostCallback GetDtByConditionOperationCompleted;
+        
+        private System.Threading.SendOrPostCallback TotalOperationCompleted;
+        
+        private System.Threading.SendOrPostCallback UpdateOperationCompleted;
+        
+        private System.Threading.SendOrPostCallback DeleteListOperationCompleted;
+        
+        private System.Threading.SendOrPostCallback DeleteOperationCompleted;
+        
         private System.Threading.SendOrPostCallback AddAccountOperationCompleted;
         
         private System.Threading.SendOrPostCallback ExistEmailOperationCompleted;
@@ -158,6 +168,21 @@ namespace We7.CMS.Accounts.WD {
         
         /// <remarks/>
         public event helloCompletedEventHandler helloCompleted;
+        
+        /// <remarks/>
+        public event GetDtByConditionCompletedEventHandler GetDtByConditionCompleted;
+        
+        /// <remarks/>
+        public event TotalCompletedEventHandler TotalCompleted;
+        
+        /// <remarks/>
+        public event UpdateCompletedEventHandler UpdateCompleted;
+        
+        /// <remarks/>
+        public event DeleteListCompletedEventHandler DeleteListCompleted;
+        
+        /// <remarks/>
+        public event DeleteCompletedEventHandler DeleteCompleted;
         
         /// <remarks/>
         public event AddAccountCompletedEventHandler AddAccountCompleted;
@@ -308,6 +333,178 @@ namespace We7.CMS.Accounts.WD {
             if ((this.helloCompleted != null)) {
                 System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
                 this.helloCompleted(this, new System.ComponentModel.AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://westengine.com/GetDtByCondition", RequestNamespace="http://westengine.com/", ResponseNamespace="http://westengine.com/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public TableInfo[] GetDtByCondition(string tablename,Criteria condition, Order[] o, int form, int count, string[] fildes) {
+            object[] results = this.Invoke("GetDtByCondition", new object[] {
+                        tablename,
+                        condition,
+                        o,
+                        form,
+                        count,
+                        fildes
+                        });
+            return ((TableInfo[])(results[0]));
+        }
+        
+        /// <remarks/>
+        public void GetDtByConditionAsync(string tablename,Criteria condition, Order[] o, int form, int count, string[] fildes) {
+            this.GetDtByConditionAsync(tablename,condition, o, form, count, fildes, null);
+        }
+        
+        /// <remarks/>
+        public void GetDtByConditionAsync(string tablename,Criteria condition, Order[] o, int form, int count, string[] fildes, object userState) {
+            if ((this.GetDtByConditionOperationCompleted == null)) {
+                this.GetDtByConditionOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetDtByConditionOperationCompleted);
+            }
+            this.InvokeAsync("GetDtByCondition", new object[] {
+                        condition,
+                        o,
+                        form,
+                        count,
+                        fildes,
+                        tablename}, this.GetDtByConditionOperationCompleted, userState);
+        }
+        
+        private void OnGetDtByConditionOperationCompleted(object arg) {
+            if ((this.GetDtByConditionCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.GetDtByConditionCompleted(this, new GetDtByConditionCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://westengine.com/Total", RequestNamespace="http://westengine.com/", ResponseNamespace="http://westengine.com/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public int Total(string tablename,Criteria condition) {
+            object[] results = this.Invoke("Total", new object[] {
+                        tablename,
+                        condition
+                        });
+            return ((int)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void TotalAsync(string tablename,Criteria condition) {
+            this.TotalAsync(tablename,condition, null);
+        }
+        
+        /// <remarks/>
+        public void TotalAsync(string tablename,Criteria condition, object userState) {
+            if ((this.TotalOperationCompleted == null)) {
+                this.TotalOperationCompleted = new System.Threading.SendOrPostCallback(this.OnTotalOperationCompleted);
+            }
+            this.InvokeAsync("Total", new object[] {
+                        tablename,
+                        condition}, this.TotalOperationCompleted, userState);
+        }
+        
+        private void OnTotalOperationCompleted(object arg) {
+            if ((this.TotalCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.TotalCompleted(this, new TotalCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://westengine.com/Update", RequestNamespace="http://westengine.com/", ResponseNamespace="http://westengine.com/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public int Update(string tablename,object obj, string[] fields, Criteria condition) {
+            object[] results = this.Invoke("Update", new object[] {
+                        tablename,
+                        obj,
+                        fields,
+                        condition});
+            return ((int)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void UpdateAsync(string tablename,object obj, string[] fields, Criteria condition) {
+            this.UpdateAsync(tablename, obj, fields, condition, null);
+        }
+        
+        /// <remarks/>
+        public void UpdateAsync(string tablename,object obj, string[] fields, Criteria condition, object userState) {
+            if ((this.UpdateOperationCompleted == null)) {
+                this.UpdateOperationCompleted = new System.Threading.SendOrPostCallback(this.OnUpdateOperationCompleted);
+            }
+            this.InvokeAsync("Update", new object[] {
+                        obj,
+                        fields,
+                        condition,
+                        tablename}, this.UpdateOperationCompleted, userState);
+        }
+        
+        private void OnUpdateOperationCompleted(object arg) {
+            if ((this.UpdateCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.UpdateCompleted(this, new UpdateCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://westengine.com/DeleteList", RequestNamespace="http://westengine.com/", ResponseNamespace="http://westengine.com/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public int DeleteList(string tablename,Criteria condition) {
+            object[] results = this.Invoke("DeleteList", new object[] {
+                        tablename,
+                        condition});
+            return ((int)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void DeleteListAsync(string tablename,Criteria condition) {
+            this.DeleteListAsync(tablename,condition, null);
+        }
+        
+        /// <remarks/>
+        public void DeleteListAsync(string tablename,Criteria condition, object userState) {
+            if ((this.DeleteListOperationCompleted == null)) {
+                this.DeleteListOperationCompleted = new System.Threading.SendOrPostCallback(this.OnDeleteListOperationCompleted);
+            }
+            this.InvokeAsync("DeleteList", new object[] {
+                        condition,
+                        tablename}, this.DeleteListOperationCompleted, userState);
+        }
+        
+        private void OnDeleteListOperationCompleted(object arg) {
+            if ((this.DeleteListCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.DeleteListCompleted(this, new DeleteListCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://westengine.com/Delete", RequestNamespace="http://westengine.com/", ResponseNamespace="http://westengine.com/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public bool Delete(string tablename,object obj)
+        {
+            object[] results = this.Invoke("Delete", new object[] {
+                        tablename,
+                        obj});
+            return ((bool)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void DeleteAsync(string tablename,object obj)
+        {
+            this.DeleteAsync(tablename,obj, null);
+        }
+        
+        /// <remarks/>
+        public void DeleteAsync(string tablename, object obj, object userState)
+        {
+            if ((this.DeleteOperationCompleted == null)) {
+                this.DeleteOperationCompleted = new System.Threading.SendOrPostCallback(this.OnDeleteOperationCompleted);
+            }
+            this.InvokeAsync("Delete", new object[] {
+                        obj,
+                        tablename}, this.DeleteOperationCompleted, userState);
+        }
+        
+        private void OnDeleteOperationCompleted(object arg) {
+            if ((this.DeleteCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.DeleteCompleted(this, new DeleteCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
         }
         
@@ -1614,10 +1811,139 @@ namespace We7.CMS.Accounts.WD {
         }
     }
     
-  
-    /// <remarks/>
+	/// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "2.0.50727.4927")]
     public delegate void helloCompletedEventHandler(object sender, System.ComponentModel.AsyncCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "2.0.50727.4927")]
+    public delegate void GetDtByConditionCompletedEventHandler(object sender, GetDtByConditionCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "2.0.50727.4927")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetDtByConditionCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetDtByConditionCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public TableInfo[] Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((TableInfo[])(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "2.0.50727.4927")]
+    public delegate void TotalCompletedEventHandler(object sender, TotalCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "2.0.50727.4927")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class TotalCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal TotalCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public int Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((int)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "2.0.50727.4927")]
+    public delegate void UpdateCompletedEventHandler(object sender, UpdateCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "2.0.50727.4927")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class UpdateCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal UpdateCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public int Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((int)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "2.0.50727.4927")]
+    public delegate void DeleteListCompletedEventHandler(object sender, DeleteListCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "2.0.50727.4927")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class DeleteListCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal DeleteListCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public int Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((int)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "2.0.50727.4927")]
+    public delegate void DeleteCompletedEventHandler(object sender, DeleteCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "2.0.50727.4927")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class DeleteCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal DeleteCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public bool Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((bool)(this.results[0]));
+            }
+        }
+    }
     
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "2.0.50727.4927")]

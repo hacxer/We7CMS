@@ -458,7 +458,7 @@ namespace Thinkment.Data
             MySqlCommand CreateCommand(SqlStatement sql)
             {
                 MySqlCommand cmd = new MySqlCommand(sql.SqlClause);
-                cmd.Connection = connection;
+                cmd.Connection = Connection;
                 cmd.CommandTimeout = 300;
                 cmd.CommandType = sql.CommandType;
                 if (IsTransaction)

@@ -15,6 +15,8 @@ using We7.CMS.Common.PF;
 using We7.Framework;
 using Thinkment.Data;
 using We7.CMS.Common.Enum;
+using We7.Framework.Util;
+using System.Xml.Serialization;
 
 namespace We7.CMS.Accounts
 {
@@ -26,6 +28,24 @@ namespace We7.CMS.Accounts
     [ToolboxItem(false)]
     public class AccountWebService : System.Web.Services.WebService
     {
+        ObjectAssistant assistant;
+        /// <summary>
+        /// 当前Helper的数据访问对象
+        /// </summary>
+        ObjectAssistant Assistant
+        {
+            get
+            {
+                if (assistant == null)
+                {
+                    
+                    assistant = HelperFactory.Instance.Assistant;
+                    
+                }
+                return assistant;
+            }
+        }
+
         AccountLocalHelper AccountLocalHelper
         {
             get
@@ -38,6 +58,36 @@ namespace We7.CMS.Accounts
         public void hello()
         {
         }
+
+        #region DataBaseAssistant
+        [WebMethod, System.Xml.Serialization.XmlInclude(typeof(TableInfo))]
+        public List<TableInfo> GetDtByCondition(string tablename,Criteria condition, Order[] o, int form, int count, string[] fildes)
+        {
+            return Assistant.List<TableInfo>(condition, o, form, count, fildes, tablename);
+        }
+    
+        [WebMethod]
+        public int Total(string tablename,Criteria condition)
+        {
+            return Assistant.Count<TableInfo>(condition, tablename);
+        }
+        [WebMethod]
+        public int Update(string tablename,object obj, string[] fields, Criteria condition)
+        {
+            return Assistant.Update(obj, fields, condition, tablename);
+        }
+        [WebMethod]
+        public int DeleteList(string tablename, Criteria condition)
+        {
+            return Assistant.DeleteList<TableInfo>(condition, tablename);
+        }
+        [WebMethod]
+        public bool Delete(string tablename, object obj)
+        {
+            return Assistant.Delete(obj, tablename);
+        }
+        
+        #endregion
 
         #region 账户
         [WebMethod]

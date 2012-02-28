@@ -1,21 +1,12 @@
 ﻿using System;
-using System.Collections;
-using System.Configuration;
-using System.Data;
-using System.Web;
-using System.Web.Security;
-using System.Web.UI;
-using System.Web.UI.HtmlControls;
-using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
-using We7.CMS.Common;
 using System.Collections.Generic;
-using We7.Framework;
-using We7.CMS.WebControls;
+using System.Web.UI.WebControls;
 using Thinkment.Data;
+using We7.CMS.Common;
+using We7.CMS.WebControls;
 using We7.CMS.WebControls.Core;
+using We7.Framework;
 using We7.Framework.Util;
-using System.Text;
 
 namespace We7.CMS.Web.Widgets
 {
@@ -120,7 +111,7 @@ namespace We7.CMS.Web.Widgets
             }
             return string.Empty;
         }
-        
+
         /// <summary>
         /// 自定义的css样式
         /// </summary>
@@ -156,11 +147,19 @@ namespace We7.CMS.Web.Widgets
                     c.Add(CriteriaType.Like, "Tags", "%" + Tags + "%");
                 }
 
-                Order[] os = IsShow ? new Order[] { new Order("IsShow", OrderMode.Desc), new Order("Updated", OrderMode.Desc), new Order("ID", OrderMode.Desc) } : new Order[] { new Order("Updated", OrderMode.Desc), new Order("ID", OrderMode.Desc) };                
+                Order[] os = IsShow ? new Order[] { new Order("IsShow", OrderMode.Desc), new Order("Updated", OrderMode.Desc), new Order("ID", OrderMode.Desc) } : new Order[] { new Order("Updated", OrderMode.Desc), new Order("ID", OrderMode.Desc) };
                 int count = HelperFactory.Instance.Assistant.Count<Article>(c);
                 int pageIndex = 0, start;
                 Utils.BuidlPagerParam(count, PageSize, ref pageIndex, out start, out PageSize);
-                articles = HelperFactory.Instance.Assistant.List<Article>(c, os, 0, PageSize) ?? new List<Article>();
+                articles = HelperFactory.Instance.Assistant.List<Article>(c, os, 0, PageSize, new string[]
+                                                                                                  {
+                                                                                                      "ID", "Title",
+                                                                                                      "ChannelFullUrl",
+                                                                                                      "Created",
+                                                                                                      "SN", "Thumbnail",
+                                                                                                      "Updated"
+                                                                                                  }) ??
+                           new List<Article>();
                 return articles;
             }
         }

@@ -512,7 +512,7 @@
 							<asp:CheckBox ID="AllowParentArticleCheckBox" runat="server" />
 						</td>
 					</tr>
-					<tr>
+					<tr style="display:none;">
 						<td align="right">
 							启用内容模型单表存储：
 						</td>

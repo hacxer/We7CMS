@@ -16,42 +16,42 @@ namespace We7.Model.Core
     /// 查询类型
     /// </summary>
     public enum OperationType 
-    { 
+    {
         /// <summary>
         /// 等于
         /// </summary>
         [XmlEnum("=")]
-        EQUER=0, 
+        EQUER = 6,
         /// <summary>
         /// 不等
         /// </summary>
         [XmlEnum("<>")]
-        NOTEQUER,
+        NOTEQUER = 7,
         /// <summary>
         /// 模糊查询
         /// </summary>
         [XmlEnum("like")]
-        LIKE, 
+        LIKE = 1,
         /// <summary>
         /// 小于
         /// </summary>
         [XmlEnum("<")]
-        LESSTHAN,
+        LESSTHAN = 4,
         /// <summary>
         /// 大于
         /// </summary>
         [XmlEnum(">")]
-        MORETHAN,
+        MORETHAN = 2,
         /// <summary>
         /// 小于等于
         /// </summary>
         [XmlEnum("<=")]
-        LESSTHANEQURE,
+        LESSTHANEQURE = 5,
         /// <summary>
         /// 大于等于
         /// </summary>
         [XmlEnum(">=")]
-        MORETHANEQURE
+        MORETHANEQURE = 3
     }
 
     /// <summary>

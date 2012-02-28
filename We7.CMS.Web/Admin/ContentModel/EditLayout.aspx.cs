@@ -21,6 +21,9 @@ namespace We7.CMS.Web.Admin.ContentModel
 
         #region Props
 
+        /// <summary>
+        /// 选项卡ID
+        /// </summary>
         public string TabID
         {
             get
@@ -45,6 +48,11 @@ namespace We7.CMS.Web.Admin.ContentModel
                 return RequestHelper.Get<string>("group");
             }
         }
+
+        /// <summary>
+        /// 内容模型类型
+        /// </summary>
+        public ModelType ContentModelType;
 
         #endregion
 
@@ -78,8 +86,10 @@ namespace We7.CMS.Web.Admin.ContentModel
             rawUrl = RequestHelper.RemoveParam(rawUrl, "panel");
 
             ModelInfo modelInfo = ModelHelper.GetModelInfoByName(ModelName);
+            ContentModelType = modelInfo.Type;
+
             #region Article
-            if (modelInfo.Type.ToString().ToLower() == "article")
+            if (modelInfo.Type == ModelType.ARTICLE)
             {
                 rawUrl = RequestHelper.AddOrUpdateParam(rawUrl, "modelname", RequestHelper.Get<string>("modelname"));
                 rawUrl = RequestHelper.AddOrUpdateParam(rawUrl, "tab", RequestHelper.Get<string>("tab", "1"));
@@ -148,38 +158,12 @@ namespace We7.CMS.Web.Admin.ContentModel
                     rawUrl = RequestHelper.AddOrUpdateParam(rawUrl, "panel", "multi");
                     tabString += string.Format(strLink, 3, "会员中心录入", dispay, rawUrl);
                 }
-
-                //if (tab == 5)
-                //{
-                //    tabString += string.Format(strActive, 5, "高级应用", dispay);
-                //    Control ctl = this.LoadControl("Controls/ModelControl.ascx");
-                //    ContentHolder.Controls.Add(ctl);
-                //}
-                //else
-                //{
-                //    rawUrl = RequestHelper.RemoveParam(rawUrl, "tab");
-                //    rawUrl = RequestHelper.AddOrUpdateParam(rawUrl, "tab", "5");
-                //    tabString += string.Format(strLink, 5, "高级应用", dispay, rawUrl);
-                //}
-
-                //if (tab == 6)
-                //{
-                //    tabString += string.Format(strActive, 6, "布局绑定", dispay);
-                //    Control ctl = this.LoadControl("Controls/LayoutBind.ascx");
-                //    ContentHolder.Controls.Add(ctl);
-                //}
-                //else
-                //{
-                //    rawUrl = RequestHelper.RemoveParam(rawUrl, "tab");
-                //    rawUrl = RequestHelper.AddOrUpdateParam(rawUrl, "tab", "6");
-                //    tabString += string.Format(strLink, 6, "布局绑定", dispay, rawUrl);
-                //}
             }
 
             #endregion
 
-            #region Advoce
-            else if (modelInfo.Type.ToString().ToLower() == "advice")
+            #region ADVICE
+            else if (modelInfo.Type == ModelType.ADVICE)
             {
                 rawUrl = RequestHelper.AddOrUpdateParam(rawUrl, "modelname", RequestHelper.Get<string>("modelname"));
                 rawUrl = RequestHelper.AddOrUpdateParam(rawUrl, "tab", RequestHelper.Get<string>("tab", "1"));
@@ -216,37 +200,11 @@ namespace We7.CMS.Web.Admin.ContentModel
                     rawUrl = RequestHelper.AddOrUpdateParam(rawUrl, "panel", "adminView");
                     tabString += string.Format(strLink, 2, "后台编辑", dispay, rawUrl);
                 }
-
-                if (tab == 5)
-                {
-                    tabString += string.Format(strActive, 5, "高级管理", dispay);
-                    Control ctl = this.LoadControl("Controls/ModelControl.ascx");
-                    ContentHolder.Controls.Add(ctl);
-                }
-                else
-                {
-                    rawUrl = RequestHelper.RemoveParam(rawUrl, "tab");
-                    rawUrl = RequestHelper.AddOrUpdateParam(rawUrl, "tab", "5");
-                    tabString += string.Format(strLink, 5, "高级管理", dispay, rawUrl);
-                }
-
-                //if (tab == 6)
-                //{
-                //    tabString += string.Format(strActive, 6, "布局绑定", dispay);
-                //    Control ctl = this.LoadControl("Controls/AdviceLayoutBind.ascx");
-                //    ContentHolder.Controls.Add(ctl);
-                //}
-                //else
-                //{
-                //    rawUrl = RequestHelper.RemoveParam(rawUrl, "tab");
-                //    rawUrl = RequestHelper.AddOrUpdateParam(rawUrl, "tab", "6");
-                //    tabString += string.Format(strLink, 6, "布局绑定", dispay, rawUrl);
-                //}
             }
             #endregion
 
             #region Account
-            else if (modelInfo.Type.ToString().ToLower() == "account")
+            else if (modelInfo.Type == ModelType.ACCOUNT)
             {
                 rawUrl = RequestHelper.AddOrUpdateParam(rawUrl, "modelname", RequestHelper.Get<string>("modelname"));
                 rawUrl = RequestHelper.AddOrUpdateParam(rawUrl, "tab", RequestHelper.Get<string>("tab", "1"));
@@ -268,21 +226,6 @@ namespace We7.CMS.Web.Admin.ContentModel
                     rawUrl = RequestHelper.AddOrUpdateParam(rawUrl, "panel", "edit");
                     tabString += string.Format(strLink, 1, "录入信息", dispay, rawUrl);
                 }
-
-                //if (tab == 2)
-                //{
-                //    tabString += string.Format(strActive, 2, "后台编辑", dispay);
-                //    Control ctl = this.LoadControl("Controls/Panel_Edit.ascx");
-                //    ContentHolder.Controls.Add(ctl);
-                //}
-                //else
-                //{
-                //    rawUrl = RequestHelper.RemoveParam(rawUrl, "panel");
-                //    rawUrl = RequestHelper.RemoveParam(rawUrl, "tab");
-                //    rawUrl = RequestHelper.AddOrUpdateParam(rawUrl, "tab", "2");
-                //    rawUrl = RequestHelper.AddOrUpdateParam(rawUrl, "panel", "fedit");
-                //    tabString += string.Format(strLink, 2, "后台编辑", dispay, rawUrl);
-                //}
             }
             #endregion
 

@@ -1,19 +1,10 @@
 ﻿using System;
-using System.Collections;
-using System.Configuration;
-using System.Data;
-using System.Web;
-using System.Web.Security;
-using System.Web.UI;
-using System.Web.UI.HtmlControls;
-using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
-using We7.Framework;
-using We7.CMS.Common;
 using System.Collections.Generic;
-using Thinkment.Data;
-using We7.CMS.WebControls.Core;
+using System.Web.UI.WebControls;
+using We7.CMS.Common;
 using We7.CMS.WebControls;
+using We7.CMS.WebControls.Core;
+using We7.Framework;
 
 namespace We7.CMS.Web.Widgets
 {
@@ -36,7 +27,12 @@ namespace We7.CMS.Web.Widgets
                 if (currentChannel == null)
                 {
                     string cid = ChannelHelper.GetChannelIDFromURL();
-                    currentChannel = ChannelHelper.GetChannel(cid, null) ?? new Channel();
+                    currentChannel = ChannelHelper.GetChannel(cid, new string[]
+                                                                       {
+                                                                           "ID", "Title", "ChannelFullUrl",
+                                                                           "Created",
+                                                                           "SN"
+                                                                       }) ?? new Channel();
                 }
                 return currentChannel;
             }

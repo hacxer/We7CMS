@@ -182,7 +182,7 @@ namespace We7.CMS.Web.Admin
 			si.SiteBuildState = SiteStateDropDownList.SelectedValue;
 			si.IPStrategy = hddnIPStrategy.Value.Trim();
 			si.AllowParentArticle = AllowParentArticleCheckBox.Checked;
-			si.EnableSingleTable = EnableSingleTable.Checked;
+            si.EnableSingleTable = true; //EnableSingleTable.Checked;
 			si.DefaultTemplateEditor = UseVisualTemplateCheckBox.Checked ? "1" : "0";
 			si.EnableHtmlTemplate = EnableHtmlTemplate.Checked;
 			txtSSOUrls.Text = si.SSOSiteUrls = Regex.Replace(txtSSOUrls.Text, @"\s", "");

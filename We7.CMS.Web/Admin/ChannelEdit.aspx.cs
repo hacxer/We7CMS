@@ -19,14 +19,6 @@ namespace We7.CMS.Web.Admin
 {
 	public partial class ChannelEdit : BasePage
 	{
-		protected override bool NeedAnPermission
-		{
-			get
-			{
-				return false;
-			}
-		}
-
 		public string TabID
 		{
 			get { return Request["tab"]; }

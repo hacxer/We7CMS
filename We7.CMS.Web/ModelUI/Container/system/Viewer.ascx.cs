@@ -52,6 +52,12 @@ namespace We7.Model.UI.Container.system
             {
                 ctr.Type = "Text";
             }
+
+            if (ctr.Type.IndexOf(".") > -1)
+            {
+                ctr.Type = string.Format("{0}Text", ctr.Type);
+            }
+
             FieldControl fc = UIHelper.GetControl(ctr);
             fc.IsEdit = IsEdit;
             c.Controls.Add(fc);
@@ -64,12 +70,12 @@ namespace We7.Model.UI.Container.system
 
         protected void bttnNew_Click(object sender, EventArgs e)
         {
-            Response.Redirect(String.Format("~/admin/addins/ModelEditor.aspx?notiframe={2}&model={0}&ID={1}", PanelContext.Model.ModelName, We7Helper.CreateNewID(),Request["notiframe"]));
+            Response.Redirect(String.Format("~/admin/addins/ModelEditor.aspx?notiframe={2}&model={0}&ID={1}", PanelContext.Model.ModelName, We7Helper.CreateNewID(), Request["notiframe"]));
         }
 
         protected void bttnEdit_Click(object sender, EventArgs e)
         {
-            Response.Redirect(String.Format("~/admin/addins/ModelEditor.aspx?notiframe={2}&model={0}&ID={1}&groupIndex=0", PanelContext.Model.ModelName, Request[Constants.EntityID],Request["notiframe"]));
+            Response.Redirect(String.Format("~/admin/addins/ModelEditor.aspx?notiframe={2}&model={0}&ID={1}&groupIndex=0", PanelContext.Model.ModelName, Request[Constants.EntityID], Request["notiframe"]));
         }
 
         private List<string> enableControls;
@@ -77,9 +83,9 @@ namespace We7.Model.UI.Container.system
         {
             get
             {
-                if(enableControls==null)
+                if (enableControls == null)
                 {
-                    enableControls= ModelConfig.GetConfig().ViewerControl??new List<string>();
+                    enableControls = ModelConfig.GetConfig().ViewerControl ?? new List<string>();
                 }
                 return enableControls;
             }

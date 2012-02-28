@@ -18,7 +18,7 @@
             <tbody>
                 <tr>
                     <td class="title">
-                        字段中文名称(标签):
+                        名称:
                     </td>
                     <td class="left">
                         <asp:TextBox ID="FieldLabelTextBox" runat="server"></asp:TextBox>
@@ -26,7 +26,7 @@
                 </tr>
                 <tr>
                     <td>
-                        字段名称:
+                        标签:
                     </td>
                     <td class="left">
                         <asp:TextBox ID="FieldNameTextBox" runat="server"></asp:TextBox>
@@ -52,7 +52,7 @@
                         字段长度
                     </td>
                     <td>
-                        <asp:TextBox ID="MaxlengthTextBox" runat="server" Text="25"></asp:TextBox>
+                        <asp:TextBox ID="MaxlengthTextBox" runat="server" Text="250"></asp:TextBox>
                         <asp:RegularExpressionValidator ID="RegularExpressionValidator1" runat="server" ControlToValidate="MaxlengthTextBox"
                             ErrorMessage="必须为正整数!" ValidationExpression="^[0-9]*[1-9][0-9]*$"></asp:RegularExpressionValidator>
                     </td>

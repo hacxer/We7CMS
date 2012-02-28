@@ -125,7 +125,6 @@ namespace We7.CMS.Web
                     //分情况分种类去规划，然后找出模板自动加缓存的机制与方法。
                     #endregion
 
-
                     Control ctl = LoadControl(TemplatePath);
 
                     this.Controls.Add(ctl);

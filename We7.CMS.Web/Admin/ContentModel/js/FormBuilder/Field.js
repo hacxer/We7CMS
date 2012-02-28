@@ -44,7 +44,6 @@
     We7.Controls.Field.prototype = {
         //设置默认参数(参数[obejct]options将传递为构造函数)
         setOptions: function(options) {
-
             //本身类和父类构造函数设置默认参数
             this.options = {};
             this.options = $.extend({}, options, this.options);
@@ -132,15 +131,20 @@
                 if (this.options.Params[p].Name == name) {
                     return this.options.Params[p].Value;
                 }
-
             }
             return null;
         }
-
     };
 
-    We7.Controls.Field.groupOptions = [{ Type: "Text", ReadOnly: true, Label: "控件类型", Name: "Type", value: '' }, { Type: "TextInput", Label: "标签", Name: "Label", value: '' }, { Type: "TextInput", ReadOnly: true, Label: "名称", Name: "Name", value: '' }
-    , { Type: "Select", Label: "必须", Name: "Required", Params: [{ Name: "data", Value: "true|是,false|否"}] }, { Type: "Select", Label: "可见性", Name: "Visible", Params: [{ Name: "data", Value: "true|是,false|否"}] }, { Type: "TextInput", Label: "Css类", Name: "CssClass" }, { Type: "TextInput", Label: "宽度", Name: "Width", value: '' },
-     { Type: "TextInput", Label: "高度", Name: "Height", value: '' }, { Type: "TextInput", Label: "默认值", Name: "DefaultValue", value: '' }, { Type: "TextInput", Label: "描述", Name: "Desc", value: '' }
+    We7.Controls.Field.groupOptions = [
+    { Type: "Text", ReadOnly: true, Label: "控件类型", Name: "Type", value: '' }, 
+    { Type: "TextInput", Label: "名称", Name: "Label", value: '' }, 
+    { Type: "TextInput", ReadOnly: true, Label: "标签", Name: "Name", value: '' }, 
+    { Type: "Select", Label: "必须", Name: "Required",Value:false, Params: [{ Name: "data", Value: "true|是,false|否"}] }, 
+    { Type: "Select", Label: "可见性", Name: "Visible", Params: [{ Name: "data", Value: "true|是,false|否"}] }, 
+    { Type: "TextInput", Label: "Css类", Name: "CssClass" }, { Type: "TextInput", Label: "宽度", Name: "Width", value: '' },
+    { Type: "TextInput", Label: "高度", Name: "Height", value: '' }, 
+    { Type: "TextInput", Label: "默认值", Name: "DefaultValue", value: '' }, 
+    { Type: "TextInput", Label: "描述", Name: "Desc", value: '' }
     ];
 })();

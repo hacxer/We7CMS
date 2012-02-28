@@ -64,11 +64,11 @@ namespace We7.Framework
         #region static void WriteFileLog(String fileName, String strTitle, String strContent)
         public static void WriteFileLog(String fileName, String strTitle, String strContent)
         {
-            String strFile, strDir;
+            String strFile;
             StreamWriter sw;
             DateTime now = DateTime.Now;
 
-            strDir = AppDomain.CurrentDomain.BaseDirectory + @"\Log\";
+            string strDir = AppDomain.CurrentDomain.BaseDirectory + @"\Log\";
 
             //创建多级目录
             string[] parts = fileName.Replace("/", "\\").Split('\\');
@@ -87,14 +87,7 @@ namespace We7.Framework
                 strFile = strDir + fileName;
 
             //文件
-            if (File.Exists(strFile))
-            {
-                sw = File.AppendText(strFile);
-            }
-            else
-            {
-                sw = File.CreateText(strFile);
-            }
+            sw = File.Exists(strFile) ? File.AppendText(strFile) : File.CreateText(strFile);
             sw.WriteLine("<----------------{0}------------------->", now.ToLongDateString() + " " + now.ToLongTimeString());
             sw.WriteLine("Title:");
             sw.WriteLine("\t" + strTitle);

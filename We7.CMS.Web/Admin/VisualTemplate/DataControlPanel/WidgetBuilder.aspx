@@ -14,7 +14,7 @@
 <script src="/Admin/cgi-bin/datacontrol/widget.new.js" type="text/javascript"></script>
 <script src="/Admin/cgi-bin/datacontrol/widgetCommon.new.js?20110630001" type="text/javascript"></script>
 <script src="<%=AppPath%>/ajax/jquery/jquery1.2.6.pack.js" type="text/javascript"></script>
-<script src="<%=AppPath%>/ajax/jquery/jquery.simplemodal-1.1.1.js" type="text/javascript"></script>
+
 <script src="/Scripts/ckfinder/ckfinder.js?20110422004" type="text/javascript"></script>
 <link href="/Scripts/jQuery/plugin/colorpicker/css/colorpicker.css" rel="stylesheet" type="text/css" />
 <script src="/Scripts/jQuery/plugin/colorpicker/colorpicker.js" type="text/javascript"></script>

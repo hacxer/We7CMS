@@ -131,11 +131,16 @@ namespace We7.Framework.Config
             else
             {
                 filename = HttpContext.Current.Server.MapPath("~/Config/general.config");
-                if (!File.Exists(filename))
-                {
-                    ConfigInfo = new GeneralConfigInfo();
-                    SerializationHelper.Save(ConfigInfo, filename);
-                }               
+				/* 2012/2/14 修改了初始化配置判断逻辑（即使已存在 general.config 文件，ConfigInfo 仍有可能为 null；此处确保其不为空，且在不存在 general.config 时创建之） */
+				if (null == ConfigInfo)
+				{
+					ConfigInfo = new GeneralConfigInfo();
+				}
+				if (!File.Exists(filename))
+				{
+					SerializationHelper.Save(ConfigInfo, filename);
+				}
+
                 ConfigInfo = DefaultConfigFileManager.LoadConfig(ref m_fileoldchange, ConfigFilePath, ConfigInfo, false);
             }
             return ConfigInfo as GeneralConfigInfo;

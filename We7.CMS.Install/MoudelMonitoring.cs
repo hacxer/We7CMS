@@ -79,6 +79,8 @@ namespace We7.CMS
                     eo.IsDataTable = true;
                     eo.PrimaryKeyName = "ID";
                     eo.TableName = table.Name;
+                    //亲，此处取的是内容模型的描述，不是写错了
+                    eo.Description = item.Description;
                     Dictionary<string, Property> diccolumn = new Dictionary<string, Property>(StringComparer.OrdinalIgnoreCase);
                     foreach (var column in table.Columns)
                     {
@@ -100,13 +102,13 @@ namespace We7.CMS
                     db.ConnectionString = assistat.GetDatabases()["We7.CMS.Common"].ConnectionString;
                     om.CurDatabase = db;
                     om.ObjType = eo.TypeForDT;
-                    if (assistat.DicForTable.ContainsKey(table.Name))  //如果存在此KEY
+                    if (assistat.DicForTable().ContainsKey(table.Name))  //如果存在此KEY
                     {
-                        assistat.DicForTable.Remove(table.Name);  //移除此项
+                        assistat.DicForTable().Remove(table.Name);  //移除此项
                     }
-					if (!assistat.DicForTable.ContainsKey(table.Name))
+					if (!assistat.DicForTable().ContainsKey(table.Name))
 					{
-						assistat.DicForTable.Add(table.Name, om);  //添加
+						assistat.DicForTable().Add(table.Name, om);  //添加
 					}
                 }
             }

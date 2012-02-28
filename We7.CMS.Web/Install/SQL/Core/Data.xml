@@ -165,10 +165,10 @@
       values('{00000000-0000-0013-0011-000000000000}','{00000000-0000-0013-0000-000000000000}',6,'会员菜单设置','会员菜单设置','/admin/manage/UserMenulistNew.aspx',0,'System.Administration')
     </Sql>
     
-    <!--<Sql>
-      insert into [Menu]([ID],[ParentID],[SequenceIndex],[NameText],[Title],[Href],[Type],[EntityID])
-      values('{00000000-0000-0013-0016-000000000000}','{00000000-0000-0013-0000-000000000000}',14,'站点设置向导','站点设置向导','/admin/NewSiteWizard.aspx',0,'System.Administration')
-    </Sql>-->
+   <Sql>
+     insert into [Menu]([ID],[ParentID],[SequenceIndex],[NameText],[Title],[Href],[Type],[EntityID])
+     values('{00000000-0000-0013-0017-000000000000}','{00000000-0000-0013-0000-000000000000}',14,'标签管理','标签管理','/admin/TagsManage.aspx',0,'System.Administration')
+   </Sql>
     <Sql>
       insert into [Menu]([ID],[ParentID],[SequenceIndex],[NameText],[Title],[Href],[Type],[EntityID])
       values('{00000000-0000-0012-0001-000000000000}','{00000000-0000-0012-0000-000000000000}',1,'插件管理','插件管理','/admin/Plugin/PluginList.aspx',0,'System.Administration')

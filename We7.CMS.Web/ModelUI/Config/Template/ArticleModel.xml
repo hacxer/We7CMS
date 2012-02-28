@@ -42,8 +42,8 @@
 			<edit path="we7.Editor" visible="true">
 				<group index="0" name="默认" next="0" enable="true">
 					<control label="ID" name="ID" type="GUID" required="false" visible="false"/>
-					<control label="栏目" name="OwnerID" type="We7.ChannelSelect" required="false" visible="true" />
-				</group>
+				<!--	<control label="栏目" name="OwnerID" type="We7.ChannelSelect" required="false" visible="true" /> -->
+        </group>
 			</edit>
 			<condition visible="false" path="we7.Condition">
 				<control id="ID" label="ID" name="ID" type="Request" required="false" visible="false" />

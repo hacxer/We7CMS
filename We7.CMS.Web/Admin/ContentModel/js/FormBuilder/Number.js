@@ -1,5 +1,8 @@
 ﻿/// <reference path="../jquery-1.4.1-vsdoc.js" />
 
+///2011-12-23后，不再使用，兼容以前版本，几个版本后可删除
+///同时还有We7CMS_2010\We7.CMS.Web\ModelUI\Controls\system\Number.ascx 等遗留文件同样不再使用
+///by Brian.G
 We7.Controls.Number = We7.extend(We7.Controls.TextBox, {
 
     setOptions: function(options) {

@@ -26,7 +26,7 @@ namespace We7.CMS.Web.Admin
 
         protected void SaveLinkbutton_Click(object sender, EventArgs args)
         {
-            Category cat = new Category();
+			Category cat = new Category();
             cat.ParentID = String.IsNullOrEmpty(ddlParentCategory.SelectedValue) ? TypeID : ddlParentCategory.SelectedValue.Trim();
             cat.Name = txtName.Text.Trim();
             cat.KeyWord = txtKey.Text.Trim();
@@ -50,7 +50,10 @@ namespace We7.CMS.Web.Admin
             {
                 try
                 {
-                    CategoryHelper.AddCategory(cat);
+					NameCheckLable.Visible = CategoryHelper.CheckNameRepeat(txtName.Text.Trim(), true);
+					KeyCheckLable.Visible = CategoryHelper.CheckKeywordRepeat(txtKey.Text.Trim(), true);
+					if (KeyCheckLable.Visible || NameCheckLable.Visible) return;
+					CategoryHelper.AddCategory(cat);
                     Messages.ShowMessage("添加成功!<a href='CategoryEdit.aspx?typeId="+TypeID+"'>继续添加</a>");
                     //Response.Redirect("CategoryList.aspx?typeId=" + TypeID);
                 }
@@ -64,7 +67,10 @@ namespace We7.CMS.Web.Admin
                 try
                 {
                     cat.ID = id;
-                    CategoryHelper.UpdateCategory(cat);
+					NameCheckLable.Visible = CategoryHelper.CheckNameRepeat(txtName.Text.Trim(), false);
+					KeyCheckLable.Visible =CategoryHelper.CheckKeywordRepeat(txtKey.Text.Trim(), false);
+					if (KeyCheckLable.Visible || NameCheckLable.Visible) return;
+					CategoryHelper.UpdateCategory(cat);
                     Messages.ShowMessage("修改成功!");
                     //Response.Redirect("CategoryList.aspx?typeId=" + TypeID);
                 }

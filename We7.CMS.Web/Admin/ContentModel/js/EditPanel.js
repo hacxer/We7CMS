@@ -35,6 +35,7 @@
         });
     }
 
+
     //创建一个新的数据下拉框
     function NewColumnDropdownlist() {
         var ddlWarp = $(document.createElement("div"));
@@ -57,9 +58,9 @@
             $("#dialog_label").val('');
             $('#dialog_name').val('');
             $('#dialog_checkTitleField')[0].checked = false;
-            $('#dialog_checkSearchField')[0].checked = false;
+            $('#dialog_checkSearchField')[0].checked = true;
             $('#dialog_dataType')[0][0].selected = true;
-            $('#dialog_maxlength').val('25');
+            $('#dialog_maxlength').val('250');
             $("#div_maxlength").show();
         }
         );
@@ -185,6 +186,7 @@
             });
 
         }
+
         //设置
         $("#ddlSelect", "#props").val($("#Name", "#props").val());
         proploading.remove();
@@ -389,6 +391,8 @@
         });
     }
 
+
+
     //加载控件类型
     function loadControlType() {
         var loadingcotrs = loading;
@@ -439,16 +443,11 @@
 
     //保存数据
     function SaveEditControl() {
-       
         var copy;
         if ($("#copyToUser").length > 0) {
             copy = $("#copyToUser").attr("checked").toString();
         }
-        else {
-            copy = "false";
-        }
-
-
+        else { copy = "false"; }
         if (copy == "true") {
             var cfm = confirm("你已经选择了-更新到会员中心,将会覆盖,是否继续?");
             if (!cfm) {
@@ -482,8 +481,9 @@
         we7.loading("保存中，请稍候");
         var strCols = "[";
         for (var p in tempColsList) {
-            var temp = jsonToString(tempColsList[p]);
-            temp = stringToJSON(temp);
+            var temp = tempColsList[p];
+            //var temp = jsonToString(tempColsList[p]);
+            //temp = stringToJSON(temp);
             for (var p1 in temp) {
                 if (We7.isUndefined(temp[p1]) || temp[p1] == null) {
                     delete temp[p1];
@@ -508,8 +508,8 @@
                 we7.beforeUnload("表单已经发生改变，您尚未保存，确定离开吗?", IsChange);
                 we7.info(json);
             },
-            error: function () {
-                alert("error");
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                we7.info("操作失败，错误信息：" + errorThrown);
             }
         });
     }
@@ -545,13 +545,13 @@
     function AddConfirm() {
         var label = $("#dialog_label").val();
         if (label == "") {
-            alert("标签不能为空!");
+            alert("名称不能为空!");
             $("#dialog_label").focus();
             return;
         }
         var name = $("#dialog_name").val();
         if (name == "") {
-            alert("名称不能为空！");
+            alert("标签不能为空！");
             $("#dialog_name").focus();
             return;
         }
@@ -585,18 +585,19 @@
                 var ajaxMessage = stringToJSON(json);
 
                 if (ajaxMessage.Success) {
-                    alert(ajaxMessage.Message);
+                    we7.info(ajaxMessage.Message);
                     //插入到下拉框
 
                     var newData = { Label: label, Name: name };
                     dataColumns.push(newData);
-                    $("#ddlSelect").replaceWith(NewColumnDropdownlist());
+                    $("#ddlSelect").parent().html(NewColumnDropdownlist());
+                   
                     $("#ddlSelect option:last").attr("selected", "selected");
                     $("#ddlSelect").trigger("change");
                     $("#dialog").dialog("close");
                     editControls[$(".editSelect").attr("myID")].ID = name;
                 } else {
-                    alert(ajaxMessage.Message);
+                    we7.info(ajaxMessage.Message);
                 }
 
             },

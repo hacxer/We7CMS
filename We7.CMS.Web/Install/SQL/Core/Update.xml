@@ -352,6 +352,12 @@
     <Sql>
       alter table [AdviceInfo] add [YearClicks] int
     </Sql>
+    <Sql>
+      alter table [AdviceInfo] add [RelationID] nvarchar(40)
+    </Sql>
+    <Sql>
+      alter table [AdviceInfo] add [RelationModelName] nvarchar(100)
+    </Sql>
 
     <!--********************[AdviceReply]表中添加的字段********************-->
     <Sql>

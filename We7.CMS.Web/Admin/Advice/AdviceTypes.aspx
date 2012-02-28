@@ -64,8 +64,8 @@
           删除
             </asp:HyperLink>
         </li>
-        <li>
-            <asp:HyperLink ID="AddAdviceTypeHyperLink" runat="server" NavigateUrl="AdviceTypeEdit.aspx"
+        <li class="smallButton6">
+            <asp:HyperLink ID="AddAdviceTypeHyperLink" runat="server" NavigateUrl="AdviceTypeEdit.aspx" 
                 Target="_parent">
             创建新类型</asp:HyperLink>
         </li>
@@ -112,8 +112,9 @@
                 <asp:BoundField HeaderText="创建日期" DataField="CreateDate"></asp:BoundField>
                 <asp:TemplateField>
                     <ItemTemplate>
+                    <a href="AdviceTypeEdit.aspx?adviceTypeID=<%# Eval("ID") %>">编辑</a>
                         <a href="../manage/AddFeedbackMenu.aspx?menuTypeID=<%# Eval("ID") %>&menuName=<%# Eval("Title")%>&returnURL=<%= Request.RawUrl %>"
-                            class="addMenu">将此类型加入到菜单</a>
+                            class="addMenu">添加到左侧菜单</a>
                     </ItemTemplate>
                 </asp:TemplateField>
             </Columns>

@@ -8,9 +8,13 @@
 <body>
  
     <div style="text-align: center; padding: 100px 0 0 0;">
-        该功能需要安装<a href="http://m.we7.cn/Shop/goods/dedabaf8_407e_4914_8737_10db45bb0f49.html?u=Brain"
-            target="_blank">Word导入</a>插件才可使用，<a href="http://m.we7.cn/Shop/goods/dedabaf8_407e_4914_8737_10db45bb0f49.html?u=Brain"
+        该功能需要安装<a href="<%=shopUrl %>/Shop/goods/dedabaf8_407e_4914_8737_10db45bb0f49.html?u=Brain"
+            target="_blank">Word导入</a>插件才可使用，<a href="<%=shopUrl %>/Shop/goods/dedabaf8_407e_4914_8737_10db45bb0f49.html?u=Brain"
                 target="_blank">点此下载安装</a>
+      
+        <br />
+        <br />
+        更多精彩尽在<a href="<%=shopUrl %>" target="_blank">We7插件商场</a>
     </div>
        <script type="text/javascript" language="javascript">
            window.parent.InnerDialogLoaded();

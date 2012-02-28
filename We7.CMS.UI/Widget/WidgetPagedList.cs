@@ -10,6 +10,8 @@ using We7.CMS.Common;
 using System.Web;
 using We7.Model.Core;
 using We7.Framework.Util;
+using We7.CMS.Data;
+using We7.Model.Core.UI;
 
 namespace We7.CMS.UI.Widget
 {
@@ -41,18 +43,38 @@ namespace We7.CMS.UI.Widget
             ModelDBHelper dbhelper = ModelDBHelper.Create(ModelName);
             List<Order> os = CreateOrders();
             Criteria c = CreateCriteria();
-            Items = dbhelper.QueryPagedList(c, os, Pager.PageIndex, Pager.PageSize, out recordcount).Rows;
+
+            DataTable dt = dbhelper.QueryPagedList(c, os, Pager.PageIndex, Pager.PageSize, out recordcount,Fields);
+            /*begin 表关联相关*/
+            if (null != dt)
+            {
+                JoinEx joinex = new JoinEx();
+                MoldPanel mp = new MoldPanel();
+                ColumnInfoCollection columns = mp.GetPanelContext(ModelName, "list").Panel.ListInfo.Groups[0].Columns;
+                foreach (ColumnInfo item in columns)
+                {
+                    if (!string.IsNullOrEmpty(item.Params["model"]))
+                    {
+                        joinex.JoinInfo.Add(item.Name, new JoinEx() { MainField = item.Name, PriMaryKeyName = item.Params["valuefield"], ToField = item.Params["textfield"], ToTableName = item.Params["model"] });
+                    }
+                }
+                if (joinex.JoinInfo != null && joinex.JoinInfo.Count > 0)
+                {
+                    DataBaseAssistant db = new DataBaseAssistant();
+                    dt = db.Join(dt, joinex);
+                }
+            }
+
+            /*end*/
+            Items = dt.Rows;
+
+            //Items = dbhelper.QueryPagedList(c, os, Pager.PageIndex, Pager.PageSize, out recordcount).Rows;
             Pager.RecordCount = recordcount;
         }
 
         protected override Criteria CreateCriteria()
         {
             Criteria c = new Criteria();
-            List<Order> os = new List<Order>();
-            os.Add(new Order("ID"));
-
-            
-
             if (QueryByColumn) //按栏目查询
             {
                 if (String.IsNullOrEmpty(OwnerID))

@@ -1,20 +1,12 @@
 ﻿using System;
-using System.Collections;
-using System.Configuration;
-using System.Data;
-using System.Web;
-using System.Web.Security;
-using System.Web.UI;
-using System.Web.UI.HtmlControls;
-using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
-using We7.CMS.Common;
 using System.Collections.Generic;
-using We7.Framework;
-using We7.CMS.WebControls;
-using Thinkment.Data;
-using We7.CMS.WebControls.Core;
 using System.Text;
+using System.Web.UI.WebControls;
+using Thinkment.Data;
+using We7.CMS.Common;
+using We7.CMS.WebControls;
+using We7.CMS.WebControls.Core;
+using We7.Framework;
 
 namespace We7.CMS.Web.Widgets
 {
@@ -125,7 +117,12 @@ namespace We7.CMS.Web.Widgets
                     }
 
                     Order[] os = new Order[] { new Order("Updated", OrderMode.Desc) };
-                    articles = Assistant.List<Article>(c, os, 0, PageSize);
+                    articles = Assistant.List<Article>(c, os, 0, PageSize, new string[]
+                                                                               {
+                                                                                   "ID", "Title", "ChannelFullUrl",
+                                                                                   "Created",
+                                                                                   "SN", "Thumbnail"
+                                                                               });
 
                 }
                 return articles;
@@ -143,7 +140,12 @@ namespace We7.CMS.Web.Widgets
                 if (channel == null)
                 {
                     ChannelHelper helper = HelperFactory.GetHelper<ChannelHelper>();
-                    channel = helper.GetChannel(OwnerID, null) ?? new Channel();
+                    channel = helper.GetChannel(OwnerID, new string[]
+                                                             {
+                                                                 "ID", "Title", "ChannelFullUrl",
+                                                                 "Created",
+                                                                 "SN"
+                                                             }) ?? new Channel();
                 }
                 return channel;
             }

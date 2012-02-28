@@ -11,7 +11,7 @@
     var UxEvents = new Object();
 
     $(document).ready(function () {
-        $(".editAction").colorbox({ width: "70%", height: "95%", iframe: true, onClosed: function () {
+        $(".editAction").colorbox({ width: "70%", height: "95%",overlayClose:false , iframe: true, onClosed: function () {
 
             if (UxEvents && UxEvents.reload) {
                 location.reload();

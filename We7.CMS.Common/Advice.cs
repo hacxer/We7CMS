@@ -6,6 +6,8 @@ using System.Xml;
 using System.Data;
 using System.IO;
 using We7.Framework;
+using System.Reflection;
+using System.Configuration;
 
 namespace We7.CMS.Common
 {
@@ -29,7 +31,15 @@ namespace We7.CMS.Common
         /// <summary>
         /// 标题
         /// </summary>
-        public string Title { get; set; }
+        private string title;
+        public string Title
+        {
+            get
+            {
+                return join.JoinField("Title", title);
+            }
+            set { title = value; }
+        }
 
         /// <summary>
         /// 内容
@@ -310,6 +320,15 @@ namespace We7.CMS.Common
             set { schemapath = value; }
         }
 
+
+        private JoinHelper join
+        {
+            get
+            {
+                return new JoinHelper(ModelConfig);
+            }
+        }
+
         /// <summary>
         /// 取得文章的内容模型数据集
         /// </summary>
@@ -317,9 +336,12 @@ namespace We7.CMS.Common
         /// <returns></returns>
         DataSet GetDataSet()
         {
+
+
             DataSet ds = !String.IsNullOrEmpty(ModelSchema) ? CreateDataSet() : CreateDataSet(SchemaPath);
             TextReader reader = new StringReader(ModelXml);
             ds.ReadXml(reader);
+            ds = join.JoinField(ds);
             return ds;
         }
 
@@ -484,7 +506,6 @@ namespace We7.CMS.Common
         /// </summary>
         public int Function { get; set; }
     }
-
 
     #region 以前的代码
 

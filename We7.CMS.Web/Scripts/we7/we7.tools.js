@@ -74,10 +74,12 @@
 				layout: '<div><p rel="tipcontent"></p></div>'
 			}, options);
 			var ret = this.tip(tip, options), tip = this.jquery.data("tooltip");
-			tip.onBeforeShow(function () {
-				var t = this.getTip();
-				t.css('left', Math.max(($(window).width() - t.width()) / 2, 0));
-			});
+			if (we7.isUndef(options.center) ? true : options.center) {
+				tip.onBeforeShow(function () {
+					var t = this.getTip();
+					t.css('left', Math.max(($(window).width() - t.width()) / 2, 0));
+				});
+			}
 			return ret;
 		},
 		popup: function (tip, options) {        // 由于 position 问题，此方法不兼容 IE6
@@ -183,11 +185,11 @@
 			if (this.validator) {
 				this.validator.destroy();
 			}
-			this.validator = this.jquery.validator(options).data("validator");
+			this.validator = this.jquery.validator(options).data("we7_validator");
 			return this;
 		},
 		getValidator: function (create, inputCreate, func, options) {
-			var val = this.validator || (this.validator = this.jquery.data("validator"));
+			var val = this.validator || (this.validator = this.jquery.data("we7_validator"));
 			if ((!val && create) && (inputCreate || !this.isInput())) {
 				this.attachValidator(func, options);
 			}
@@ -344,7 +346,7 @@
 				opts = afterPick;
 			} else if (we7.isFunc(afterPick)) {
 				opts = {};
-				opts.onClose = afterPick;		// function(dateText, instance){this = input}
+				opts.onClose = afterPick; 	// function(dateText, instance){this = input}
 				opts.interval = interval;
 			}
 
@@ -410,7 +412,13 @@
 			$.tools.validator.fn(matcher, message, fn);
 		}
 	});
-
+	we7.status.clear = function () {
+		var t, u = $("a[we7status]");
+		if (u.length && (t = u.data("tooltip");)) {
+			t.destroy();
+			u.remove();
+		}
+	};
 	$(document).ready(function () {
 		$("form").attr("novalidate", "novalidate");
 	});

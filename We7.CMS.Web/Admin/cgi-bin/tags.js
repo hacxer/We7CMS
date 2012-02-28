@@ -1,5 +1,11 @@
 ﻿
 function addTag(tagName) {
+    if (!/^[A-z\u4e00-\u9fa5]+$/gi.test(tagName)) {
+        $("#tagNameInput").select();
+        we7.info("请输入中文或英文!");
+        return;
+    }
+
     tagName = $.trim(tagName);
     if (tagName.length > 0) {
         we7.loading("操作中..");
@@ -15,10 +21,10 @@ function addTag(tagName) {
                     $('#tagList').append(FormatTag(tagName));
                     $("#tagNameInput").val('');
                     $("#tagNameInput").focus();
-                    we7.status("操作成功!");
+                    we7.info("操作成功!");
                 }
                 else {
-                    we7.status("添加失败 " + tagName + ",错误消息：" + json.msg , { autoHide: true, hideTimeout: 6000 });
+                    we7.info("添加失败 " + tagName + ",错误消息：" + json.msg, { autoHide: true, hideTimeout: 6000 });
 
                 }
             },
@@ -57,7 +63,7 @@ function removeTag(tagName, event) {
                     we7.status("操作成功!");
                 }
                 else
-                    we7.status("删除失败 " + tagName + ",错误消息：" + json.msg , { autoHide: true, hideTimeout: 6000 });
+                    we7.status("删除失败 " + tagName + ",错误消息：" + json.msg, { autoHide: true, hideTimeout: 6000 });
             }
 
         });

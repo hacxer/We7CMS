@@ -12,10 +12,8 @@ using We7.Model.Core;
 using We7.Model.Core.Data;
 using We7.Framework.Util;
 using We7.Framework;
-using We7.CMS.Accounts;
 using We7.CMS.WebControls.Core;
 using Thinkment.Data;
-using We7.CMS.Common;
 
 namespace We7.CMS.Web.Admin.ContentModel.ajax
 {
@@ -43,8 +41,8 @@ namespace We7.CMS.Web.Admin.ContentModel.ajax
     [WebService(Namespace = "http://we7.org/")]
     [WebServiceBinding(ConformsTo = WsiProfiles.BasicProfile1_1)]
     [System.ComponentModel.ToolboxItem(false)]
-    [ScriptService()]
-    public class ContentModel : System.Web.Services.WebService
+    [ScriptService]
+    public class ContentModel : WebService
     {
 
         /// <summary>
@@ -109,26 +107,22 @@ namespace We7.CMS.Web.Admin.ContentModel.ajax
         public string GetEditControls(string model, string panel, int index)
         {
             ModelInfo modelInfo = ModelHelper.GetModelInfo(model);
-            AjaxMessage ajaxMessage = new AjaxMessage();
-            ajaxMessage.Success = false;
-            ajaxMessage.Message = "控件为空!";
-            if (modelInfo.Layout.Panels[panel] == null || modelInfo.Layout.Panels[panel].EditInfo == null)
-            {
-                return JavaScriptConvert.SerializeObject(ajaxMessage);
-            }
-            else
+            AjaxMessage ajaxMessage = new AjaxMessage {Success = false, Message = "控件为空!"};
+            if (modelInfo.Layout.Panels[panel] != null && modelInfo.Layout.Panels[panel].EditInfo != null)
             {
                 GroupCollection groups = modelInfo.Layout.Panels[panel].EditInfo.Groups;
                 Group group = GetGroupByIndex(index, groups);
-                if (group != null)
+                if (@group != null)
                 {
-                    ajaxMessage.Data = group;// editControls;
+                    ajaxMessage.Data = @group; // editControls;
                     ajaxMessage.Success = true;
                     ajaxMessage.Message = "获取成功!";
                 }
+               
 
                 return JavaScriptConvert.SerializeObject(ajaxMessage).Replace("null", "\"\"");
             }
+            return JavaScriptConvert.SerializeObject(ajaxMessage);
         }
         /// <summary>
         /// 获取组
@@ -180,24 +174,21 @@ namespace We7.CMS.Web.Admin.ContentModel.ajax
             {
                 return JavaScriptConvert.SerializeObject(ajaxMessage);
             }
+            if (HasGroup(name, ref index, modelInfo.Layout.Panels[panel].EditInfo.Groups))
+                ajaxMessage.Message = "已存在该标记！";
             else
             {
-                if (HasGroup(name, ref index, modelInfo.Layout.Panels[panel].EditInfo.Groups))
-                    ajaxMessage.Message = "已存在该标记！";
-                else
-                {
-                    ajaxMessage.Success = true;
-                    ajaxMessage.Message = "添加成功!";
-                    Group group = new Group();
-                    group.Index = index;
-                    group.Name = name;
-                    group.Next = index;
-                    modelInfo.Layout.Panels[panel].EditInfo.Groups.Add(group);
-                    ModelHelper.SaveModelInfo(modelInfo);
-                    ajaxMessage.Data = modelInfo.Layout.Panels[panel].EditInfo.Groups;
-                }
-                return JavaScriptConvert.SerializeObject(ajaxMessage).Replace("null", "\"\"");
+                ajaxMessage.Success = true;
+                ajaxMessage.Message = "添加成功!";
+                Group group = new Group();
+                @group.Index = index;
+                @group.Name = name;
+                @group.Next = index;
+                modelInfo.Layout.Panels[panel].EditInfo.Groups.Add(@group);
+                ModelHelper.SaveModelInfo(modelInfo);
+                ajaxMessage.Data = modelInfo.Layout.Panels[panel].EditInfo.Groups;
             }
+            return JavaScriptConvert.SerializeObject(ajaxMessage).Replace("null", "\"\"");
         }
 
         /// <summary>
@@ -257,33 +248,28 @@ namespace We7.CMS.Web.Admin.ContentModel.ajax
             {
                 return JavaScriptConvert.SerializeObject(ajaxMessage);
             }
+            bool flag = false;
+            GroupCollection groups = modelInfo.Layout.Panels[panel].EditInfo.Groups;
+            foreach (Group group in groups)
+            {
+                if (@group.Next == index) @group.Next = @group.Index;
+                if (@group.Index != index) continue;
+                modelInfo.Layout.Panels[panel].EditInfo.Groups.Remove(@group);
+                flag = true;
+                break;
+            }
+            ajaxMessage.Success = flag;
+            if (flag)
+            {
+                ajaxMessage.Message = "删除成功!";
+                ajaxMessage.Data = modelInfo.Layout.Panels[panel].EditInfo.Groups;
+                ModelHelper.SaveModelInfo(modelInfo);
+            }
             else
             {
-                bool flag = false;
-                GroupCollection groups = modelInfo.Layout.Panels[panel].EditInfo.Groups;
-                foreach (Group group in groups)
-                {
-                    if (group.Next == index) group.Next = group.Index;
-                    if (group.Index == index)
-                    {
-                        modelInfo.Layout.Panels[panel].EditInfo.Groups.Remove(group);
-                        flag = true;
-                        break;
-                    }
-                }
-                ajaxMessage.Success = flag;
-                if (flag)
-                {
-                    ajaxMessage.Message = "删除成功!";
-                    ajaxMessage.Data = modelInfo.Layout.Panels[panel].EditInfo.Groups;
-                    ModelHelper.SaveModelInfo(modelInfo);
-                }
-                else
-                {
-                    ajaxMessage.Message = "删除失败！";
-                }
-                return JavaScriptConvert.SerializeObject(ajaxMessage).Replace("null", "\"\"");
+                ajaxMessage.Message = "删除失败！";
             }
+            return JavaScriptConvert.SerializeObject(ajaxMessage).Replace("null", "\"\"");
         }
 
         /// <summary>
@@ -291,6 +277,7 @@ namespace We7.CMS.Web.Admin.ContentModel.ajax
         /// </summary>
         /// <param name="model">模型名称</param>
         /// <param name="panel">面板名称</param>
+        /// <param name="index">索引</param>
         /// <returns></returns>
         [WebMethod]
         [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
@@ -303,7 +290,7 @@ namespace We7.CMS.Web.Admin.ContentModel.ajax
                 modelInfo = ModelHelper.GetModelInfo(model);
             }
             ListInfo listInfo = modelInfo.Layout.Panels[panel].ListInfo;
-            return JavaScriptConvert.SerializeObject(GetGroupByIndex(index, listInfo.Groups)).Replace("null", "\"\""); ;
+            return JavaScriptConvert.SerializeObject(GetGroupByIndex(index, listInfo.Groups)).Replace("null", "\"\""); 
         }
 
         /// <summary>
@@ -358,6 +345,36 @@ namespace We7.CMS.Web.Admin.ContentModel.ajax
 
                 ModelUIHandler.DealSystemColumn(cols, modelInfo);
 
+
+                /* begin
+                 * ndoe:此段代码的作用是查找编辑配置
+                 *      有param["model"]的项（此param作用于关联控件）
+                 *      列表查询读取此段param信息可以得到关联表信息。
+                 * ps：如果您试图维护此代码，或者有更好的办法。请谨慎为之。
+                 * author：丁乐
+                 * date:2011/12/19
+                 */
+                if (modelInfo.Layout.Panels["edit"] != null && modelInfo.Layout.Panels["edit"].EditInfo != null && modelInfo.Layout.Panels["edit"].EditInfo.Controls != null && modelInfo.Layout.Panels["edit"].EditInfo.Controls.Count>0)
+                {
+                    foreach (var item in modelInfo.Layout.Panels["edit"].EditInfo.Controls)
+                    {
+                        if (item.Params!=null&&item.Params.Count>0&&!string.IsNullOrEmpty(item.Params["model"]))
+                        {
+                            if (cols[item.Name] != null && cols[item.Name].Params != null)
+                            {
+                                cols[item.Name].Params.Add(new Param("model", item.Params["model"]));
+                                cols[item.Name].Params.Add(new Param("textfield", item.Params["textfield"]));
+                                cols[item.Name].Params.Add(new Param("valuefield", item.Params["valuefield"]));
+                            }
+                            else if (cols[item.Name] != null && cols[item.Name].Params == null)
+                            {
+                                cols[item.Name].Params = new ParamCollection { new Param("model", item.Params["model"]), new Param("textfield", item.Params["textfield"]), new Param("valuefield", item.Params["valuefield"]) };
+                            }
+                        }
+                    }
+                }
+                /*end*/
+                
                 GetGroupByIndex(index, modelInfo.Layout.Panels[panel].ListInfo.Groups).Columns = cols;
                 GetGroupByIndex(index, modelInfo.Layout.Panels[panel].ListInfo.Groups).Enable = bool.Parse(enable);
                 modelInfo.Layout.Panels[panel].Context.PageSize = Convert.ToInt32(pagesize);
@@ -388,6 +405,7 @@ namespace We7.CMS.Web.Admin.ContentModel.ajax
         /// <param name="copy">是否复制</param>
         /// <param name="index">group的索引</param>
         /// <param name="next">当前页的后继页</param>
+        /// <param name="enable">是否启用 </param>
         /// <returns></returns>
         [WebMethod]
         [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
@@ -547,9 +565,9 @@ namespace We7.CMS.Web.Admin.ContentModel.ajax
         /// <summary>
         /// 生成前台部件
         /// </summary>
-        /// <param name="model"></param>
-        /// <param name="widgetDetailFields"></param>
-        /// <param name="widgetListFields"></param>
+        /// <param name="model">内容模型名称</param>
+        /// <param name="widgetDetailFields">详细信息部件字段</param>
+        /// <param name="widgetListFields">列表信息部件字段</param>
         /// <returns></returns>
         [WebMethod]
         [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
@@ -579,7 +597,6 @@ namespace We7.CMS.Web.Admin.ContentModel.ajax
                 }
                 ModelHelper.SaveModelInfo(modelInfo, modelInfo.ModelName);
                 ModelHelper.CreateWidgets(modelInfo);
-
 
             }
             catch (Exception ex)
@@ -943,7 +960,7 @@ namespace We7.CMS.Web.Admin.ContentModel.ajax
             //TODO::tedyding 是否存在Tables 以及多个表
             if (modelInfo.DataSet.Tables == null)
             {
-                We7.Model.Core.We7DataTable table = new We7DataTable();
+                We7DataTable table = new We7DataTable();
                 modelInfo.DataSet.Tables.Add(table);
             }
 
@@ -953,7 +970,7 @@ namespace We7.CMS.Web.Admin.ContentModel.ajax
             success = ModelHelper.SaveModelInfo(modelInfo, model);
             if (success)
             {
-                ajaxMessage.Success = success;
+                ajaxMessage.Success = true;
                 ajaxMessage.Message = "添加成功!";
             }
             else

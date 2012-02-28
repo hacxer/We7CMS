@@ -189,7 +189,7 @@ namespace We7.CMS
             set { input = value; }
         }
 
-        private string originInput;
+  
         /// <summary>
         /// 前一版本内容
         /// </summary>
@@ -353,50 +353,45 @@ namespace We7.CMS
         /// </summary>
         public void SaveStyle()
         {
-            try
+            originalTemplateProcessor.FromVisualBoxText();
+            SortControl();
+
+            string cssPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, We7TemplateStylePath);
+            FileInfo cssfile = new FileInfo(cssPath);
+
+            string csstxt = "";
+            if (CheckFile(cssfile))
             {
-                originalTemplateProcessor.FromVisualBoxText();
-                SortControl();
-
-                string cssPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, We7TemplateStylePath);
-                FileInfo cssfile = new FileInfo(cssPath);
-
-                string csstxt = "";
-                if (CheckFile(cssfile))
+                using (StreamReader reader = OpenFile(cssfile.FullName))
                 {
-                    using (StreamReader reader = OpenFile(cssfile.FullName))
-                    {
-                        csstxt = reader.ReadToEnd();
-                    }
-                }
-
-                TemplateStyleHelper styleHelper = new TemplateStyleHelper();
-
-                foreach (KeyValuePair<string, int> kvp in oldDic) //处理过期的控件样式
-                {
-                    string path = kvp.Key.Split('_')[0];
-                    string style = kvp.Key.Split('_')[1];
-                    string control = Path.GetFileNameWithoutExtension(path).Trim();
-                    csstxt = styleHelper.DeleteStyle(control, style.Trim(), Path.GetFileNameWithoutExtension(FileName), csstxt);
-                }
-
-                foreach (KeyValuePair<string, int> kvp in newDic) //处理新增的控件样式
-                {
-                    string path = kvp.Key.Split('_')[0];
-                    string style = kvp.Key.Split('_')[1];
-                    csstxt = styleHelper.AddStyleByPath(path, style.Trim(), Path.GetFileNameWithoutExtension(FileName), csstxt);
-                }
-                using (FileStream f = File.Open(cssPath, FileMode.Create, FileAccess.Write))
-                {
-                    using (StreamWriter writer = OpenWriteFile(f))
-                    {
-                        writer.Write(csstxt);
-                    }
+                    csstxt = reader.ReadToEnd();
                 }
             }
-            catch
+
+            TemplateStyleHelper styleHelper = new TemplateStyleHelper();
+
+            foreach (KeyValuePair<string, int> kvp in oldDic) //处理过期的控件样式
             {
+                string path = kvp.Key.Split('_')[0];
+                string style = kvp.Key.Split('_')[1];
+                string control = Path.GetFileNameWithoutExtension(path).Trim();
+                csstxt = styleHelper.DeleteStyle(control, style.Trim(), Path.GetFileNameWithoutExtension(FileName), csstxt);
             }
+
+            foreach (KeyValuePair<string, int> kvp in newDic) //处理新增的控件样式
+            {
+                string path = kvp.Key.Split('_')[0];
+                string style = kvp.Key.Split('_')[1];
+                csstxt = styleHelper.AddStyleByPath(path, style.Trim(), Path.GetFileNameWithoutExtension(FileName), csstxt);
+            }
+            using (FileStream f = File.Open(cssPath, FileMode.Create, FileAccess.Write))
+            {
+                using (StreamWriter writer = OpenWriteFile(f))
+                {
+                    writer.Write(csstxt);
+                }
+            }
+
         }
 
         void AppendLink()
@@ -1113,6 +1108,7 @@ namespace We7.CMS
 
         private void UpdatePublishStyle(string style, string controlPath, string PublishStyle)
         {
+
             string uxStyle = File.ReadAllText(PublishStyle, Encoding.UTF8);
             string css = CssTxt(style, controlPath);
             string control = Path.GetFileNameWithoutExtension(controlPath);
@@ -1289,7 +1285,7 @@ namespace We7.CMS
         /// <returns></returns>
         string ConvertTagsToControls(string inputStr)
         {
-            string strReturn = "";
+           // string strReturn = "";
             string strTemplate;
             Controls.Clear();
             Templates.Clear();
@@ -1456,14 +1452,13 @@ namespace We7.CMS
         /// </summary>
         void CopyControl()
         {
-            try
+            GeneralConfigInfo info = GeneralConfigs.GetConfig();
+            string tpdir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, TemplateGroupPath + "\\" + Constants.We7ControlsBasePath);
+            string tpcdir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, TemplateGroupPathCopy + "\\" + Constants.We7ControlsBasePath);
+            foreach (WeControl c in Controls)
             {
-                GeneralConfigInfo info = GeneralConfigs.GetConfig();
-
-
-                string tpdir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, TemplateGroupPath + "\\" + Constants.We7ControlsBasePath);
-                string tpcdir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, TemplateGroupPathCopy + "\\" + Constants.We7ControlsBasePath);
-                foreach (WeControl c in Controls)
+                //2.7部件目录重构后，部件不需要复制，只复制控件
+                if (!string.IsNullOrEmpty(c.FileName) && c.FileName.IndexOf("/Page/") > 0)
                 {
                     string ctrdir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, c.FileName.TrimStart('/', '\\'));
                     ctrdir = ctrdir.Substring(0, ctrdir.LastIndexOf("/Page/", StringComparison.OrdinalIgnoreCase));//上面两句是为了取得控件的实际目录。
@@ -1494,9 +1489,7 @@ namespace We7.CMS
                     }
                 }
             }
-            catch (Exception ex)
-            {
-            }
+
         }
 
         /// <summary>
@@ -1517,28 +1510,24 @@ namespace We7.CMS
             {
                 if (f.Name.StartsWith(".") || f.Name.StartsWith("~"))
                     continue;
-                try
+
+                string targetFile = Path.Combine(target, f.Name);
+                if (f.Name.EndsWith("aspx", true, null) || f.Name.EndsWith("ascx", true, null))
                 {
-                    string targetFile = Path.Combine(target, f.Name);
-                    if (f.Name.EndsWith("aspx", true, null) || f.Name.EndsWith("ascx", true, null))
+                    using (StreamReader sr = OpenFile(f.FullName))
                     {
-                        using (StreamReader sr = OpenFile(f.FullName))
+                        string txt = sr.ReadToEnd();
+                        using (StreamWriter sw = OpenWriteFile(targetFile))
                         {
-                            string txt = sr.ReadToEnd();
-                            using (StreamWriter sw = OpenWriteFile(targetFile))
-                            {
-                                sw.Write(txt);
-                            }
+                            sw.Write(txt);
                         }
                     }
-                    else
-                    {
-                        File.Copy(f.FullName, targetFile);
-                    }
                 }
-                catch (Exception ex)
+                else
                 {
+                    File.Copy(f.FullName, targetFile);
                 }
+
             }
 
             foreach (DirectoryInfo d in dir.GetDirectories())
@@ -2175,7 +2164,7 @@ namespace We7.CMS
         /// <summary>
         /// 取得控件名称
         /// </summary>
-        /// <param name="control">控件名称</param>
+        /// <param name="filePath">控件名称</param>
         /// <returns></returns>
         string GetUCName(string filePath)
         {
@@ -2250,7 +2239,7 @@ namespace We7.CMS
         ///<summary>
         /// 通过流取得StreamWriter
         /// </summary>
-        /// <param name="path">文件路径</param>
+        /// <param name="stream">文件路径</param>
         /// <returns></returns>
         static StreamWriter OpenWriteFile(Stream stream)
         {
@@ -2265,13 +2254,20 @@ namespace We7.CMS
         static bool CheckFile(string path)
         {
             FileInfo f = new FileInfo(path);
-            if (!f.Exists)
+
+            if (!FileHelper.Exists(path))
             {
-                if (!f.Directory.Exists)
-                    f.Directory.Create();
-                f.Create();
+                FileHelper.WriteFile(path, "");
                 return false;
             }
+            //if (!f.Exists)
+            //{
+            //    if (!f.Directory.Exists)
+            //        f.Directory.Create();
+            //    f.Create();
+            //    f.d();
+            //    return false;
+            //}
             return true;
         }
 
@@ -2286,7 +2282,7 @@ namespace We7.CMS
             {
                 if (!file.Directory.Exists)
                     file.Directory.Create();
-                file.Create();
+                file.Create().Close();
                 return false;
             }
             return true;

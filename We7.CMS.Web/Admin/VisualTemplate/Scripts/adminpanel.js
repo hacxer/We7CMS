@@ -75,7 +75,8 @@ $(document).ready(function() {
         container.css("width", cValue.width);
         container.css("margin", "0 " + cValue.align);
 
-        var bgattr = "background-color:" + bodyBg.color + ";background-image:url('" + bodyBg.image + "');background-position:" + bodyBg.postion + ";background-repeat:" + bodyBg.repeat + "; background-attachment:" + bodyBg.scroll + ";";
+        var bgattr = "background-color:" + bodyBg.color + ";background-position:" + bodyBg.postion + ";background-repeat:" + bodyBg.repeat + "; background-attachment:" + bodyBg.scroll + ";";
+        if (bodyBg.image != '') bgattr += "background-image:url('" + bodyBg.image + "');";
         var ccattr = "width:" + cValue.width + "px;margin:0 " + cValue.align + "";
         SaveBgData(StringUtil.Base64Encode(bgattr), StringUtil.Base64Encode(ccattr));
         $("#admin_panle_container").slideUp("slow");

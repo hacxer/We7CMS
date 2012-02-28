@@ -171,7 +171,8 @@
 				height: 230,
                 autowidth:true,
                 rowNum:20,
-                autoencode:false
+                autoencode:false,
+                isSiteGroup: true
 			};
 			
 			we7("#ModelList").bind(bindDestination, options);

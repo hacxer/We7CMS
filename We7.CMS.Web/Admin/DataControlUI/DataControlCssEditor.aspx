@@ -54,7 +54,7 @@
                     <table>
                         <tr>
                             <td>
-                                <asp:Button ID="SaveButton" runat="server" OnClientClick="getCurrentValue()" UseSubmitBehavior="false" Text="　　保存　　"
+                                <asp:Button ID="SaveButton" runat="server" UseSubmitBehavior="false" Text="　　保存　　"
                                     OnClick="SaveButton_Click" />
                             </td>
                             <td>

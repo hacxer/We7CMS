@@ -101,21 +101,21 @@ namespace We7.CMS.Web.Admin.DataControlUI
 
         void InitializeCssFile()
         {
-            //string cfn = Path.GetFileNameWithoutExtension(Path.GetFileNameWithoutExtension(ControlFile));
-            //string tn = Path.GetFileNameWithoutExtension(Template);
+            string cfn = Path.GetFileNameWithoutExtension(Path.GetFileNameWithoutExtension(ControlFile));
+            string tn = Path.GetFileNameWithoutExtension(Template);
 
-            //Templator tp = new Templator();
-            //tp.FileName = Server.MapPath(TemplateHelper.GetTemplatePath(Template));
+            Templator tp = new Templator();
+            tp.FileName = Server.MapPath(TemplateHelper.GetTemplatePath(Template));
 
-            //string cssFile = "";
-            //WeControl c = new WeControl();
-            //c.TagName = cfn;
-            //if (tp.CopyStyleSheet(c, ref cssFile))
-            //{
-            //    //EditCssHyperLink.NavigateUrl = string.Format("manage/CssDetail.aspx?file={0}_{1}.css&folder=controls", tn, cfn);
-            //    CssFileTextBox.Text = string.Format("{0}_{1}.css", tn, cfn);
-            //}
-            //StylePathTextBox.Text = Constants.TemplateUrlPath.Remove(0, 1) + "/styles";
+            string cssFile = "";
+            WeControl c = new WeControl();
+            c.TagName = cfn;
+            if (tp.CopyStyleSheet(c, ref cssFile))
+            {
+                //EditCssHyperLink.NavigateUrl = string.Format("manage/CssDetail.aspx?file={0}_{1}.css&folder=controls", tn, cfn);
+                CssFileTextBox.Text = string.Format("{0}_{1}.css", tn, cfn);
+            }
+            StylePathTextBox.Text = Constants.TemplateUrlPath.Remove(0, 1) + "/styles";
         }
 
         protected bool IsControl()

@@ -3,7 +3,7 @@
 
 
 (function () {
-    var conditionSetting = [{ Type: "TextInput", Label: "标签", Name: "Label", value: '' }, { Type: "TextInput", Label: "名称", ReadOnly: true, Name: "Name", value: '' },
+    var conditionSetting = [{ Type: "TextInput", Label: "名称", Name: "Label", value: '' }, { Type: "TextInput", Label: "标签", ReadOnly: true, Name: "Name", value: '' },
     { Type: "Select", Label: "控件类型", Name: "Type", Params: [{ Name: "data", Value: "TextInput|文本框,Request|来自Url"}], Value: "TextInput" },
     { Type: "Select", Label: "可见性", Name: "Visible", Params: [{ Name: "data", Value: "true|是,false|否"}], Value: "true" }, { Type: "TextInput", Label: "Css类", Name: "CssClass" }, { Type: "TextInput", Label: "宽度", Name: "Width", value: '' },
     { Type: "TextInput", Label: "高度", Name: "Height", value: '' },
@@ -152,6 +152,7 @@
                 $(".error_item").first().find("input").focus();
                 return;
             }
+            we7.loading("保存中，请稍候");
             var strCols = "[";
             for (var p in tempColsList) {
 
@@ -193,10 +194,11 @@
                 data: '{"model":"' + model + '","panel":"' + panel + '","list":"' + encodeURIComponent(strCols) + '","condition":"' +
 					encodeURIComponent(strCondition) + '","pagesize":"' + pageSize.toString() + '","index":"' + $("#ListMode").val() + '","enable":"' + $("#IsEnable").val() + '"}',
                 success: function (json) {
-                    alert(json);
+                    we7.info(json);
+                    
                 },
-                error: function () {
-                    alert("error");
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    we7.info("操作失败，错误信息：" + textStatus);
                 }
             });
         });

@@ -41,8 +41,11 @@ namespace We7.CMS.Web.Admin
                 }
                 else
                     LoginNameTextBox.Text = SiteConfigs.GetConfig().AdministratorName;
+
+                LoginNameTextBox.Enabled = false;
             }
         }
+
 
         void changePassword(string loginName, string password,string newPassword)
         {
@@ -108,7 +111,7 @@ namespace We7.CMS.Web.Admin
 
         protected void CancelButton_Click(object sender, EventArgs e)
         {
-            LoginNameTextBox.Text="";
+           // LoginNameTextBox.Text="";
             PasswordTextBox.Text="";
             NewPasswordTextBox.Text="";
             AgainPasswordTextBox.Text="";
